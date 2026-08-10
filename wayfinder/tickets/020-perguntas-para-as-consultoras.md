@@ -166,6 +166,12 @@ te entrega? (marque tudo que valer)
 *(Pergunto porque nesse caso o atendimento é diferente, né? Quero entender se é a pessoa que
 muda ou a conversa.)*
 
+**32. Consegue separar uns 2 ou 3 atendimentos que você lembra como "foi assim que eu faria de
+novo" — não precisa ter fechado venda — e me mandar o print ou o texto da conversa?** 🙏
+( ) Consigo separar alguns agora ( ) Consigo, mas preciso procurar ( ) Só me lembro de um
+*Pode ser recente ou de um cliente antigo. Se der, **apaga ou borra o nome e o telefone** antes
+de mandar — o que eu quero ver é como você conduziu a conversa, não quem é o cliente.*
+
 ---
 
 ## Rastreamento interno
@@ -186,6 +192,7 @@ Não vai no roteiro. Serve para saber o que priorizar e para onde a resposta vol
 
 | 27, 28 | [009](009-como-funciona-o-atendimento-hoje.md) | A loja não tem registro do movimento por tipo de cliente, então a estimativa delas é a única fonte. **Não muda a decisão** de deixar o arquiteto fora da fase 1 — serve para dimensionar quanto do movimento a fase 1 deixa de cobrir, e para priorizar o fluxo do arquiteto depois. |
 | 29, 30, 31 | [009](009-como-funciona-o-atendimento-hoje.md) · [012](012-quando-e-como-o-agente-escala.md) | **Alimentam o classificador arquiteto × consumidor final**, que é o gatilho de escalada mais importante da fase 1. A **29 é a mais valiosa do roteiro inteiro**: a consultora faz essa leitura há anos e tem sinais que não se adivinham de fora. A 30 mostra onde a classificação erra na prática, e a 31 confirma (ou derruba) a modelagem de que o modo é da **conversa**, não do contato. |
+| 32 | [013](013-sinal-de-sucesso-do-aprendizado.md) | O mapa dizia que o desenho do laço de aprendizado "só fica nítido depois de existir um sinal de sucesso definido e de eu ver conversas reais" (`Not yet specified`). A 32 é a fonte mais barata dessas conversas: **curada pela consultora**, não bruta como a exportação completa do [003](003-exportacao-das-conversas-das-consultoras.md) — ela já sabe, sem precisar ler tudo de novo, qual atendimento vale a pena olhar. Não substitui o 003 (que cobre volume e o resto do roteiro); adianta exemplo de sucesso antes dele estar pronto. |
 
 ### ⚠️ Manuseio da nota fiscal (pergunta 25)
 
@@ -200,6 +207,18 @@ Não vai no roteiro. Serve para saber o que priorizar e para onde a resposta vol
 **Deixado de fora de propósito:** perguntar se elas topam marcar na conversa que o agente
 mandou bem ou mal. É pedir compromisso com uma ferramenta que elas ainda não viram — a
 pergunta fica para depois do protótipo de tom ([014](014-como-o-agente-soa.md)).
+
+### ⚠️ Manuseio dos exemplos de atendimento (pergunta 32)
+
+**É dado pessoal** — a conversa de um cliente real, ainda que o resultado tenha sido bom. As
+mesmas regras da nota fiscal (pergunta 25) valem aqui, sem exceção:
+
+- O print ou o texto vai para `/dados/` ou `/conversas/`, já cobertos pelo `.gitignore`.
+  **Nunca entra no repositório.**
+- O que sobe para o ticket 013 é o **padrão observado** (como abriu, como conduziu, como
+  fechou) — jamais a conversa ou o print em si.
+- Pedir com nome e telefone já borrados sempre que possível, do mesmo jeito da 25 — para
+  treinar o agente no **como**, os dados do cliente não importam e são risco puro.
 
 ---
 
