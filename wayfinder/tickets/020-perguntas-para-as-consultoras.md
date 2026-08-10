@@ -97,8 +97,12 @@ Curioso pra entender na prática — e o que acontece quando duas respondem a me
 *O que costuma ficar em branco?*
 
 **18. Você usa Google Agenda?**
-( ) Uso e está sempre atualizada ( ) Tenho, mas não uso muito ( ) Não uso
-*Se não: como você anota que tem visita marcada com um cliente?*
+( ) Uso e lanço **tudo** lá ( ) Uso, mas só pras coisas importantes ( ) Tenho, mas quase não uso ( ) Não uso
+*Se não usa: como você anota que tem visita marcada com um cliente?*
+
+**18b. Se você usa: dá pra me mostrar a sua agenda da semana que vem?** 🙏
+Não precisa mandar detalhe nenhum — só quero ver se está preenchida. É pra eu saber se dá pra
+confiar nela pra marcar visita, ou se é melhor sempre confirmar com você antes.
 
 **19. Seu e-mail do trabalho é @gmail.com ou tem o nome da loja depois do arroba?**
 ( ) @gmail.com ( ) @laiscasa... (ou outro domínio da loja) ( ) Não tenho e-mail do trabalho
@@ -155,7 +159,7 @@ Não vai no roteiro. Serve para saber o que priorizar e para onde a resposta vol
 | 12, 13 | [012](012-quando-e-como-o-agente-escala.md) | A 12 vem como sensação; traduzir para critério operável é nosso trabalho, não delas. |
 | 14, 15 | [013](013-sinal-de-sucesso-do-aprendizado.md) | Definição de contato perdido e de atendimento bom sem venda. |
 | 16, 17 | [009](009-como-funciona-o-atendimento-hoje.md) | Confirma na prática o rodízio sem estado escrito, e se a planilha aguenta ser fonte para o agente. |
-| 18, 19 | [006](006-integracao-com-google-calendar.md) | A recomendação do research é condicional a estes dois fatos. A 19 decide o modelo de autenticação inteiro: domínio próprio → conta de serviço com delegação; Gmail comum → compartilhamento `freeBusyReader`. |
+| 18, 18b, 19 | [006](006-integracao-com-google-calendar.md) · [009](009-como-funciona-o-atendimento-hoje.md) | **Decidem se o agente agenda ou só registra a intenção.** O critério não é "usa agenda", é "a agenda é confiável" — daí a 18b: agenda parcialmente preenchida é **mais perigosa** que agenda nenhuma, porque parece confiável e o agente marca por cima de compromisso real. Todo mundo diz que mantém a agenda em dia; o que vale é a próxima semana estar cheia. A 19 decide o modelo de autenticação: domínio próprio → conta de serviço com delegação; Gmail comum → compartilhamento. |
 | 20, 21 | [009](009-como-funciona-o-atendimento-hoje.md) | O agente é 24/7 e a loja não. Fora do expediente ele diz ao cliente quando o atendimento volta — o que exige saber o horário real (não o presumido) e onde moram folga, férias e feriado. A 21 só vira bloqueante se o agente prometer **pessoa**; prometendo **loja**, é refinamento. |
 | 22, 23, 24, 25, 26 | [013](013-sinal-de-sucesso-do-aprendizado.md) | **Testam a aposta central do sinal de sucesso.** O research do Mainô concluiu que a nota fiscal emitida seria o sinal objetivo de venda — o único que não depende de alguém lembrar de marcar. Isso só funciona se der para ligar a nota de volta à conversa, e há dois jeitos de quebrar: **pelo tempo** (ciclo longo + nota tardia = atribuição frouxa) e **pela chave** (nota tem CPF e nome; conversa tem telefone — sem campo em comum, não casa). A **25 é a que decide**: o documento mostra os campos que existem, não os que alguém lembra. Se quebrar, o 013 muda inteiro. |
 

@@ -165,6 +165,62 @@ por "conversas que ele resolveu sozinho" seria medir a coisa errada.
 - **Links `wa.me` rastreados** (um por origem, com mensagem inicial pré-preenchida diferente)
   resolvem o rastreamento de origem sem API nenhuma. Também no ticket 021.
 
+### Transparência — o agente não finge ser gente, mas também não se anuncia robô
+
+- **O agente tem nome próprio e se apresenta como assistente da Lais Casa.** Não finge ser
+  pessoa e não abre a conversa anunciando que é um robô.
+- **Nunca assina como uma consultora.** Se o cliente acredita ter falado com a Fulana e a
+  Fulana não faz ideia da conversa, a mentira não é do agente — é da loja.
+- **Se o cliente perguntar se é um robô, responde que sim, na hora, sem rodeio.** Esta regra
+  não se negocia.
+- **Razão da escolha:** declarar de cara rebaixa a conversa (parte dos clientes trata bot com
+  menos paciência, e num ticket de R$ 30 mil isso custa o contato no primeiro minuto); não
+  declarar nunca cria o pior momento possível, que é o cliente descobrir sozinho — estrago
+  que a venda não paga, numa loja onde a relação com a consultora é o ativo.
+- ⚠️ **Pendência jurídica, não técnica:** o CDC não exige hoje declaração de atendimento por
+  IA, mas há discussão legislativa em curso no Brasil e a LGPD pesa sobre o que se faz com a
+  conversa. **A decisão deve passar pela dona da loja** — não porque esteja errada, mas
+  porque é ela quem responde pela marca se o critério mudar.
+- O **nome** do agente fica para o protótipo de tom ([014](014-como-o-agente-soa.md)).
+
+### Agendamento — decisão condicional, e o critério é confiabilidade
+
+O destino do mapa diz que o agente *"verifica disponibilidade e agenda"*; a restrição dura diz
+que *"fase 1 é só qualificação"*. As duas não podiam valer juntas, e a contradição estava
+atravessando três tickets. Resolvida assim:
+
+**O caminho depende de a agenda das consultoras ser confiável — e o teste não é o uso, é a
+confiabilidade.**
+
+- **Se a agenda for confiável → o agente agenda.** Confirma o horário com o cliente.
+- **Se não for → o agente registra a intenção e escala:** *"vou ver com a consultora e ela te
+  confirma"*. Ele captura **quando** o cliente quer vir — dado que faz a consultora priorizar
+  quem atender primeiro — mas quem confirma é gente.
+
+**O critério, explicitamente:** o agente só agenda se a consultora responder que lança **tudo**
+na agenda **e** isso se confirmar olhando a agenda dela de verdade (perguntas 18 e 18b do
+ticket [020](020-perguntas-para-as-consultoras.md)) — a tela, não a resposta verbal. Todo mundo
+diz que mantém a agenda em dia.
+
+**Por que o critério é esse:** uma agenda parcialmente preenchida é **mais perigosa que agenda
+nenhuma**, porque parece confiável. Se a consultora lança a reunião importante mas não o
+cliente que passou às 15h, um horário livre na agenda não significa livre — o agente marca por
+cima de compromisso real, o cliente chega e ninguém o espera. Isso é pior que não agendar: é
+errar na frente do cliente com a assinatura da loja.
+
+**Três consequências, se o caminho do agendamento se confirmar:**
+
+1. **Reserva de horário é obrigação nossa.** A API do Google não tem *hold* (research
+   [006](../research/006-google-calendar.md)). Entre oferecer "amanhã às 15h" e o cliente
+   confirmar, nada impede a mesma vaga ser oferecida a outro. Exige tabela de reservas com
+   trava de exclusão — construção real, dentro da fase 1.
+2. **Depende de escrita, não só de leitura.** O `freeBusyReader` recomendado para o caso Gmail
+   comum apenas **lê**. Marcar exige permissão de escrita, o que muda o modelo de acesso e
+   endurece a resposta da pergunta 19.
+3. **A fase 1 deixa de ser só qualificação.** Agendar é a primeira coisa que o agente faz *no
+   mundo*, não apenas na conversa. É decisão legítima — mas tomada com esse nome, não por
+   tabela.
+
 ### O desfecho — desceu para as consultoras
 
 Cotação, pagamento, momento de emissão da nota e tempo de ciclo não estão com o dono do
