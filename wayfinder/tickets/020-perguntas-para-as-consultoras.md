@@ -103,6 +103,44 @@ Curioso pra entender na prática — e o que acontece quando duas respondem a me
 **19. Seu e-mail do trabalho é @gmail.com ou tem o nome da loja depois do arroba?**
 ( ) @gmail.com ( ) @laiscasa... (ou outro domínio da loja) ( ) Não tenho e-mail do trabalho
 
+**20. Qual o horário que vocês atendem no WhatsApp, de verdade?**
+Segunda a sexta: das ____ às ____
+Sábado: ( ) não atendemos ( ) das ____ às ____
+Domingo: ( ) não atendemos ( ) das ____ às ____
+*E fora desse horário — chega mensagem? Alguém responde de casa?*
+
+**21. Quando uma de vocês está de folga, de férias ou falta, isso fica anotado em algum
+lugar?**
+( ) Na planilha compartilhada ( ) Num grupo do WhatsApp ( ) Numa escala/agenda ( ) É combinado no dia
+*(Pergunto porque o agente vai dizer pro cliente quando alguém vai retornar — e não pode
+prometer uma pessoa que está de férias.)*
+
+**22. Quando o cliente diz "quero comprar", o que você faz em seguida?**
+Você monta a cotação no Mainô e manda pra ele como?
+( ) PDF ( ) Print da tela ( ) Digito o preço na conversa mesmo ( ) Outro: ____
+
+**23. A nota fiscal é emitida quando?**
+( ) Na hora que ele paga ( ) Quando a entrega sai ( ) Dias depois ( ) Depende
+
+**24. Do primeiro "oi" até fechar a venda, quanto costuma demorar?**
+Cliente comum: ( ) mesmo dia ( ) alguns dias ( ) 1–2 semanas ( ) um mês ou mais
+Arquiteto: ( ) mesmo dia ( ) alguns dias ( ) 1–2 semanas ( ) um mês ou mais
+
+**25. Dá pra você me mandar um exemplo de nota fiscal de uma venda?** 🙏
+Qualquer uma serve, e **pode ser de um cliente antigo**. Não preciso dos dados dele — se
+quiser, **rabisca ou apaga o nome e o CPF** antes de mandar. O que eu quero ver é só **quais
+campos a nota tem**, pra saber se dá pra ligar uma venda de volta à conversa que a originou.
+
+**26. Na cotação do Mainô, você chega a colocar o telefone do cliente?**
+( ) Sempre ( ) Às vezes ( ) Nunca ( ) Não sei se tem esse campo
+
+**27. De cada 10 clientes que te chamam no WhatsApp, quantos são arquiteto?**
+Não precisa ser exato, um chute serve: ____ de 10
+
+**28. Quando chega uma planilha de arquiteto, quanto tempo você leva pra responder?**
+( ) No mesmo dia ( ) 1–2 dias ( ) Uma semana ( ) Depende demais
+*O que mais demora nesse processo?*
+
 ---
 
 ## Rastreamento interno
@@ -118,6 +156,20 @@ Não vai no roteiro. Serve para saber o que priorizar e para onde a resposta vol
 | 14, 15 | [013](013-sinal-de-sucesso-do-aprendizado.md) | Definição de contato perdido e de atendimento bom sem venda. |
 | 16, 17 | [009](009-como-funciona-o-atendimento-hoje.md) | Confirma na prática o rodízio sem estado escrito, e se a planilha aguenta ser fonte para o agente. |
 | 18, 19 | [006](006-integracao-com-google-calendar.md) | A recomendação do research é condicional a estes dois fatos. A 19 decide o modelo de autenticação inteiro: domínio próprio → conta de serviço com delegação; Gmail comum → compartilhamento `freeBusyReader`. |
+| 20, 21 | [009](009-como-funciona-o-atendimento-hoje.md) | O agente é 24/7 e a loja não. Fora do expediente ele diz ao cliente quando o atendimento volta — o que exige saber o horário real (não o presumido) e onde moram folga, férias e feriado. A 21 só vira bloqueante se o agente prometer **pessoa**; prometendo **loja**, é refinamento. |
+| 22, 23, 24, 25, 26 | [013](013-sinal-de-sucesso-do-aprendizado.md) | **Testam a aposta central do sinal de sucesso.** O research do Mainô concluiu que a nota fiscal emitida seria o sinal objetivo de venda — o único que não depende de alguém lembrar de marcar. Isso só funciona se der para ligar a nota de volta à conversa, e há dois jeitos de quebrar: **pelo tempo** (ciclo longo + nota tardia = atribuição frouxa) e **pela chave** (nota tem CPF e nome; conversa tem telefone — sem campo em comum, não casa). A **25 é a que decide**: o documento mostra os campos que existem, não os que alguém lembra. Se quebrar, o 013 muda inteiro. |
+
+| 27, 28 | [009](009-como-funciona-o-atendimento-hoje.md) | A loja não tem registro do movimento por tipo de cliente, então a estimativa delas é a única fonte. **Não muda a decisão** de deixar o arquiteto fora da fase 1 — serve para dimensionar quanto do movimento a fase 1 deixa de cobrir, e para priorizar o fluxo do arquiteto depois. |
+
+### ⚠️ Manuseio da nota fiscal (pergunta 25)
+
+**É dado pessoal** — nome e CPF de cliente real. Regras, sem exceção:
+
+- O arquivo vai para `/dados/`, que já está no `.gitignore`. **Nunca entra no repositório.**
+- O que sobe para o ticket é **a lista de campos descobertos**, jamais o documento nem os
+  valores.
+- Pedir com os dados do cliente já rabiscados sempre que possível — para o nosso propósito, a
+  estrutura basta; os valores são risco puro.
 
 **Deixado de fora de propósito:** perguntar se elas topam marcar na conversa que o agente
 mandou bem ou mal. É pedir compromisso com uma ferramenta que elas ainda não viram — a
