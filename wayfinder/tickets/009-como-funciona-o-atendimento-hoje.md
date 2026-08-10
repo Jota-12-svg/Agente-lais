@@ -3,7 +3,7 @@ id: "009"
 title: Como funciona o atendimento da Lais Casa hoje, ponta a ponta
 labels: [wayfinder:grilling]
 status: open
-assignee:
+assignee: sessão 2026-08-10 (grilling com o dono do projeto)
 blocked-by: []
 ---
 
@@ -58,3 +58,38 @@ A conversa precisa reconstruir o caminho real de um contato, do primeiro "oi" ao
 **Resolvido quando** o fluxo estiver descrito com clareza suficiente para desenhar em cima
 dele. A resolução consolida isso e deve produzir o vocabulário do domínio — o que é lead,
 cliente, cotação, atendimento — via `/domain-modeling`.
+
+---
+
+## Respostas do grilling (em andamento — sessão de 2026-08-10)
+
+Anotadas conforme o dono do projeto responde. A `## Resolução` consolida no fim.
+
+### O canal e as pessoas
+
+- **Quatro pessoas atendem** pelo número: 3 consultoras + a dona da loja.
+- **O limite de 4 acompanhantes do Coexistence não é um problema** — a estrutura é *1 aparelho
+  principal + até 4 acompanhantes*, e a **Cloud API não ocupa vaga de acompanhante**: ela é
+  via de integração no nível da conta, não dispositivo vinculado. Confirmado na doc da Meta
+  (*"Businesses can link up to four WhatsApp 'companion' clients"*). O incômodo real do
+  onboarding permanece: todos os acompanhantes são desvinculados e cada pessoa reconecta o
+  seu depois.
+- ⚠️ **Ponto cego descoberto:** mensagem enviada de um companion **não suportado** não dispara
+  webhook — e o **WhatsApp para Windows** está na lista de não suportados. Algumas consultoras
+  usam esse app hoje. Se elas responderem por ele, o agente não sabe que um humano assumiu e
+  pode responder por cima. Investigado em
+  [research/019](../research/019-companion-windows-ponto-cego.md).
+
+### Roteamento — como o contato chega a uma consultora
+
+- **Rodízio.** Contato novo vai para a próxima da fila, sempre intercalando entre as quatro.
+  Regra determinística, executável sem julgamento.
+- **O estado do rodízio não está escrito em lugar nenhum** — vive no acordo entre elas, cada
+  uma sabendo de cabeça quem pegou o último.
+- **O vínculo cliente↔consultora mora na planilha compartilhada** (uma aba por consultora).
+- **Cliente que volta fura a fila**: vai para a consultora dona dele, fora do rodízio.
+
+**Consequência de desenho** (a confirmar no ticket de escalada): o agente precisa de duas
+coisas que hoje não existem em formato legível por máquina — **um registro de quem é a vez**
+e **a planilha consultável por número de telefone**, para saber no primeiro "oi" se aquele
+número já tem dona. Sem as duas, ele distribui errado.
