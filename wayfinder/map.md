@@ -80,6 +80,12 @@ prototipagem, `/prototype`. Em tickets de research, `/research` como subagente.
   imagem (fonte do conhecimento de produto do agente), e `GET /notas_fiscais_emitidas`
   entrega a venda concretizada (sinal objetivo para o aprendizado, por polling). Os campos
   de estoque da API não valem nada aqui e não mudam a regra de não afirmar disponibilidade.
+- [Contrato real da API do Gemini via kie.ai](tickets/008-contrato-da-api-do-gemini.md)
+  — function calling existe na kie.ai (o medo estrutural não se confirmou), **mas a
+  recomendação é ir direto à Gemini API da Google, tier pago**, por LGPD (o tier pago não
+  treina com os dados; a kie.ai não tem DPA) e por cache de contexto, que a kie.ai não tem e
+  que anula o desconto dela. Modelo `gemini-3-flash`, sempre com raciocínio em `low`. Custo
+  não é a variável decisiva — a diferença é de ~R$ 90/mês.
 
 ## Not yet specified
 
@@ -92,7 +98,10 @@ Névoa em escopo, ainda sem nitidez para virar ticket:
 - **Modelo de dados no Supabase.** Esquema de clientes, conversas, produtos e aprendizado.
   Depende de saber que campos a qualificação extrai e como o catálogo é representado.
 - **Stack e hospedagem do runtime.** Onde o agente roda, como recebe webhook, como
-  sobrevive a reinício no meio de uma conversa.
+  sobrevive a reinício no meio de uma conversa. Já se sabe uma restrição: se o áudio OGG/Opus
+  do WhatsApp precisar de transcodificação, o ambiente terá de suportar binário nativo
+  (ffmpeg) — o que elimina boa parte das opções serverless. Depende de
+  [Validar empiricamente o contrato do LLM](tickets/018-validar-contrato-do-llm.md).
 - **Fluxo do arquiteto.** O agente recebe uma planilha com dezenas de itens — o que ele faz
   com ela é um segundo fluxo inteiro, não uma variação do primeiro.
 - **Superfície para as consultoras.** Como elas veem, corrigem e assumem uma conversa do
