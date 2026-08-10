@@ -1,0 +1,43 @@
+# =============================================================================
+# SEGREDOS — nunca versionar
+# =============================================================================
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+credentials.json
+service-account*.json
+
+
+# =============================================================================
+# DADOS DE CLIENTE — conversas exportadas, planilhas, qualquer coisa com dado
+# pessoal real. Fica fora do git por LGPD, não por tamanho.
+# =============================================================================
+/dados/
+/conversas/
+*.export.txt
+
+
+# =============================================================================
+# Dependências e build
+# =============================================================================
+node_modules/
+dist/
+build/
+.next/
+coverage/
+*.tsbuildinfo
+
+
+# =============================================================================
+# Ambiente local
+# =============================================================================
+.DS_Store
+Thumbs.db
+*.log
+npm-debug.log*
+.vscode/
+.idea/
+tmp/
+.cache/
