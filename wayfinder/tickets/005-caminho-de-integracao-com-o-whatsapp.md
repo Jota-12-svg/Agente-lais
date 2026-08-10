@@ -2,8 +2,8 @@
 id: "005"
 title: Como levar o agente ao WhatsApp sem tirar o Business das consultoras
 labels: [wayfinder:research]
-status: open
-assignee:
+status: closed
+assignee: Claude
 blocked-by: []
 ---
 
@@ -36,3 +36,39 @@ O research deve levantar, contra fontes primárias:
 
 **Resolvido quando** houver um comparativo dos caminhos com custo, risco e o que cada um
 custa às consultoras no dia a dia — e uma recomendação. A escolha final é do usuário.
+
+## Resolução
+
+Investigação completa em [`research/005-integracao-whatsapp.md`](../research/005-integracao-whatsapp.md).
+
+**A premissa deste ticket estava errada.** A exclusividade entre o app do WhatsApp Business e
+a Cloud API vale só para a migração direta. A Meta oferece **Coexistence**: o mesmo número
+fica nos dois lados ao mesmo tempo, com as mensagens espelhadas, o histórico dos últimos 6
+meses e os contatos preservados. As consultoras não perdem o app.
+
+**Recomendação: Coexistence via parceiro oficial.** As razões:
+
+- É o único caminho que respeita a restrição do mapa de não mudar a ferramenta das
+  consultoras.
+- **O custo da fase 1 é essencialmente zero.** Desde julho de 2025 a cobrança é por mensagem,
+  e mensagens fora de template são gratuitas dentro da janela de 24h aberta pelo cliente. O
+  agente da fase 1 é reativo — vive inteiro dentro dessa janela. Mensagens enviadas pelo app
+  pelas consultoras continuam grátis.
+- Provedores não-oficiais (Evolution, Baileys) foram descartados: violam os termos da Meta e
+  o banimento é do número. Num negócio onde o WhatsApp *é* o canal de vendas, o risco é a
+  operação inteira contra uma economia irrisória.
+
+**Restrições que Coexistence impõe e que precisam ser aceitas:**
+
+- Exige onboarding por **Solution Partner ou Tech Provider** da Meta — não dá para fazer
+  sozinho.
+- App na versão 2.24.17+; até **4 dispositivos acompanhantes**, todos desvinculados durante o
+  onboarding e reconectados depois por cada consultora.
+- Mensagens temporárias, visualização única e localização ao vivo são desativadas; listas de
+  transmissão viram somente leitura.
+
+**Abre:** [Escolher o parceiro Meta para o onboarding do WhatsApp](016-escolher-parceiro-meta.md).
+
+**Devolve para o ticket do atendimento atual** duas perguntas de fato: quantas consultoras
+usam o número e como os aparelhos estão vinculados hoje (o limite de 4 acompanhantes pode já
+estar apertado), e se o número é único e compartilhado ou um por consultora.

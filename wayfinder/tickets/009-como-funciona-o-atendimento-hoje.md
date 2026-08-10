@@ -18,6 +18,10 @@ A conversa precisa reconstruir o caminho real de um contato, do primeiro "oi" ao
 **O canal e as pessoas**
 - Quantas consultoras são? O WhatsApp Business é **um número compartilhado** por todas ou
   cada consultora tem o seu? (Muda tudo em roteamento e handoff.)
+- **Como os aparelhos estão vinculados hoje?** Vindo do research do WhatsApp: o Coexistence
+  suporta até **4 dispositivos acompanhantes**, e todos são desvinculados durante o
+  onboarding — cada consultora reconecta o dela depois. Se houver mais de 4 consultoras num
+  número só, o arranjo atual não é o que imaginamos e precisa ser entendido antes.
 - Quando chega um contato novo, quem atende? Existe rodízio, ou quem viu primeiro?
 - Como um cliente vira "cliente da Fulana" e o que acontece quando ele volta meses depois.
 - Qual o horário de atendimento? O que acontece com mensagem que chega de madrugada?
@@ -38,6 +42,13 @@ A conversa precisa reconstruir o caminho real de um contato, do primeiro "oi" ao
 - Como a consultora responde "vocês têm esse vaso?" hoje, sem sistema de estoque.
 - Com que frequência ela promete algo que depois não tinha?
 - O que ela consegue responder de cabeça e o que exige levantar da loja.
+
+**A agenda** (vindo do research do Google Calendar, que não pode ser concluído sem isto)
+- As consultoras mantêm agenda no **Google Calendar** hoje — de verdade, atualizada? Ou os
+  compromissos vivem só na cabeça delas e no WhatsApp?
+- A loja tem **Google Workspace** (e-mail em domínio próprio) ou contas **Gmail** comuns?
+  Isso decide o modelo de autenticação inteiro.
+- Como uma visita à loja é marcada hoje, do ponto de vista da consultora?
 
 **O desfecho**
 - O que acontece depois do "quero comprar": cotação no Maino, pagamento, entrega?

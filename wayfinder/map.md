@@ -63,6 +63,23 @@ prototipagem, `/prototype`. Em tickets de research, `/research` como subagente.
   desde antes do primeiro commit, `.env.example` reescrito do zero e `CLAUDE.md` com as
   convenções de trabalho e de git. A rotação das credenciais ficou para depois da limpeza do
   Supabase.
+- [Como levar o agente ao WhatsApp sem tirar o Business das consultoras](tickets/005-caminho-de-integracao-com-o-whatsapp.md)
+  — **Coexistence** via parceiro oficial da Meta: o mesmo número fica no app das consultoras
+  e na Cloud API ao mesmo tempo, com histórico e contatos preservados. A premissa de
+  exclusividade que originou o ticket estava errada. Custo da fase 1 é praticamente zero
+  (agente reativo vive dentro da janela de 24h, onde mensagem fora de template é grátis).
+  Provedores não-oficiais descartados por risco de banimento do número.
+- [O que a integração com Google Calendar exige](tickets/006-integracao-com-google-calendar.md)
+  — recomendação **condicional**: com Workspace, conta de serviço com delegação de domínio;
+  com Gmail comum, compartilhamento `freeBusyReader` para uma conta única do projeto. OAuth
+  individual descartado (token expira em 7 dias sem verificação). Se as consultoras não
+  usarem agenda no Google, não construir integração na fase 1 — grade fixa mais confirmação
+  humana. Reserva de horário é sempre nossa: a API não tem hold.
+- [O Maino tem API? O que dá para ler de lá](tickets/007-maino-tem-api.md)
+  — tem, e resolve duas coisas: `GET /produtos` entrega catálogo com preço, dimensão e
+  imagem (fonte do conhecimento de produto do agente), e `GET /notas_fiscais_emitidas`
+  entrega a venda concretizada (sinal objetivo para o aprendizado, por polling). Os campos
+  de estoque da API não valem nada aqui e não mudam a regra de não afirmar disponibilidade.
 
 ## Not yet specified
 
