@@ -61,9 +61,10 @@ cliente, cotação, atendimento — via `/domain-modeling`.
 
 ---
 
-## Respostas do grilling (em andamento — sessão de 2026-08-10)
+## Respostas do grilling (sessão de 2026-08-10)
 
-Anotadas conforme o dono do projeto responde. A `## Resolução` consolida no fim.
+Anotadas conforme o dono do projeto respondeu, pergunta a pergunta. A `## Resolução`, no fim
+do arquivo, consolida — quem quiser só o resultado pode pular direto para lá.
 
 ### O canal e as pessoas
 
