@@ -2,7 +2,7 @@
 id: "009"
 title: Como funciona o atendimento da Lais Casa hoje, ponta a ponta
 labels: [wayfinder:grilling]
-status: open
+status: closed
 assignee: sessão 2026-08-10 (grilling com o dono do projeto)
 blocked-by: []
 ---
@@ -151,6 +151,37 @@ por "conversas que ele resolveu sozinho" seria medir a coisa errada.
   registro. A pergunta desceu para o ticket [020](020-perguntas-para-as-consultoras.md) como
   estimativa das consultoras — mas a decisão não depende dela.
 
+#### Como o agente reconhece um arquiteto
+
+**"Arquiteto" não é atributo da pessoa, é modo do atendimento.** O mesmo arquiteto que manda
+planilha de um projeto na terça pode chamar na quinta para comprar uma bandeja para a casa
+dele — e aí é consumidor final. **Classifica-se a conversa, não o cadastro.** Carimbar o
+contato erraria já na segunda conversa.
+
+**Duas camadas de identificação:**
+
+1. **Perguntar** — dentro da qualificação, uma pergunta natural do tipo *"é para sua casa ou
+   você está montando um projeto?"*. É o sinal mais barato e mais confiável, não soa como
+   triagem e resolve a maioria dos casos na primeira troca.
+2. **Sinais que disparam sozinhos**, mesmo sem a pergunta: anexo, planilha ou lista longa de
+   itens; autodeclaração ("sou arquiteta", "é para uma cliente minha"); vocabulário
+   profissional (*projeto*, *ambiente*, *especificação*, *meu cliente*, prazo de obra); pedido
+   de **tabela para profissional**; e o sinal mais decisivo no Brasil — **menção a RT**
+   (reserva técnica, a comissão do arquiteto). Consumidor final não sabe o que é RT.
+   Some-se a isso o contato **já conhecido**, se a planilha compartilhada o marcar como
+   arquiteto.
+
+**Viés declarado: na dúvida, escala.** A assimetria de custo é grande e é o que sustenta a
+regra. Escalar um consumidor final por engano custa apenas o agente ter feito menos trabalho —
+a consultora atende como sempre atendeu e ninguém perde nada. Tratar um arquiteto como
+consumidor custa o agente tentar responder uma planilha, que é exatamente o erro caro que a
+fase 1 existe para não cometer. Erro barato de um lado, caro do outro: o agente pende para o
+barato.
+
+**A levantar com as consultoras** (perguntas 29 a 31 do ticket 020): como elas percebem que é
+arquiteto antes de a pessoa dizer. Elas fazem essa leitura há anos e têm sinais que não se
+adivinham de fora.
+
 ### De onde vêm os contatos
 
 - **Instagram e WhatsApp** são os canais principais, segundo a consultora entrevistada. Existe
@@ -233,3 +264,51 @@ venda para o aprendizado. Ela quebra por dois caminhos — pelo **tempo** (ciclo
 tardia tornam a atribuição frouxa) e pela **chave** (a nota carrega CPF e nome; a conversa
 carrega telefone — sem campo em comum, não casa). Se quebrar, o ticket
 [013](013-sinal-de-sucesso-do-aprendizado.md) muda inteiro.
+
+---
+
+## Resolução
+
+O fluxo está descrito com nitidez suficiente para desenhar em cima dele, e o vocabulário do
+domínio foi extraído para [`CONTEXT.md`](../../CONTEXT.md) na raiz do repositório.
+
+**A constatação que reorganiza o resto:** conferir disponibilidade é um **ato físico**. A
+informação não existe em sistema nenhum até uma consultora andar pela loja e olhar — e isso
+não é limitação da fase 1, é do negócio. Portanto **escalar não é o plano B do agente, é o
+produto dele**: boa parte dos atendimentos termina numa consultora por definição, não por
+falha. O agente deve ser medido por quanto trabalho já deixou pronto quando ela chega, nunca
+por quantas conversas resolveu sozinho.
+
+**O que ficou fixado:**
+
+| Assunto | Decisão |
+|---|---|
+| Canal | Um número compartilhado por 4 pessoas (3 consultoras + a dona). O limite de 4 acompanhantes do Coexistence **não é obstáculo** — a Cloud API não ocupa vaga. |
+| Dispositivos | O **app de Windows cega o agente**, sem via de recuperação. Saída provável é o WhatsApp Web, mas exige teste → ticket [019](019-companion-windows-ponto-cego.md). |
+| Roteamento | **Rodízio** para contato novo; **cliente que volta fura a fila** e vai para a consultora dona dele. O vínculo mora na planilha; o estado do rodízio não está escrito em lugar nenhum. |
+| Horário | Agente **24/7**, loja em horário comercial. Fora do expediente ele **qualifica mas não distribui**. |
+| Promessa | O agente **promete a loja, nunca a pessoa**. Só nomeia a consultora depois que ela assumiu. |
+| Escopo | **Só consumidor final.** Planilha, anexo ou lista longa é escalada imediata, sem interpretar nada. |
+| Classificação | Duas camadas — perguntar dentro da qualificação, e sinais que disparam sozinhos (anexo, autodeclaração, vocabulário profissional, **RT**). **Na dúvida, escala**, porque o erro de escalar demais é barato e o de tratar arquiteto como consumidor é caro. |
+| Transparência | Nome próprio, não finge ser gente, não se anuncia robô — e **confirma na hora** se perguntarem. Nunca assina como consultora. |
+| Agendamento | **Condicional:** o agente agenda se, e só se, a agenda das consultoras for **confiável** — testada na tela, não na resposta verbal. Caso contrário, registra a intenção e escala. |
+| Instagram | **Sem agente.** Só mensagem automática direcionando ao WhatsApp → ticket [021](021-instagram-porta-de-entrada.md). |
+
+**Contradição do mapa, resolvida:** o destino prometia que o agente "verifica disponibilidade
+de horário e agenda" enquanto a restrição dura limitava a fase 1 à qualificação. As duas não
+podiam valer juntas e três tickets assumiam coisas diferentes. Agora o agendamento é
+condicional e explícito.
+
+**O que deliberadamente não foi respondido aqui.** Como uma conversa típica começa, o que a
+consultora pergunta e em que ordem, quando vira visita, como se fala de preço numa faixa de
+R$ 2 mil a R$ 50 mil, e o desfecho passo a passo. Nada disso está com o dono do projeto —
+sai das conversas exportadas ([003](003-exportacao-das-conversas-das-consultoras.md)) e do
+roteiro do ticket [020](020-perguntas-para-as-consultoras.md), aberto nesta sessão. Forçar
+resposta agora seria inventar decisão.
+
+**Tickets abertos por este:** [019](019-companion-windows-ponto-cego.md) (dispositivos),
+[020](020-perguntas-para-as-consultoras.md) (perguntas às consultoras),
+[021](021-instagram-porta-de-entrada.md) (Instagram).
+
+**Pendência para a dona da loja:** o aval sobre a transparência do agente. Não é técnica — é
+ela quem responde pela marca se o critério mudar.

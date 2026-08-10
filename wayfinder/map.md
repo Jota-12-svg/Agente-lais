@@ -9,9 +9,10 @@ title: Agente de WhatsApp da Lais Casa
 
 Um agente de WhatsApp **em produção** atendendo clientes reais da Lais Casa: recebe o
 contato novo, faz a qualificação inicial (extrai os dados que a consultora precisa),
-responde dúvidas sobre o negócio e sobre produtos que ele conhece, verifica
-disponibilidade de horário de consultora e agenda, e **escala para uma consultora**
-quando a conversa exige julgamento humano — tudo no tom que as consultoras já usam hoje.
+responde dúvidas sobre o negócio e sobre produtos que ele conhece, e **escala para uma
+consultora** quando a conversa exige julgamento humano — tudo no tom que as consultoras já
+usam hoje. Agendar visita entra **se, e só se**, a agenda das consultoras se mostrar
+confiável; caso contrário o agente registra a intenção e escala.
 
 Junto com ele, em produção, o **laço de aprendizado**: cada atendimento gera registro de
 resultado (venda, reunião agendada, satisfação/insatisfação, fracasso) que alimenta uma
@@ -48,6 +49,15 @@ mais uma aba de datas importantes tipo aniversários).
   atendimento não se adapta ao agente.
 - **Fase 1 é só qualificação.** Enquanto não estiver treinado, o agente coleta dados e
   escala. Não vende, não negocia, não resolve dúvida complexa.
+
+**Vocabulário do domínio:** [`CONTEXT.md`](../CONTEXT.md) na raiz do repositório. É a
+linguagem única do projeto — vale para tickets, código e schema. Leia antes de nomear
+qualquer coisa.
+
+**Escalar é o produto, não o plano B.** Conferir disponibilidade é ato físico: a informação
+não existe até uma consultora andar pela loja e olhar. Boa parte dos atendimentos termina
+numa consultora **por definição do negócio**, não por falha do agente. Medir o agente por
+"conversas resolvidas sozinho" seria medir a coisa errada.
 
 **Skills a consultar em toda sessão:** `/grilling` e `/domain-modeling`. Em tickets de
 prototipagem, `/prototype`. Em tickets de research, `/research` como subagente.
@@ -86,6 +96,15 @@ prototipagem, `/prototype`. Em tickets de research, `/research` como subagente.
   treina com os dados; a kie.ai não tem DPA) e por cache de contexto, que a kie.ai não tem e
   que anula o desconto dela. Modelo `gemini-3-flash`, sempre com raciocínio em `low`. Custo
   não é a variável decisiva — a diferença é de ~R$ 90/mês.
+
+- [Como funciona o atendimento da Lais Casa hoje, ponta a ponta](tickets/009-como-funciona-o-atendimento-hoje.md)
+  — o fluxo real está descrito e o vocabulário do domínio virou [`CONTEXT.md`](../CONTEXT.md).
+  Quatro pessoas num número compartilhado, **rodízio** para contato novo e cliente que volta
+  furando a fila. Agente **24/7** com a loja em horário comercial, prometendo **a loja e nunca
+  a pessoa**. **Só consumidor final** na fase 1 — planilha e lista longa escalam na hora, e na
+  dúvida escala, porque o erro barato é escalar demais. Transparência com nome próprio, sem
+  fingir ser gente e sem se anunciar robô. Agendamento **condicional** à agenda ser confiável,
+  o que resolve a contradição que o destino carregava. Abriu os tickets 019, 020 e 021.
 
 ## Not yet specified
 

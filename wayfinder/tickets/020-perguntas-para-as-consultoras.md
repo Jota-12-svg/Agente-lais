@@ -145,6 +145,27 @@ Não precisa ser exato, um chute serve: ____ de 10
 ( ) No mesmo dia ( ) 1–2 dias ( ) Uma semana ( ) Depende demais
 *O que mais demora nesse processo?*
 
+**29. Como você percebe que quem está falando com você é arquiteto?**
+Essa é a que eu mais quero saber. Muitas vezes dá pra sentir antes da pessoa dizer — o que
+te entrega? (marque tudo que valer)
+( ) Ela mesma fala logo de cara
+( ) Pelo jeito de falar (fala em "projeto", "ambiente", "meu cliente")
+( ) Pergunta sobre RT
+( ) Pede tabela/desconto de profissional
+( ) Manda uma lista ou planilha de itens
+( ) Pergunta várias coisas de uma vez
+( ) Já conheço a pessoa
+*Tem algum outro sinal que te entrega na hora?*
+
+**30. Já aconteceu de você achar que era arquiteto e não ser — ou o contrário?**
+( ) Já, algumas vezes ( ) Raro ( ) Nunca
+*Se já: o que confundiu?*
+
+**31. Acontece de um arquiteto comprar pra casa dele, e não pra um projeto?**
+( ) Acontece bastante ( ) De vez em quando ( ) Nunca vi
+*(Pergunto porque nesse caso o atendimento é diferente, né? Quero entender se é a pessoa que
+muda ou a conversa.)*
+
 ---
 
 ## Rastreamento interno
@@ -164,6 +185,7 @@ Não vai no roteiro. Serve para saber o que priorizar e para onde a resposta vol
 | 22, 23, 24, 25, 26 | [013](013-sinal-de-sucesso-do-aprendizado.md) | **Testam a aposta central do sinal de sucesso.** O research do Mainô concluiu que a nota fiscal emitida seria o sinal objetivo de venda — o único que não depende de alguém lembrar de marcar. Isso só funciona se der para ligar a nota de volta à conversa, e há dois jeitos de quebrar: **pelo tempo** (ciclo longo + nota tardia = atribuição frouxa) e **pela chave** (nota tem CPF e nome; conversa tem telefone — sem campo em comum, não casa). A **25 é a que decide**: o documento mostra os campos que existem, não os que alguém lembra. Se quebrar, o 013 muda inteiro. |
 
 | 27, 28 | [009](009-como-funciona-o-atendimento-hoje.md) | A loja não tem registro do movimento por tipo de cliente, então a estimativa delas é a única fonte. **Não muda a decisão** de deixar o arquiteto fora da fase 1 — serve para dimensionar quanto do movimento a fase 1 deixa de cobrir, e para priorizar o fluxo do arquiteto depois. |
+| 29, 30, 31 | [009](009-como-funciona-o-atendimento-hoje.md) · [012](012-quando-e-como-o-agente-escala.md) | **Alimentam o classificador arquiteto × consumidor final**, que é o gatilho de escalada mais importante da fase 1. A **29 é a mais valiosa do roteiro inteiro**: a consultora faz essa leitura há anos e tem sinais que não se adivinham de fora. A 30 mostra onde a classificação erra na prática, e a 31 confirma (ou derruba) a modelagem de que o modo é da **conversa**, não do contato. |
 
 ### ⚠️ Manuseio da nota fiscal (pergunta 25)
 
