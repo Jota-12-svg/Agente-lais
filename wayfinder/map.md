@@ -58,7 +58,11 @@ prototipagem, `/prototype`. Em tickets de research, `/research` como subagente.
 
 <!-- índice: uma linha por ticket fechado -->
 
-_(vazio — o mapa acabou de ser criado)_
+- [Inicializar o repositório e proteger os segredos](tickets/001-repositorio-e-protecao-dos-segredos.md)
+  — repositório em `main` no GitHub (`Jota-12-svg/Agente-lais`), `.env` fora do histórico
+  desde antes do primeiro commit, `.env.example` reescrito do zero e `CLAUDE.md` com as
+  convenções de trabalho e de git. A rotação das credenciais ficou para depois da limpeza do
+  Supabase.
 
 ## Not yet specified
 
