@@ -42,3 +42,27 @@ projeto, que responde por ela.
 
 **Resolvido quando** o provedor estiver escolhido e, se for a Google, a chave criada e o
 billing ativo. A resolução registra qual provedor, qual modelo, e onde a credencial mora.
+
+---
+
+## Decisão tomada — 2026-08-10
+
+O dono do projeto **acatou as duas recomendações**:
+
+1. **Provedor: Gemini API da Google (AI Studio), tier pago.** Modelo `gemini-3-flash`, sempre
+   com `reasoning_effort: "low"` e `include_thoughts: false` explícitos.
+2. **Conversa real de cliente NÃO passa pela kie.ai.** A kie.ai fica restrita a protótipo com
+   **dado sintético** e, mais adiante, a provedor de fallback atrás da mesma interface — nunca
+   com dado pessoal, enquanto não houver DPA ou anonimização.
+
+**O ticket segue aberto** porque a parte executável depende de ação no console da Google, que
+só o dono da conta pode fazer:
+
+- [ ] Criar a API key no Google AI Studio (https://aistudio.google.com/apikey)
+- [ ] Vincular conta de cobrança para sair do free tier — **o free tier usa os dados para
+      treinar**, e é essa a razão de existir esta etapa
+- [ ] Confirmar no painel que o projeto está no tier pago
+- [ ] Colocar a chave no `.env` como `GEMINI_API_KEY` (o `.env.example` já tem o campo)
+
+Enquanto isso não acontece, o desenvolvimento pode rodar na kie.ai ou no free tier **com dado
+sintético**. O que fica bloqueado é atender cliente de verdade, não construir.
