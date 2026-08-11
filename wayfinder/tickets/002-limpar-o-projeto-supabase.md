@@ -2,7 +2,7 @@
 id: "002"
 title: Inventariar e limpar o projeto Supabase
 labels: [wayfinder:task]
-status: open
+status: closed
 assignee: Claude
 blocked-by: []
 ---
@@ -136,3 +136,29 @@ DROP ROLE platform_worker;
 
 **Resolvido quando** os dois `DROP ROLE` acima rodarem e o ticket puder fechar com o estado
 final confirmado.
+
+### Verificação — 2026-08-11
+
+O dono do projeto rodou os dois `DROP ROLE` pelo SQL Editor do dashboard. Conferido de volta
+via Management API: `agent_runtime` e `platform_worker` não aparecem mais em `pg_roles`, e o
+schema `app` segue ausente. Nada do projeto anterior restou.
+
+## Resolução
+
+**Reaproveitado o projeto Supabase atual** (`ewxmjbvaolfiafhghxbn`), não criado um novo — o
+resíduo era pequeno e nomeado o bastante para não justificar trocar a credencial mais
+perigosa do `.env` sem necessidade.
+
+**O que existia:** um schema próprio (`app`, 7 tabelas, 9 policies de RLS, 1 função, 53
+registros) e dois papéis de login (`agent_runtime`, `platform_worker`) — tudo do projeto
+anterior (lojas de ótica, ateliê e clínica; nenhuma é a Lais Casa). RLS estava ligado e
+forçado; não havia Edge Function, `pg_cron`, webhook nem segredo no Vault.
+
+**O que foi apagado:** `DROP SCHEMA app CASCADE` (tabelas, função, policies e os 53 registros
+junto) e `DROP ROLE agent_runtime` / `DROP ROLE platform_worker`. Confirmado por consulta
+direta que nenhum dos dois existe mais.
+
+**Credenciais:** nenhuma mudou. A rotação do `SUPABASE_ACCESS_TOKEN` continua um ticket à
+parte ([015](015-rotacao-das-credenciais.md)), agora desbloqueada.
+
+**Banco em estado virgem** — pronto para a primeira migração deste projeto.

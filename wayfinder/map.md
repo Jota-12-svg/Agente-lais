@@ -105,6 +105,11 @@ prototipagem, `/prototype`. Em tickets de research, `/research` como subagente.
   dúvida escala, porque o erro barato é escalar demais. Transparência com nome próprio, sem
   fingir ser gente e sem se anunciar robô. Agendamento **condicional** à agenda ser confiável,
   o que resolve a contradição que o destino carregava. Abriu os tickets 019, 020 e 021.
+- [Inventariar e limpar o projeto Supabase](tickets/002-limpar-o-projeto-supabase.md) —
+  reaproveitado o projeto atual (`ewxmjbvaolfiafhghxbn`), em vez de criar um novo: o resíduo
+  do projeto anterior era pequeno e nomeado (schema `app`, dois papéis de login). Nenhum dado
+  era da Lais Casa. `DROP SCHEMA app CASCADE` e os dois `DROP ROLE` confirmados — banco em
+  estado virgem. Desbloqueou a rotação das credenciais (015).
 
 ## Not yet specified
 
