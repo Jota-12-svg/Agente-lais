@@ -38,6 +38,13 @@ abaixo só se respondem tentando, não lendo mais documentação.
    teste, deixar o agente responder, e conferir se aparece erro `463`
    (`NackCallerReachoutTimelocked`) nos logs — mesmo numa resposta pura, sem disparo nenhum. Se
    aparecer, o checklist do research 026 precisa de ajuste antes de ir para produção.
+5. **O próprio ato de vincular a sessão é, sozinho, um momento de risco — não só o
+   comportamento depois.** Achado do
+   [research 028](../research/028-casos-de-banimento-e-estimativa-de-risco.md): dois casos
+   catalogados (Evolution API #1650 e #2497) mostram banimento **antes de qualquer mensagem
+   enviada**, só ao ler o QR code e vincular. Monitorar também esse instante — "conectou sem
+   erro" não é a mesma coisa que "seguro" — e manter o mesmo cuidado se algum dia vincular no
+   número real da loja.
 
 ### Como testar sem arriscar o número da loja
 
@@ -63,6 +70,6 @@ reverter (desconectar o Baileys) se algo parecer errado.
   cobrança de app recorrente associada?). Isso decide quantos slots de dispositivo sobram de
   verdade para o agente entrar.
 
-**Resolvido quando** os quatro pontos acima estiverem testados e registrados com o resultado
+**Resolvido quando** os cinco pontos acima estiverem testados e registrados com o resultado
 real (não inferido), e houver uma recomendação clara de ir ou não para o número de produção da
 loja — e, se for, com que ajuste no desenho do agente (checklist do research 026).
