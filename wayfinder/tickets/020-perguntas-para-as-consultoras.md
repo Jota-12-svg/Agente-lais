@@ -172,17 +172,37 @@ novo" — não precisa ter fechado venda — e me mandar o print ou o texto da c
 *Pode ser recente ou de um cliente antigo. Se der, **apaga ou borra o nome e o telefone** antes
 de mandar — o que eu quero ver é como você conduziu a conversa, não quem é o cliente.*
 
-**33. Quando o agente passa uma conversa pra você (porque o cliente pediu pra falar com
-alguém, ou é caso de arquiteto, ou qualquer outro motivo), como ele avisa que é sua vez?**
-Hoje não tem como marcar isso dentro do próprio WhatsApp — nem etiqueta, nem grupo, funcionam
-pelo número compartilhado. O jeito que sobra é o agente mandar uma mensagem separada pro seu
-**WhatsApp pessoal** avisando ("Cliente Fulano tá esperando você: quer um vaso pra sala, na
-faixa de R$5mil"), e você entra no app de sempre pra responder.
+**33. Pensamos num jeito de organizar quem vai atender: toda vez que o agente passa um
+cliente pra alguém (porque pediu pra falar com uma pessoa, ou é caso de arquiteto, ou
+qualquer outro motivo), ele escreve uma linha numa aba nova da planilha de vocês
+("Aguardando atendimento") — fica destacada em vermelho até alguém escrever o próprio nome
+na coluna "responsável" (o vermelho some, e as outras três já sabem que foi pega). Faz
+sentido pra vocês, do jeito que já usam a planilha?**
+( ) Sim, funciona bem assim ( ) Funcionaria, mas eu não fico entrando na planilha toda hora
+( ) Prefiro outro jeito de saber ( ) Não sei dizer
+*Se marcou "outro jeito" ou tem ressalva: qual seria melhor pra você?*
+
+**33b. Ao longo do dia de trabalho, vocês costumam abrir a planilha de vez em quando, ou só
+mexem nela no fim do expediente?**
+( ) Abro várias vezes ao longo do dia ( ) Abro de vez em quando ( ) Só no fim do expediente
+( ) Quase nunca abro
+*Essa resposta decide se um e-mail de aviso é só reforço, ou se precisa ser o aviso
+principal.*
+
+**33c. Faria sentido, além da planilha, chegar um e-mail avisando "tem cliente esperando"
+(sem dizer de quem é) pro e-mail de trabalho de vocês (o mesmo da pergunta 19)? Esse tipo de
+aviso chega rápido na sua atenção, ou fica parado sem ver?**
+( ) Vejo e-mail de trabalho rápido ( ) Vejo, mas demoro a abrir ( ) Quase não abro e-mail de
+trabalho ( ) Não tenho e-mail de trabalho
+
+**33d. Se a linha ficar sem ninguém pegar por tempo demais, pensamos em, só nesse caso,
+mandar um aviso direto pro seu **WhatsApp pessoal** como último recurso — não em toda
+escalada, só quando atrasar demais. Tudo bem?**
 ( ) Tudo bem, sem problema ( ) Tudo bem, mas eu queria outro formato de aviso ( ) Prefiro não
 misturar meu número pessoal com trabalho ( ) Só em horário de expediente, fora disso não
 *Se marcou "outro formato" ou tem ressalva: qual seria melhor pra você?*
 
-**33b. Seu WhatsApp pessoal (o que você usaria pra receber esse aviso) é um número diferente
+**33e. Seu WhatsApp pessoal (o que receberia esse aviso de última hora) é um número diferente
 do número da loja?**
 ( ) Sim, é outro número ( ) Não, é o mesmo número que eu uso pra atender ( ) Não sei dizer
 
@@ -214,7 +234,7 @@ Não vai no roteiro. Serve para saber o que priorizar e para onde a resposta vol
 | 27, 28 | [009](009-como-funciona-o-atendimento-hoje.md) | A loja não tem registro do movimento por tipo de cliente, então a estimativa delas é a única fonte. **Não muda a decisão** de deixar o arquiteto fora da fase 1 — serve para dimensionar quanto do movimento a fase 1 deixa de cobrir, e para priorizar o fluxo do arquiteto depois. |
 | 29, 30, 31 | [009](009-como-funciona-o-atendimento-hoje.md) · [012](012-quando-e-como-o-agente-escala.md) | **Alimentam o classificador arquiteto × consumidor final**, que é o gatilho de escalada mais importante da fase 1. A **29 é a mais valiosa do roteiro inteiro**: a consultora faz essa leitura há anos e tem sinais que não se adivinham de fora. A 30 mostra onde a classificação erra na prática, e a 31 confirma (ou derruba) a modelagem de que o modo é da **conversa**, não do contato. |
 | 32 | [013](013-sinal-de-sucesso-do-aprendizado.md) | O mapa dizia que o desenho do laço de aprendizado "só fica nítido depois de existir um sinal de sucesso definido e de eu ver conversas reais" (`Not yet specified`). A 32 é a fonte mais barata dessas conversas: **curada pela consultora**, não bruta como a exportação completa do [003](003-exportacao-das-conversas-das-consultoras.md) — ela já sabe, sem precisar ler tudo de novo, qual atendimento vale a pena olhar. Não substitui o 003 (que cobre volume e o resto do roteiro); adianta exemplo de sucesso antes dele estar pronto. |
-| 33, 33b | [012](012-quando-e-como-o-agente-escala.md) | **Decide o mecanismo de notificação da escalada.** O research ([research/012](../research/012-notificacao-de-escalada.md)) descartou etiqueta via API (não suportada em Coexistence) e badge de não lida (não aponta pessoa) — sobrou template pago pro número pessoal da consultora como único caminho que aponta a pessoa certa sem exigir ferramenta nova. A **33 é a que decide se elas aceitam essa condição**; sem essa resposta, o 012 fica com esse ponto em aberto. A 33b confirma o pressuposto do research de que o número pessoal é distinto do número da loja — se não for, o desenho muda. **⚠️ Pode mudar antes de enviar:** uma segunda rodada de research está avaliando se, com a escala fluida delas, um modelo de fila compartilhada substitui o push pra pessoa fixa — se mudar, a 33 é reescrita antes de ir pra elas. |
+| 33, 33b, 33c, 33d, 33e | [012](012-quando-e-como-o-agente-escala.md) | **Decide o mecanismo de notificação da escalada.** O research ([research/012](../research/012-notificacao-de-escalada.md)) descartou etiqueta via API (não suportada em Coexistence) e badge de não lida (não aponta pessoa), e revisou a primeira recomendação (template pago pro número pessoal, sempre) depois de perceber que ela presumia atribuição fixa — mas o rodízio das quatro é fluido. Desenho atual: **fila visível na planilha compartilhada** (linha vermelha até alguém escrever o nome em "responsável", mesma lógica de pull que Chatwoot/Botpress/Intercom usam) + e-mail impessoal de reforço; o template pago pro número pessoal não sai do desenho, mas vira **rede de segurança de timeout**, não o aviso principal. A **33 decide se a mecânica da fila funciona pra elas; a 33b se olham a planilha ao longo do dia (decide se o e-mail é reforço ou essencial); a 33c se o e-mail de trabalho chega rápido; a 33d e 33e repetem a pergunta original sobre o número pessoal, agora só para o caso de timeout**. Sem essas respostas, o 012 fica com esse ponto em aberto. |
 | 34 | [012](012-quando-e-como-o-agente-escala.md) | Define o limiar de tempo pro agente mandar **uma** mensagem de espera reforçando a promessa já fixada em 009 ("a loja, nunca a pessoa") quando a consultora demora a responder uma conversa escalada — não é decisão de arquitetura, é calibragem operacional que só elas sabem. |
 
 ### ⚠️ Manuseio da nota fiscal (pergunta 25)

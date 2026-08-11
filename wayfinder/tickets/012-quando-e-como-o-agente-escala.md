@@ -66,21 +66,35 @@ Decidido até aqui:
 
 ### ⚠️ Em aberto — aguardando resposta das consultoras
 
-**Notificação da escalada.** O research [research/012](../research/012-notificacao-de-escalada.md)
-descartou etiqueta nativa via API (não suportada em Coexistence, confirmado com fonte) e
-badge de não lida (não aponta pessoa específica — estrutural). A opção que sobrou — template
-pago (categoria *utility*) para o **número pessoal** da consultora — depende de duas coisas
-que só elas respondem: se aceitam receber esse aviso no número pessoal, e se esse número é
-de fato distinto do número compartilhado da loja. Perguntas **33 e 33b** subiram para o
-ticket [020](020-perguntas-para-as-consultoras.md).
+**Notificação da escalada — desenho final (revisado 2026-08-11, seção 7 do research).**
+A primeira recomendação (template pago pro número pessoal, sempre) presumia atribuição fixa
+no momento da escalada — errado, porque o rodízio entre as quatro é combinado informalmente
+e se reorganiza ao longo do dia (per 009). Uma segunda rodada de research
+([research/012](../research/012-notificacao-de-escalada.md), seção 7) checou como a
+indústria resolve handoff bot→humano com escala fluida (Chatwoot, Botpress, Intercom — todas
+usam fila visível de onde quem está livre **puxa**, não push pra pessoa fixa) e concluiu que
+a planilha compartilhada que a loja já usa é a ferramenta certa pra sustentar isso, sem
+exigir nada novo.
 
-**Ressalva levantada depois de abrir a 33:** notificar um número pessoal fixo assume uma
-atribuição estática, mas o rodízio entre as quatro é combinado informalmente e pode se
-reorganizar ao longo do dia (per 009, "o estado do rodízio não está escrito em lugar
-nenhum"). Uma segunda rodada de research está avaliando se um modelo de **fila
-compartilhada** (pull, não push pra pessoa fixa) resolve melhor — se a conclusão mudar o
-desenho, a pergunta 33 é reescrita **antes** de ir pras consultoras, para não perguntar a
-coisa errada.
+**Desenho aceito:**
+1. A cada escalada, o agente escreve uma linha numa aba nova ("Aguardando atendimento") —
+   cliente, resumo, horário, coluna "responsável" vazia. Mesma conta de serviço já prevista
+   pro Google Calendar em [006](006-integracao-com-google-calendar.md).
+2. Formatação condicional (configurada uma vez) pinta a linha de vermelho enquanto
+   "responsável" estiver vazio.
+3. Quem for atender escreve o nome na coluna — some o vermelho, as outras três sabem que já
+   foi pega. Captura por convenção/visibilidade, não trava técnica — mesma limitação que os
+   produtos de mercado têm (nenhum trava de verdade, confirmado na seção 7.3 do research).
+4. E-mail automático impessoal ("tem gente esperando", não "é sua") reforça o aviso.
+5. **O template pago pro número pessoal não sai do desenho — muda de papel.** Vira rede de
+   segurança de **timeout**: só dispara se a linha ficar sem "responsável" por tempo demais.
+
+Perguntas **33 a 33e**, reescritas pra esse desenho, subiram para o ticket
+[020](020-perguntas-para-as-consultoras.md): se a mecânica da fila funciona pra elas (33), se
+olham a planilha ao longo do dia ou só no fim do expediente — decide se o e-mail é reforço ou
+essencial (33b), se o e-mail de trabalho chega rápido (33c), e se aceitam o aviso de timeout
+no número pessoal / se esse número é distinto do da loja (33d, 33e — a pergunta original,
+agora só pro caso de timeout).
 
 **Este ticket não fecha até a resposta das consultoras voltar** — o resto da árvore de
 decisão (freio de mão, caminho de volta) segue sendo trabalhado em paralelo.

@@ -1,6 +1,7 @@
 # Research — Como notificar a consultora certa de uma escalada, em Coexistence
 
-Ticket: [012](../tickets/012-quando-e-como-o-agente-escala.md) · Investigado em 2026-08-11
+Ticket: [012](../tickets/012-quando-e-como-o-agente-escala.md) · Investigado em 2026-08-11 ·
+revisado em 2026-08-11 (seção 7: escala dinâmica)
 
 ---
 
@@ -13,18 +14,20 @@ em duas fontes independentes (Meta e Infobip). O app não tem, e nunca teve, con
 atribuído a um agente": todo dispositivo acompanhante vê a mesma caixa de entrada única, sem
 distinção de quem deve responder.
 
-O mecanismo mais simples, mais barato e que **preserva o app nativo como interface** é:
-**o agente manda, pela mesma Cloud API já em uso, uma mensagem de template para o número de
-WhatsApp pessoal da consultora responsável**, dizendo que uma conversa específica precisa
-dela — com nome do cliente e um resumo curto. Ela recebe isso como uma mensagem de WhatsApp
-comum, no aparelho que já usa, e vai até a conversa certa no app compartilhado para responder.
-Nenhuma ferramenta nova, custo de poucos centavos por notificação, aprovação de template é
-única e não recorrente. Isso é detalhado e recomendado na seção final.
+**Revisão importante (seção 7):** as seções 2–6 abaixo resolveram "como apontar a mensagem
+para uma pessoa" assumindo implicitamente que a pessoa certa já é conhecida no momento da
+escalada. Isso não é verdade aqui — a escala das quatro (rodízio, plantão, quem está livre
+agora) é fluida, não fixa. **A pergunta certa não é "para qual número mando", é "onde fica
+visível quem está esperando, para que qualquer uma das quatro possa pegar".** Isso muda o
+desenho: em vez de o agente empurrar uma notificação para uma pessoa específica (push), o
+padrão que a indústria de chatbot/helpdesk usa para esse exato problema é uma **fila
+compartilhada e visível, de onde quem estiver livre puxa o próximo cliente (pull)** — sem
+pré-atribuição. A recomendação final deste documento muda em função disso; ver seção 7 e a
+"Recomendação" revisada ao final.
 
-**Existe uma via 100% gratuita com a mesma qualidade — mas ela depende de um hábito
-operacional que hoje não existe** (a consultora mandar uma mensagem para o número da loja a
-partir do número pessoal dela, para manter uma janela de atendimento aberta). Não é uma
-substituição limpa do template pago; é um complemento condicional. Detalhado na seção 6.
+O mecanismo de template pago (seções 2–6) **continua válido e é mantido**, mas rebaixado de
+"canal principal de aviso" para **rede de segurança de timeout** (quando a fila fica sem
+resposta por tempo demais) — não mais o primeiro aviso de toda escalada.
 
 ---
 
@@ -304,38 +307,184 @@ garantida. Mas isso é uma otimização de custo a considerar depois que o mecan
 
 ---
 
+## 7. Escala dinâmica muda a resposta — fila compartilhada em vez de push fixo
+
+Motivação: o dono do projeto apontou que a atribuição "consultora X é a responsável por este
+cliente, mande o aviso pra ela" pode já estar errada no instante em que a notificação chega —
+plantão, rodízio e disponibilidade se reorganizam entre as quatro ao longo do dia (3
+consultoras + a dona, ver `CONTEXT.md`). Duas frentes investigadas: como a indústria resolve
+handoff bot→humano quando a escala não é fixa, e que ferramenta leve poderia sustentar uma
+fila visível fora do WhatsApp.
+
+### 7.1 O padrão dominante é fila compartilhada (pull), não push para pessoa fixa
+
+Três plataformas de handoff bot→humano usadas em produção, checadas na documentação oficial:
+
+- **Chatwoot** (open source, "team inbox" é o conceito central do produto): o comportamento
+  padrão de uma conversa nova é cair em **"Unassigned"** — nenhum agente é dono até alguém
+  pegar. Round-robin (atribuição automática a um agente disponível, em rodízio) existe como
+  recurso **opcional**, pensado para times com volume alto que precisam de distribuição
+  automática, não como o único modelo.
+  https://www.chatwoot.com/features/assignments ·
+  https://www.chatwoot.com/hc/user-guide/articles/1677696868-assigning-conversations-in-a-round_robin-fashion
+- **Botpress** (HITL — Human-in-the-Loop): agentes humanos "assign conversations to
+  **themselves or teammates**" — ou seja, o modelo primário é **autoatribuição** (a pessoa
+  livre pega a conversa), não o bot decidindo de antemão quem é dona.
+  https://botpress.com/docs/get-started/manage-your-agent/human-handoff ·
+  https://botpress.com/en/features/human-handoff
+- **Intercom**: quando o bot não resolve, a conversa cai primeiro numa **caixa de equipe**
+  visível a todos ("bot inbox" → depois de o cliente terminar o caminho do bot, "your
+  assignment rules will run"), e só then a atribuição a um indivíduo acontece — a atribuição
+  individual é a **segunda** etapa, não a primeira.
+  https://www.intercom.com/help/en/articles/3722087-turn-on-the-bot-inbox
+
+**Resposta ao ponto 1 da Frente 1:** o padrão dominante em times pequenos com escala fluida é
+**pull de fila compartilhada**, não push fixo — nas três plataformas checadas, "todo mundo vê,
+quem estiver livre pega" é o comportamento default ou o primeiro nível da hierarquia; push
+para um indivíduo específico só entra depois (Intercom) ou como otimização de volume
+(Chatwoot round-robin), nunca como a única porta de entrada.
+
+### 7.2 "On-call rotation" simples para operação pequena — não achei precedente aplicável
+
+Ponto 2 da Frente 1. As ferramentas que implementam o conceito de "só quem sinalizou
+disponibilidade agora entra na rota de aviso" existem (Grafana OnCall, Opsgenie, Squadcast,
+Zenduty, PagerDuty) — mas são **todas construídas para resposta a incidente de engenharia**
+(times técnicos, plantão de infraestrutura), não para atendimento ao cliente em loja pequena.
+Não encontrei fonte de um negócio pequeno não-técnico usando esse tipo de ferramenta para
+coordenar quem atende o WhatsApp agora. Registro isso como busca sem resultado, em vez de
+forçar uma analogia que a fonte não sustenta: **o conceito de "escala fluida com sinalização de
+disponibilidade" não tem, na prática observável, uma ferramenta leve e específica para o porte
+da Lais Casa** — é um padrão de operação, não um produto que se compra.
+
+### 7.3 Duplicidade em fila pull-based — nem os produtos especializados travam de verdade
+
+Ponto 3 da Frente 1, e o achado mais relevante para o desenho final. Mesmo produtos com
+"atribuição de conversa" como funcionalidade central **não impedem tecnicamente** que duas
+pessoas respondam ao mesmo cliente — eles reduzem a chance por **visibilidade**, não por
+trava:
+
+- A própria página de "Collision Detection" do Chatwoot descreve o mecanismo como indicador de
+  digitação em tempo real e badge de quem é dona da conversa — **sinal para o humano decidir
+  não responder**, não um bloqueio de envio.
+  https://www.chatwoot.com/features/collision-detection
+- Uma issue aberta no repositório do Chatwoot pede exatamente a trava que falta: "when a
+  conversation is assigned to an agent, only the assigned agent should be allowed to send
+  messages" — confirmando que, no Chatwoot de hoje, **qualquer agente ainda consegue mandar
+  mensagem numa conversa já atribuída a outro**. A trava é convenção de uso, não imposição do
+  software.
+  https://github.com/chatwoot/chatwoot/issues/12079
+
+**Resposta ao ponto 3 da Frente 1:** eles não evitam de forma garantida — evitam por
+convenção apoiada em visibilidade (todo mundo vê o campo "responsável" preenchido e, por
+norma da equipe, não mexe). É a mesma limitação estrutural que o WhatsApp Business App já
+tem (seção 4) — nenhuma ferramenta de mercado, nem a mais madura, resolve isso com trava
+técnica de graça; resolver de verdade exige substituir o WhatsApp Business App inteiro por uma
+plataforma de inbox compartilhado paga (ex. Wati, Clapvo — confirmado em
+https://clapvo.com/blog/whatsapp-multiple-agents e
+https://www.wati.io/en/blog/whatsapp-business-multiple-agent/, ambas descrevendo "assignment"
+como a solução, mas exigindo trocar o app nativo). Essa troca já está fora de escopo por
+decisão registrada em `wayfinder/map.md` ("Superfície para as consultoras" em *Not yet
+specified*) — não é reaberta aqui.
+
+### 7.4 Frente 2 — ferramenta leve para a fila de espera, fora do WhatsApp
+
+Candidato a levar mais a sério: a **planilha compartilhada que a loja já usa** (`shared_sheet`,
+`CONTEXT.md`), automatizada em vez de um app novo.
+
+- **Formatação condicional aplicada por script/API é uma funcionalidade real e documentada**
+  pelo próprio Google — tanto via Apps Script (`SpreadsheetApp.newConditionalFormatRule()` +
+  `Sheet.setConditionalFormatRules(rules)`) quanto via Sheets API v4 (endpoint de
+  `conditionalFormats`). Isso permite deixar **uma regra fixa configurada uma vez** — "se a
+  coluna responsável estiver vazia, pinte a linha de vermelho" — de modo que o agente só
+  precisa **escrever uma linha nova**; a formatação reage sozinha, sem chamada extra a cada
+  escalada.
+  https://developers.google.com/apps-script/reference/spreadsheet/conditional-format-rule-builder ·
+  https://developers.google.com/workspace/sheets/api/samples/conditional-formatting
+- **Escrever a linha é trivial de automatizar**, por dois caminhos documentados: um endpoint
+  de Apps Script publicado como Web App com `doPost(e)` (recebe POST, escreve com
+  `sheet.appendRow()`) — https://coefficient.io/google-sheets-tutorials/google-sheets-webhooks ·
+  https://www.svix.com/resources/guides/google-sheets-webhook-integration-tutorial/ — ou,
+  caminho mais próximo do que este projeto já decidiu, a **Sheets API diretamente**, com a
+  mesma conta de serviço já recomendada em
+  [ticket 006](../tickets/006-integracao-com-google-calendar.md) para o Google Calendar
+  (mesmo mecanismo de credencial, reaproveitado — não é uma decisão nova de acesso).
+- **E-mail automático é a opção de menor fricção possível**, e a loja já tem o dado necessário:
+  a pergunta 19 do [ticket 020](../tickets/020-perguntas-para-as-consultoras.md) pergunta o
+  e-mail de trabalho de cada consultora. `GmailApp.sendEmail()`, disparado por um trigger
+  `onChange` do Apps Script (ou pelo próprio backend do agente, sem depender do Apps Script),
+  manda um aviso simples a cada nova linha — sem exigir abrir ferramenta nenhuma, só olhar
+  uma caixa de entrada que elas já usam.
+  https://www.gmass.co/blog/trigger-transactional-email-google-sheet/ ·
+  https://mailtrap.io/blog/send-emails-from-google-sheet/
+- **Trello/Notion/Google Tasks** continuam sendo uma opção intermediária válida em teoria —
+  baixa curva de aprendizado frente a um helpdesk completo — mas não achei fonte específica de
+  negócio pequeno não-técnico adotando um desses só para fila de atendimento ao lado do
+  WhatsApp nativo; diferente da planilha, aqui a consultora **precisaria abrir um app que hoje
+  não abre**, o que é exatamente a fricção que a seção 3 já descartou para Telegram/Slack. Fica
+  registrado como opção, não como recomendação — sem evidência de que o ganho compensa a
+  ferramenta nova.
+
+### 7.5 O que isso muda no desenho
+
+Nenhuma fonte, nas duas frentes, aponta um jeito de a notificação **saber sozinha** quem está
+livre agora — isso não existe como problema resolvido em lugar nenhum, nem nas plataformas
+maduras. O que existe, de forma consistente entre Chatwoot, Botpress e Intercom, é **tornar o
+"quem está esperando" visível a todos e deixar a escolha de quem atende para a pessoa livre
+decidir na hora** — puxar, não empurrar. Isso é exatamente o formato de "central de clientes em
+stand-by" que o dono do projeto descreveu, e a planilha compartilhada (seção 7.4) é o candidato
+que entrega isso **sem** ferramenta nova, porque já é aberta pelas quatro todos os dias.
+
+---
+
 ## Recomendação
 
-**Notificar a consultora responsável por mensagem de template (categoria utility), enviada
-pela mesma Cloud API do agente, para o número de WhatsApp pessoal dela — não para o número
-compartilhado da loja.**
+**Recomendação revisada em função da seção 7.** O modelo de "template pago para o número
+pessoal de uma consultora específica" (seções 2–6) resolvia um problema que não é o problema
+real: ele presume uma atribuição no momento da escalada, e essa atribuição muda ao longo do
+dia. A resposta que os dados de mercado sustentam (seção 7.1) é **fila visível e compartilhada,
+de onde quem estiver livre puxa o próximo cliente** — não push para uma pessoa fixa.
 
-Por quê, em ordem de peso:
+**Desenho recomendado, em ordem:**
 
-1. **É a única opção que aponta a pessoa certa E preserva o app nativo como interface**, ao
-   mesmo tempo. Etiqueta via API está descartada por fato confirmado (Meta + Infobip). Badge
-   de não lida não distingue destinatário. Ferramentas de terceiro (Telegram/Slack) resolvem o
-   apontamento, mas custam um segundo app que o `CLAUDE.md` deste projeto proíbe em espírito.
-2. **Zero ferramenta nova.** A infraestrutura já existe: é a mesma Cloud API que o agente usa
-   para atender. Só se acrescenta um envio de template a mais número de destino.
-3. **Custo irrelevante.** Poucos centavos por escalada, numa loja de ticket R$ 2 mil a
-   R$ 50 mil — a mesma conclusão de custo desprezível que o research 005 chegou para a operação
-   inteira.
-4. **Aprovação é única, não recorrente.** Um template simples ("cliente X precisa de você:
-   resumo Y") passa pela revisão da Meta uma vez e fica disponível para sempre.
-5. **Não existe alternativa gratuita incondicional.** Investigado à parte na seção 6: a única
-   via 100% gratuita depende de a consultora manter uma janela de atendimento aberta por
-   hábito próprio — algo que não existe hoje na rotina da loja. Vale como otimização de custo
-   futura (mandar texto livre grátis quando a janela já estiver aberta, com o template como
-   fallback), não como substituto do mecanismo básico.
+1. **A cada escalada, o agente escreve uma linha numa aba nova da planilha compartilhada**
+   (ex. "Aguardando atendimento"): nome do cliente, resumo curto da qualificação, horário,
+   e uma coluna "responsável" vazia. Usa a mesma credencial de conta de serviço já recomendada
+   para o Google Calendar no [ticket 006](../tickets/006-integracao-com-google-calendar.md) —
+   não é integração nova, é a mesma conta com mais um escopo.
+2. **Uma regra de formatação condicional, configurada uma única vez**, pinta a linha de
+   vermelho enquanto "responsável" estiver vazia — reage sozinha a cada escrita, sem chamada
+   extra por escalada (seção 7.4).
+3. **A "captura" é o próprio ato de responder**: quem for atender no WhatsApp escreve o nome
+   dela na coluna "responsável" — isso tira o vermelho e sinaliza às outras três que já foi
+   pega. Mesma mecânica de "assignment" que Chatwoot e Botpress usam, só que dentro da
+   ferramenta que a loja já abre (seção 7.1).
+4. **Um e-mail automático simples, sem destinatário individual, avisa que uma linha nova
+   chegou** — não diz "é sua", diz "tem gente esperando" (seção 7.4). É o empurrão mínimo para
+   fazer alguém olhar a planilha, sem virar um segundo canal de conversa.
+5. **O template pago para número pessoal (seções 2–6) não é descartado — muda de papel.** Ele
+   vira a **rede de segurança de timeout**: se a linha ficar sem "responsável" preenchido por
+   tempo demais (o "quando ninguém atende" que o próprio [ticket 012](../tickets/012-quando-e-como-o-agente-escala.md)
+   também precisa decidir), aí sim faz sentido escalar o aviso para uma pessoa específica —
+   plausivelmente a dona da loja, como último degrau. Isso é uma decisão do ticket 012, não
+   deste research; fica registrado aqui só o motivo de manter o mecanismo em vez de apagá-lo.
 
-**O que fica para o próprio ticket 012 decidir** (fora do escopo deste research, que só resolve
-o "como notificar"):
-- O **conteúdo exato** do template — quanto de resumo cabe num template aprovado (Meta limita
-  formatação e variáveis).
-- **Confirmar que cada consultora tem número de WhatsApp pessoal distinto** do número
-  compartilhado da loja — presumido aqui, mas não verificado com a loja. Se alguma consultora
-  usa o mesmo número para o pessoal e o profissional, a notificação por template precisa de
-  outro desenho para ela.
-- O que fazer **quando a consultora notificada não responde em X tempo** — este research
-  resolve "avisar", não "escalar o aviso".
+**Por que isso é o mais simples dentro das duas restrições reais do projeto** (escala fluida +
+WhatsApp nativo como ferramenta principal, intocável):
+
+- **Evita notificar a pessoa errada**: ninguém é pré-atribuído; a planilha só diz "alguém
+  precisa ser atendido", e quem está livre decide na hora — a mesma lógica que resolve o
+  problema no Chatwoot, no Botpress e no Intercom.
+- **Evita ferramenta nova**: reaproveita a planilha que as quatro já abrem todo dia
+  (`shared_sheet`) e o e-mail que já têm (pergunta 19 do ticket 020) — nenhum app novo para
+  aprender, ao contrário de Telegram/Slack/Trello/Notion.
+- **Honestidade sobre o limite:** isso não elimina duas pessoas respondendo ao mesmo cliente ao
+  mesmo tempo — nenhuma ferramenta revisada elimina isso sem trocar o WhatsApp Business App
+  por uma plataforma paga de inbox compartilhado, o que está fora de escopo agora (seção 7.3).
+  O ganho aqui é reduzir a chance por visibilidade, não travar tecnicamente — mesmo padrão que
+  os produtos de mercado adotam.
+
+**O que ainda fica em aberto, para o dono da loja confirmar** (mesmo espírito das perguntas 33
+e 33b já levantadas para o ticket 020): se as quatro **de fato olham a planilha compartilhada
+ao longo do dia** (não só no fim do expediente) — se a resposta for não, o e-mail automático do
+passo 4 vira o elemento crítico do desenho, não um reforço opcional, e vale testar se e-mail
+puxa atenção rápido o suficiente antes de assumir que a fila funciona na prática.
