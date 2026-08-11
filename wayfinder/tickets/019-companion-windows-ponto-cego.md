@@ -7,6 +7,16 @@ assignee:
 blocked-by: ["016"]
 ---
 
+> ⚠️ **Em pausa — 2026-08-11.** O ticket [016](016-escolher-parceiro-meta.md) fechou decidindo
+> **não** seguir por Coexistence — o problema que este ticket testa (ponto cego do WhatsApp
+> para Windows) é específico do mecanismo de Coexistence (`smb_message_echoes` não cobre
+> Windows/WearOS). A arquitetura escolhida (self-hosted no número atual) tem, por
+> [research 024](../research/024-arquitetura-self-hosted-whatsapp.md), um mecanismo de
+> sincronização diferente que provavelmente **não** tem esse ponto cego — mas isso não foi
+> testado. O teste equivalente para a arquitetura escolhida está no ticket
+> [027](027-testar-self-hosted-no-numero-atual.md). Este ticket só volta a fazer sentido se a
+> decisão do 016 for revertida para Coexistence.
+
 ## Question
 
 Descoberto durante o grilling do ticket

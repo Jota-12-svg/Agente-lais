@@ -110,6 +110,18 @@ prototipagem, `/prototype`. Em tickets de research, `/research` como subagente.
   do projeto anterior era pequeno e nomeado (schema `app`, dois papéis de login). Nenhum dado
   era da Lais Casa. `DROP SCHEMA app CASCADE` e os dois `DROP ROLE` confirmados — banco em
   estado virgem. Desbloqueou a rotação das credenciais (015).
+- [Escolher o parceiro Meta para o onboarding do WhatsApp](tickets/016-escolher-parceiro-meta.md)
+  — **reverte a recomendação de Coexistence do ticket 005.** O parceiro mais barato viável
+  (~R$300/mês) foi considerado inviável para o orçamento da loja. Depois de seis researches
+  (custo dos parceiros; "6 dispositivos" da loja não são Coexistence; caminho sem parceiro;
+  arquitetura self-hosted; número dedicado descartado por isolar o agente do ecossistema e
+  exigir duas contas de WhatsApp; mecanismo real de banimento via tokens de protocolo), a
+  decisão foi **agente self-hosted (Baileys/Evolution API) como dispositivo adicional no
+  número atual da loja**, sem parceiro Meta, sem número novo — risco de banimento real mas
+  mitigável, concentrado no número de produção, aceito conscientemente no lugar do custo.
+  Abriu o ticket [027](tickets/027-testar-self-hosted-no-numero-atual.md) para validar antes
+  de produção; pausou o [019](tickets/019-companion-windows-ponto-cego.md), específico do
+  ponto cego de Coexistence.
 
 ## Not yet specified
 

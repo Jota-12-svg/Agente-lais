@@ -72,3 +72,18 @@ meses e os contatos preservados. As consultoras não perdem o app.
 **Devolve para o ticket do atendimento atual** duas perguntas de fato: quantas consultoras
 usam o número e como os aparelhos estão vinculados hoje (o limite de 4 acompanhantes pode já
 estar apertado), e se o número é único e compartilhado ou um por consultora.
+
+## Atualização — 2026-08-11
+
+**A recomendação de Coexistence não é mais o caminho seguido.** O ticket
+[016](016-escolher-parceiro-meta.md), ao pesquisar o parceiro para executar Coexistence,
+achou o custo (~R$300/mês, o mais barato viável) inviável para o orçamento da loja, e a
+investigação levou a uma releitura da rejeição de provedores não-oficiais feita acima. O
+[research 026](../research/026-o-que-causa-banimento.md) encontrou, em código-fonte, um
+mecanismo real que explica boa parte do risco de banimento (falha das bibliotecas em provar
+ao protocolo que uma resposta é resposta, não contato frio) e um checklist que o reduz. A
+decisão registrada no ticket 016 é rodar o agente self-hosted como dispositivo adicional no
+número atual da loja — mantém o não-mudar-de-ferramenta que motivou Coexistence, sem o custo
+do parceiro, aceitando um risco de banimento residual e mitigado no lugar do risco financeiro.
+Esta entrada fica como registro histórico do raciocínio original; a decisão vigente está no
+ticket 016.

@@ -172,6 +172,12 @@ novo" — não precisa ter fechado venda — e me mandar o print ou o texto da c
 *Pode ser recente ou de um cliente antigo. Se der, **apaga ou borra o nome e o telefone** antes
 de mandar — o que eu quero ver é como você conduziu a conversa, não quem é o cliente.*
 
+**33. O WhatsApp Business da loja tem alguma cobrança recorrente (assinatura pela App Store ou
+Google Play), ou apareceu em algum momento a palavra "Premium" nas configurações?**
+( ) Tem cobrança/assinatura ( ) Não tem ( ) Não sei dizer
+*(Pergunto porque o app grátis limita a 4 dispositivos conectados ao celular principal, e a
+loja usa mais que isso — quero confirmar se é uma assinatura paga que libera mais vagas.)*
+
 ---
 
 ## Rastreamento interno
@@ -193,6 +199,7 @@ Não vai no roteiro. Serve para saber o que priorizar e para onde a resposta vol
 | 27, 28 | [009](009-como-funciona-o-atendimento-hoje.md) | A loja não tem registro do movimento por tipo de cliente, então a estimativa delas é a única fonte. **Não muda a decisão** de deixar o arquiteto fora da fase 1 — serve para dimensionar quanto do movimento a fase 1 deixa de cobrir, e para priorizar o fluxo do arquiteto depois. |
 | 29, 30, 31 | [009](009-como-funciona-o-atendimento-hoje.md) · [012](012-quando-e-como-o-agente-escala.md) | **Alimentam o classificador arquiteto × consumidor final**, que é o gatilho de escalada mais importante da fase 1. A **29 é a mais valiosa do roteiro inteiro**: a consultora faz essa leitura há anos e tem sinais que não se adivinham de fora. A 30 mostra onde a classificação erra na prática, e a 31 confirma (ou derruba) a modelagem de que o modo é da **conversa**, não do contato. |
 | 32 | [013](013-sinal-de-sucesso-do-aprendizado.md) | O mapa dizia que o desenho do laço de aprendizado "só fica nítido depois de existir um sinal de sucesso definido e de eu ver conversas reais" (`Not yet specified`). A 32 é a fonte mais barata dessas conversas: **curada pela consultora**, não bruta como a exportação completa do [003](003-exportacao-das-conversas-das-consultoras.md) — ela já sabe, sem precisar ler tudo de novo, qual atendimento vale a pena olhar. Não substitui o 003 (que cobre volume e o resto do roteiro); adianta exemplo de sucesso antes dele estar pronto. |
+| 33 | [027](027-testar-self-hosted-no-numero-atual.md) | Decide quantos slots de dispositivo vinculado sobram de verdade no número da loja para o agente entrar (research [022](../research/022-alternativas-onboarding-sem-parceiro-pago.md) já suspeitava de WhatsApp Business Premium, sem confirmar). |
 
 ### ⚠️ Manuseio da nota fiscal (pergunta 25)
 
