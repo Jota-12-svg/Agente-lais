@@ -52,6 +52,10 @@ sem cegar o agente, e a operação estiver ajustada a essa lista.
   falar sozinho — só se o cliente o chamar de novo explicitamente. É a única defesa que não
   depende de detectar nada, e entra no desenho da escalada
   ([012](012-quando-e-como-o-agente-escala.md)).
+- **Resposta 1 de 4** (ticket [020](020-perguntas-para-as-consultoras.md), 2026-08-11): usa o
+  computador "metade e metade" com o celular, e no computador é o **site no navegador**, não o
+  app nativo de Windows. Para esta pessoa o ponto cego não se aplica hoje — mas é uma resposta
+  em quatro; falta saber das outras duas consultoras e da dona da loja.
 - **Plano B, se o WhatsApp Web também for cego:** as consultoras atendem pelo inbox do
   próprio parceiro (BSP), que passa pela Cloud API e é 100% visível ao agente. Mantém a tela
   grande do computador e ainda dá handoff explícito — mas é ferramenta nova, então é opção a

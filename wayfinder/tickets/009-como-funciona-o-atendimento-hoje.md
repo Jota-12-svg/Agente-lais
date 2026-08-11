@@ -313,3 +313,35 @@ resposta agora seria inventar decisão.
 
 **Pendência para a dona da loja:** o aval sobre a transparência do agente. Não é técnica — é
 ela quem responde pela marca se o critério mudar.
+
+---
+
+## Addendum — respostas do ticket 020 (2026-08-11, resposta 1 de 4)
+
+Ticket já fechado; registrado aqui como addendum, sem alterar a Resolução acima. É uma
+resposta em quatro (3 consultoras + a dona da loja) — tratar como amostra.
+
+- **Rodízio na prática:** "Temos uma cronologia de rotatividade" — confirma o rodízio descrito
+  na Resolução. Não detalhou o que acontece quando duas pessoas respondem o mesmo cliente.
+- **Planilha atualizada:** "Sempre em dia" — resposta favorável; o próprio roteiro do ticket
+  020 já alertava que "todo mundo diz que mantém em dia", então vale conferir na prática antes
+  de tratar como fonte confiável para o agente.
+- **Horário real de atendimento:** **segunda a sexta, 9h às 18h; sábado, 9h às 13h.** Primeiro
+  dado concreto de horário — falta confirmar domingo (presume-se "não atende", por omissão) e
+  se mensagem fora do horário chega a ser respondida de casa.
+- **Folga/férias/ausência:** "Escala/agenda" — existe registro em algum lugar, o que deixa
+  aberto o caminho para, no futuro, o agente nomear quem volta em vez de só "a loja volta".
+- **Proporção de arquitetos:** **8 de 10** — mais alto do que o esperado. Não muda a decisão de
+  fase 1 (só consumidor final), mas dimensiona quanto do movimento fica de fora por enquanto.
+  Veio junto com uma declaração de política, não só um número: *"quando for arquiteto prefiro
+  que seja direcionado à consultora, e quando for cliente final, para a IA"* — reforça, com
+  peso de decisão de negócio, a classificação já fixada nesta Resolução.
+- **Tempo de resposta a planilha de arquiteto:** "No mesmo dia".
+- **Como identifica um arquiteto:** "Já conhecemos a pessoa" — o sinal citado é o
+  reconhecimento prévio do contato, que reforça a camada "planilha compartilhada marca como
+  arquiteto" já prevista acima. Não cobre o caso mais difícil, que é o arquiteto novo e ainda
+  desconhecido.
+- **Já confundiu arquiteto com consumidor final, ou o contrário:** "Nunca".
+
+**Falta:** as outras três respostas, para saber se a proporção 8/10 e "já conhecemos a pessoa"
+se repetem ou são particulares desta consultora.

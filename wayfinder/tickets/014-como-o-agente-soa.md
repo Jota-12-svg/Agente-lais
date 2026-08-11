@@ -38,3 +38,20 @@ Perguntas que o protótipo tem de responder:
 **Resolvido quando** houver transcrições aprovadas que sirvam de referência de tom para a
 construção — e de material de comparação depois, quando o agente estiver rodando de
 verdade.
+
+---
+
+## Respostas — ticket 020 (2026-08-11, resposta 1 de 4)
+
+- **Textão ou várias curtas:** "Mensagens mais completas" — lê como textão, não fragmentado
+  em várias mensagens.
+- **Áudio:** "Às vezes".
+- **Emoji:** "Alguns" — usa, mas poucos, não intenso.
+- **Tempo de resposta:** "Alguns minutos".
+- **Atendimento de arquiteto é diferente do de cliente comum:** "Sim, bastante" — mas o texto
+  livre de "o que muda" não veio nesta rodada.
+
+**Não é o bastante para fechar o protótipo:** é uma resposta de quatro, e o próprio ticket já
+previa que 7–11 se confirmam melhor lendo as conversas exportadas
+([003](003-exportacao-das-conversas-das-consultoras.md)) do que por resposta verbal — vale como
+ponto de partida, não como tom definitivo.

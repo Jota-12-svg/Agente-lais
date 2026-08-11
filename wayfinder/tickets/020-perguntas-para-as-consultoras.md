@@ -222,6 +222,48 @@ mesmas regras da nota fiscal (pergunta 25) valem aqui, sem exceção:
 
 ---
 
+## Levantamento 1 — respondido em 2026-08-11
+
+Primeira resposta recebida (carimbo 2026-08-11 07:46). Quem respondeu não veio identificado no
+texto que voltou — é uma peça entre quatro (3 consultoras + a dona da loja). Tratar como uma
+amostra, não como o consolidado; sinalizado ticket a ticket onde isso importa — em especial nas
+perguntas 27 e 29, que valem mais quando as quatro respostas convergem.
+
+A numeração da resposta não bate 1:1 com a do roteiro (a pergunta "vocês têm esse vaso?", sem
+número aqui, veio numerada lá; a partir dela a resposta corre um número atrás do roteiro). O
+mapeamento abaixo já resolve isso pelo texto da pergunta, não pelo número.
+
+**Distribuído para os tickets de origem**, como respostas registradas (sem sintetizar decisão —
+isso fica para quando a rodada estiver completa):
+
+- [019](019-companion-windows-ponto-cego.md) — perguntas 1, 2.
+- [011](011-o-que-o-agente-pode-dizer-sobre-produto.md) — perguntas 3, 4, 5, 6.
+- [014](014-como-o-agente-soa.md) — perguntas 7, 8, 9, 10, 11.
+- [012](012-quando-e-como-o-agente-escala.md) — perguntas 12, 13.
+- [013](013-sinal-de-sucesso-do-aprendizado.md) — perguntas 14, 15, 22, 23, 24, 26 (25 e 32
+  pendentes, ver abaixo).
+- [009](009-como-funciona-o-atendimento-hoje.md) — perguntas 16, 17, 20, 21, 27, 28, 29, 30.
+  Ticket fechado; registrado como addendum, sem reabrir.
+- [006](006-integracao-com-google-calendar.md) — perguntas 18, 19. Ticket fechado; registrado
+  como addendum, sem reabrir.
+
+**Ficou de fora desta rodada:**
+
+- **18b** (mostrar a agenda da semana que vem) não foi respondida. É a pergunta que decide se o
+  agendamento automático libera — o critério fixado em
+  [009](009-como-funciona-o-atendimento-hoje.md) exige a tela, não a resposta verbal. Continua
+  em aberto.
+- **31** (arquiteto comprando pra casa dele) não foi respondida.
+- **25** (exemplo de nota fiscal) voltou como "Opção 1", que não corresponde a um arquivo —
+  provavelmente indica intenção de mandar pelo WhatsApp. **O arquivo ainda não chegou.**
+- **32** (exemplos de bons atendimentos) voltou "Por favor, enviar por WhatsApp". **Ainda não
+  chegou.**
+
+Nenhum dado pessoal (nota fiscal, conversa de cliente) chegou nesta rodada — nada a levar para
+`/dados/` ainda. As regras de manuseio abaixo continuam valendo quando chegarem.
+
+---
+
 ## Observação — vale mais que o roteiro
 
 Perguntar "como você atende" produz a versão idealizada. Duas coisas produzem a real:

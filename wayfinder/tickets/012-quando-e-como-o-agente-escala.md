@@ -36,3 +36,23 @@ A decidir:
 
 **Resolvido quando** os gatilhos, o roteamento, o que a consultora recebe e o comportamento
 de falha estiverem definidos.
+
+---
+
+## Respostas — ticket 020 (2026-08-11, resposta 1 de 4)
+
+- **O que faz perceber que precisa assumir pessoalmente:** *"Quando ele está querendo uma
+  produção ou comprar um produto."* Candidato a gatilho de escalada: intenção de compra
+  concreta ("quero comprar") ou pedido de produção sob encomenda — não dúvida genérica.
+- **O que gostaria de receber ao assumir uma conversa:** **"A conversa inteira"**, não um
+  resumo nem só os dados extraídos. Simplifica o desenho do handoff — repassar o histórico
+  bruto já atende, sem construir um resumidor separado.
+- **Relacionado (pergunta 27, registrada em [009](009-como-funciona-o-atendimento-hoje.md)):**
+  a resposta trouxe uma declaração de política, não só um número — *"quando for arquiteto
+  prefiro que seja direcionado à consultora, e quando for cliente final, para a IA"*. Reforça,
+  com peso de decisão de negócio, o gatilho de classificação que 009 já havia fixado.
+
+**Falta:** a pergunta 31 (arquiteto comprando pra casa dele, e não pra um projeto) não foi
+respondida nesta rodada — segue em aberto para confirmar se o modo é da conversa ou do
+contato. E as outras três respostas podem trazer gatilhos diferentes de "assumir
+pessoalmente".
