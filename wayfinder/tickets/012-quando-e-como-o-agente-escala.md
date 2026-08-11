@@ -56,6 +56,13 @@ Decidido até aqui:
   agente é o sinal de que um humano assumiu — natural pela arquitetura de número
   compartilhado, sem precisar de comando dedicado (ressalva conhecida: ponto cego do
   WhatsApp Windows, ticket [019](019-companion-windows-ponto-cego.md)).
+- **Transparência da passagem:** o agente anuncia a troca, sem nome ("vou pedir pra alguém da
+  equipe olhar isso com você"), antes de ficar em silêncio — mantém "a loja, nunca a pessoa".
+- **Timeout — ninguém atende:** o agente não volta a responder e não reatribui
+  automaticamente. No máximo manda **uma** mensagem de espera reforçando a mesma promessa,
+  sem prometer pessoa nem horário. O limiar de tempo exato é pergunta operacional das
+  consultoras, não decisão de arquitetura — subiu como pergunta **34** no ticket
+  [020](020-perguntas-para-as-consultoras.md).
 
 ### ⚠️ Em aberto — aguardando resposta das consultoras
 
@@ -65,6 +72,15 @@ badge de não lida (não aponta pessoa específica — estrutural). A opção qu
 pago (categoria *utility*) para o **número pessoal** da consultora — depende de duas coisas
 que só elas respondem: se aceitam receber esse aviso no número pessoal, e se esse número é
 de fato distinto do número compartilhado da loja. Perguntas **33 e 33b** subiram para o
-ticket [020](020-perguntas-para-as-consultoras.md). **Este ticket não fecha até essa resposta
-voltar** — o resto da árvore de decisão (transparência da passagem, caminho de volta, timeout,
-freio de mão) segue sendo trabalhado em paralelo.
+ticket [020](020-perguntas-para-as-consultoras.md).
+
+**Ressalva levantada depois de abrir a 33:** notificar um número pessoal fixo assume uma
+atribuição estática, mas o rodízio entre as quatro é combinado informalmente e pode se
+reorganizar ao longo do dia (per 009, "o estado do rodízio não está escrito em lugar
+nenhum"). Uma segunda rodada de research está avaliando se um modelo de **fila
+compartilhada** (pull, não push pra pessoa fixa) resolve melhor — se a conclusão mudar o
+desenho, a pergunta 33 é reescrita **antes** de ir pras consultoras, para não perguntar a
+coisa errada.
+
+**Este ticket não fecha até a resposta das consultoras voltar** — o resto da árvore de
+decisão (freio de mão, caminho de volta) segue sendo trabalhado em paralelo.

@@ -186,6 +186,13 @@ misturar meu número pessoal com trabalho ( ) Só em horário de expediente, for
 do número da loja?**
 ( ) Sim, é outro número ( ) Não, é o mesmo número que eu uso pra atender ( ) Não sei dizer
 
+**34. Depois que uma conversa foi passada pra vocês, quanto tempo sem resposta é normal antes
+de o cliente começar a estranhar?**
+( ) Alguns minutos ( ) Meia hora ( ) Poucas horas, se for correria ( ) Depende muito do
+movimento do dia
+*Pra eu saber quando faz sentido o agente mandar uma mensagem de reforço tipo "nossa equipe já
+viu, só um momentinho" pro cliente não se sentir esquecido — sem prometer hora nem pessoa.*
+
 ---
 
 ## Rastreamento interno
@@ -207,7 +214,8 @@ Não vai no roteiro. Serve para saber o que priorizar e para onde a resposta vol
 | 27, 28 | [009](009-como-funciona-o-atendimento-hoje.md) | A loja não tem registro do movimento por tipo de cliente, então a estimativa delas é a única fonte. **Não muda a decisão** de deixar o arquiteto fora da fase 1 — serve para dimensionar quanto do movimento a fase 1 deixa de cobrir, e para priorizar o fluxo do arquiteto depois. |
 | 29, 30, 31 | [009](009-como-funciona-o-atendimento-hoje.md) · [012](012-quando-e-como-o-agente-escala.md) | **Alimentam o classificador arquiteto × consumidor final**, que é o gatilho de escalada mais importante da fase 1. A **29 é a mais valiosa do roteiro inteiro**: a consultora faz essa leitura há anos e tem sinais que não se adivinham de fora. A 30 mostra onde a classificação erra na prática, e a 31 confirma (ou derruba) a modelagem de que o modo é da **conversa**, não do contato. |
 | 32 | [013](013-sinal-de-sucesso-do-aprendizado.md) | O mapa dizia que o desenho do laço de aprendizado "só fica nítido depois de existir um sinal de sucesso definido e de eu ver conversas reais" (`Not yet specified`). A 32 é a fonte mais barata dessas conversas: **curada pela consultora**, não bruta como a exportação completa do [003](003-exportacao-das-conversas-das-consultoras.md) — ela já sabe, sem precisar ler tudo de novo, qual atendimento vale a pena olhar. Não substitui o 003 (que cobre volume e o resto do roteiro); adianta exemplo de sucesso antes dele estar pronto. |
-| 33, 33b | [012](012-quando-e-como-o-agente-escala.md) | **Decide o mecanismo de notificação da escalada.** O research ([research/012](../research/012-notificacao-de-escalada.md)) descartou etiqueta via API (não suportada em Coexistence) e badge de não lida (não aponta pessoa) — sobrou template pago pro número pessoal da consultora como único caminho que aponta a pessoa certa sem exigir ferramenta nova. A **33 é a que decide se elas aceitam essa condição**; sem essa resposta, o 012 fica com esse ponto em aberto. A 33b confirma o pressuposto do research de que o número pessoal é distinto do número da loja — se não for, o desenho muda. |
+| 33, 33b | [012](012-quando-e-como-o-agente-escala.md) | **Decide o mecanismo de notificação da escalada.** O research ([research/012](../research/012-notificacao-de-escalada.md)) descartou etiqueta via API (não suportada em Coexistence) e badge de não lida (não aponta pessoa) — sobrou template pago pro número pessoal da consultora como único caminho que aponta a pessoa certa sem exigir ferramenta nova. A **33 é a que decide se elas aceitam essa condição**; sem essa resposta, o 012 fica com esse ponto em aberto. A 33b confirma o pressuposto do research de que o número pessoal é distinto do número da loja — se não for, o desenho muda. **⚠️ Pode mudar antes de enviar:** uma segunda rodada de research está avaliando se, com a escala fluida delas, um modelo de fila compartilhada substitui o push pra pessoa fixa — se mudar, a 33 é reescrita antes de ir pra elas. |
+| 34 | [012](012-quando-e-como-o-agente-escala.md) | Define o limiar de tempo pro agente mandar **uma** mensagem de espera reforçando a promessa já fixada em 009 ("a loja, nunca a pessoa") quando a consultora demora a responder uma conversa escalada — não é decisão de arquitetura, é calibragem operacional que só elas sabem. |
 
 ### ⚠️ Manuseio da nota fiscal (pergunta 25)
 
