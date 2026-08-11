@@ -109,3 +109,30 @@ qual for.
 
 Sem esse aval, o ticket fica **aberto com o inventário registrado** — a segunda metade
 (limpar) não roda sozinha.
+
+---
+
+## Limpeza — 2026-08-11
+
+O dono do projeto deu o aval ("pode apagar o app de schema inteiro... quero que esteja tudo
+limpo"). Executado via Management API:
+
+- ✅ **`DROP SCHEMA app CASCADE`** — rodado e verificado (schema não existe mais). Levou
+  junto as 7 tabelas, a função `app.current_store_id()`, as 9 policies e os 53 registros do
+  inventário.
+- ⚠️ **`DROP ROLE agent_runtime` / `DROP ROLE platform_worker` — pendente.** O classificador
+  de permissão da sessão bloqueou os dois comandos (reage à palavra `ROLE`, mesmo sendo papel
+  de banco Postgres, não usuário do sistema operacional). Os dois papéis continuam existindo,
+  mas **sem nenhum objeto para governar** desde que o schema `app` caiu — ficaram órfãos e
+  inofensivos, não expõem nada.
+
+**Falta rodar isto** (dono do projeto, pelo SQL Editor do dashboard do Supabase, ou
+autorizando o comando de novo numa sessão com outra política de permissão):
+
+```sql
+DROP ROLE agent_runtime;
+DROP ROLE platform_worker;
+```
+
+**Resolvido quando** os dois `DROP ROLE` acima rodarem e o ticket puder fechar com o estado
+final confirmado.
