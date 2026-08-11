@@ -63,6 +63,10 @@ Decidido até aqui:
   sem prometer pessoa nem horário. O limiar de tempo exato é pergunta operacional das
   consultoras, não decisão de arquitetura — subiu como pergunta **34** no ticket
   [020](020-perguntas-para-as-consultoras.md).
+- **Freio de mão:** por conversa já está resolvido de graça pelo mecanismo de detecção do
+  handoff acima — qualquer mensagem humana silencia o agente ali, sem comando dedicado. Um
+  freio de mão **global** (desligar o agente inteiro) é responsabilidade de implementação,
+  não decisão de design — abriu o ticket [022](022-freio-de-mao-administrativo.md).
 
 ### ⚠️ Em aberto — aguardando resposta das consultoras
 

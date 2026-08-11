@@ -36,6 +36,7 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 | 015 | [Decidir a rotação das credenciais expostas](tickets/015-rotacao-das-credenciais.md) | task | 002 |
 | 018 | [Validar empiricamente o contrato do LLM](tickets/018-validar-contrato-do-llm.md) | task | 017 |
 | 019 | [De quais dispositivos a consultora pode responder sem cegar o agente](tickets/019-companion-windows-ponto-cego.md) | task | 016 |
+| 022 | [Construir o freio de mão administrativo (desligamento geral do agente)](tickets/022-freio-de-mao-administrativo.md) | task | 012 |
 
 ## Fechados
 
