@@ -67,6 +67,12 @@ Decidido até aqui:
   handoff acima — qualquer mensagem humana silencia o agente ali, sem comando dedicado. Um
   freio de mão **global** (desligar o agente inteiro) é responsabilidade de implementação,
   não decisão de design — abriu o ticket [022](022-freio-de-mao-administrativo.md).
+- **Caminho de volta:** a passagem é definitiva dentro do mesmo atendimento — depois que a
+  consultora responde, ela fica dona até o desfecho (venda, abandono ou perda); o agente não
+  reentra no meio. Um atendimento **novo** do mesmo contato, mais tarde, é conversa nova e o
+  agente participa normalmente, sem "lembrar" que houve escalada da última vez (isso é
+  problema do laço de aprendizado, ticket [013](013-sinal-de-sucesso-do-aprendizado.md), não
+  deste). Mantém a garantia de "a loja, nunca a pessoa, e nunca por trás" fixada em 009.
 
 ### ⚠️ Em aberto — aguardando resposta das consultoras
 
@@ -100,5 +106,9 @@ essencial (33b), se o e-mail de trabalho chega rápido (33c), e se aceitam o avi
 no número pessoal / se esse número é distinto do da loja (33d, 33e — a pergunta original,
 agora só pro caso de timeout).
 
-**Este ticket não fecha até a resposta das consultoras voltar** — o resto da árvore de
-decisão (freio de mão, caminho de volta) segue sendo trabalhado em paralelo.
+**O que a consultora recebe junto da conversa** (conversa inteira, resumo, ou só os campos
+qualificados) também depende de resposta das consultoras — pergunta **13** do ticket
+[020](020-perguntas-para-as-consultoras.md) já cobre isso.
+
+**Toda a árvore de decisão deste ticket está fechada** exceto os dois pontos acima, que
+dependem só da resposta das consultoras. **Este ticket não fecha até essa resposta voltar.**
