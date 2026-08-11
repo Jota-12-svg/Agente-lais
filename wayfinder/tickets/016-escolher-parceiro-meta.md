@@ -3,7 +3,7 @@ id: "016"
 title: Escolher o parceiro Meta para o onboarding do WhatsApp
 labels: [wayfinder:research]
 status: open
-assignee:
+assignee: Claude
 blocked-by: ["009"]
 ---
 
