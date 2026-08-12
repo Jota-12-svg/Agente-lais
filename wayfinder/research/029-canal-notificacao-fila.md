@@ -299,6 +299,55 @@ custo mais alto entre as opções avaliadas".
 
 ---
 
+## Addendum — "chamativo" e onde a fila vive de fato, compartilhada entre todas
+
+Pergunta de acompanhamento (2026-08-12, dono do projeto): a notificação, além de disparar
+independente da origem da gravação (Seção 2), precisa ser **(a)** chamativa o suficiente para que
+a consultora bata o olho no celular/computador, e **(b)** a fila em si precisa viver num lugar
+único, compartilhado, que todas acessam — não só a consultora que recebeu o e-mail.
+
+**(b) já está resolvido por arquitetura, e é independente do canal de notificação escolhido.** O
+ticket [012](../tickets/012-quando-e-como-o-agente-escala.md) já decidiu onde a fila vive: **uma
+aba nova na mesma planilha compartilhada que as consultoras já usam todo dia** para os clientes
+delas, com a linha em vermelho enquanto o chamado está pendente. Esse é o "lugar físico" único e
+compartilhado que a pergunta busca — já existe hoje, é a mesma superfície que elas já abrem no
+navegador ou no app do Sheets no celular, e **nenhuma decisão de canal de notificação muda isso**.
+A notificação (e-mail, SMS, o que for) **não é a fila** — é só o toque no ombro que manda alguém
+abrir essa aba. Qualquer uma das quatro pessoas (3 consultoras + dona) vê a mesma fila, ao vivo,
+assim que abre a planilha; o e-mail (ou SMS) avisa que ela mudou, não duplica o conteúdo.
+
+**(a) é onde a escolha de canal realmente compete**, e vale destacar com honestidade: a
+recomendação principal (e-mail) venceu nos critérios de **custo, confiabilidade técnica com escrita
+via API, e latência documentada** — não foi avaliada, até este addendum, pelo critério "quão
+provável é chamar atenção no celular". Ranqueando as opções já mapeadas por esse critério
+especificamente:
+
+| Canal | Quão chamativo | Custo/complexidade extra |
+|---|---|---|
+| **SMS** (via Twilio, Seção 3) | Alto — som/vibração/tela de bloqueio quase sempre ativos; hábito de checar é maior que e-mail | Conta paga de terceiro, credencial extra, sem cobertura nativa do Google |
+| **Push de app terceiro** (Zapier/Make → Pushover, Telegram etc., Seção 4) | Alto, mas depende de instalar e manter notificação ligada num app novo | Conta de terceiro nova, custo recorrente |
+| **E-mail** (recomendação principal, Seção 2) | **Depende de configuração do celular de cada consultora** — se o Gmail tiver push ativado (comportamento padrão, mas não garantido), aparece como notificação comum; se não, só aparece quando alguém abre o app | Zero |
+| **Notificações nativas do Sheets** (Seção 1) | Mesmo problema de proeminência do e-mail — é o mesmo canal de saída, e ainda carrega a incerteza técnica da Seção 1.3/2 | Zero, mas não confirmado que funciona com escrita via API |
+
+**O ponto central: "chamativo" para e-mail não é uma propriedade do mecanismo, é uma configuração
+de celular que ninguém confirmou ainda** — exatamente a mesma lacuna já registrada na Seção "Lacunas"
+(item 3) e no ticket [020](../tickets/020-perguntas-para-as-consultoras.md): não basta saber se
+elas checam e-mail, é preciso saber se o celular **avisa** quando chega um. Isso é validação
+humana, fora do escopo técnico deste research, mas decide diretamente se a resposta a esta pergunta
+do dono do projeto é "sim, o e-mail já resolve" ou "não, precisa subir para SMS".
+
+**Isso muda a recomendação técnica?** Não muda o mecanismo de disparo (time-driven trigger,
+Seção 2) — continua sendo a única peça comprovada por documentação a funcionar com escrita via
+API, e é pré-requisito de qualquer um dos quatro canais da tabela acima, não só do e-mail. Muda,
+potencialmente, **qual canal de saída o último passo do script usa** — e o desenho já foi pensado
+para trocar isso sem redesenhar o resto (ver Recomendação final). A rota mais barata para resolver
+essa dúvida na prática: implementar com e-mail primeiro (grátis, testável assim que o
+[004](../tickets/004-acesso-a-planilha-e-ao-catalogo.md) der acesso), perguntar explicitamente às
+consultoras se o celular avisa quando chega e-mail durante o expediente, e só then subir para SMS
+(Seção 3) se a resposta for "não percebo".
+
+---
+
 ## Lacunas que esta pesquisa não fecha
 
 1. **Se as Notificações nativas do Sheets (clássica ou condicional) disparam para gravação via

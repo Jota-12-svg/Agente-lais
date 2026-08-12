@@ -71,3 +71,13 @@ canal que elas de fato checam no expediente — ver ticket
 [020](020-perguntas-para-as-consultoras.md). Se a resposta for não, a arquitetura de disparo
 (leitura periódica da fila) continua valendo; só o último passo (envio) trocaria de `MailApp` para
 Twilio ou uma integração de terceiro.
+
+**Addendum, em resposta a pergunta de acompanhamento sobre "chamativo" e onde a fila vive:** a
+fila já vive num lugar único e compartilhado — a aba nova da planilha que as quatro pessoas já
+abrem todo dia (decisão do ticket 012), independente de qual canal de notificação for escolhido.
+O ponto que faltava avaliar é se o **e-mail chama atenção o suficiente**: isso não é propriedade do
+mecanismo, é configuração de notificação push do Gmail no celular de cada consultora, que ninguém
+confirmou ainda. Refina, sem trocar, a pendência acima: a pergunta a levar ao ticket 020 não é só
+"vocês checam e-mail", é "o celular avisa quando chega um e-mail durante o expediente". SMS
+continua como plano B se a resposta for não. Tabela de comparação de proeminência entre os quatro
+canais no research completo.

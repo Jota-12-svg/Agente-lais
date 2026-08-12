@@ -140,9 +140,10 @@ prototipagem, `/prototype`. Em tickets de research, `/research` como subagente.
   API v4) não dispara esses eventos, e nada garante que as Notificações nativas se comportem
   diferente. O time-driven trigger contorna o problema por completo, lendo o estado da planilha
   a cada execução — custo zero dentro das quotas oficiais, latência de até 1 minuto. SMS, apps de
-  terceiro (Zapier/Make) e sinal físico na loja descartados por escrito. Pendência não-técnica:
-  confirmar com as consultoras (ver [020](tickets/020-perguntas-para-as-consultoras.md)) se
-  e-mail é canal que elas de fato checam.
+  terceiro (Zapier/Make) e sinal físico na loja descartados por escrito. A fila em si já vive num
+  lugar único e compartilhado — a aba do ticket 012 — independente do canal escolhido; o que falta
+  confirmar é se o celular de cada consultora **avisa** quando chega e-mail (não só se elas checam
+  a caixa), ver [020](tickets/020-perguntas-para-as-consultoras.md).
 
 ## Not yet specified
 
