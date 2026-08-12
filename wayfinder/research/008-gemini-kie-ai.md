@@ -7,6 +7,11 @@ data: 2026-08-10
 
 # Contrato da API do Gemini via kie.ai — descobertas
 
+> **Nota — 2026-08-12.** O modelo recomendado abaixo, `gemini-3-flash-preview`, foi aposentado
+> pela Google em 2026-07-15. Substituto e custo revisado em
+> [ticket 017 — Atualização 2026-08-12](../tickets/017-provedor-de-llm-e-billing.md). Esta
+> pesquisa fica como registro do que se sabia em 2026-08-10, não reescrita.
+
 > **Base desta investigação.** Tudo aqui foi levantado do zero contra a documentação da
 > própria kie.ai (`docs.kie.ai`, `kie.ai`) e da Google (`ai.google.dev`,
 > `docs.cloud.google.com`). Nenhum comentário herdado do `.env` foi usado como fonte.

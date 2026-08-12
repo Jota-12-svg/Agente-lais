@@ -66,3 +66,30 @@ só o dono da conta pode fazer:
 
 Enquanto isso não acontece, o desenvolvimento pode rodar na kie.ai ou no free tier **com dado
 sintético**. O que fica bloqueado é atender cliente de verdade, não construir.
+
+---
+
+## Atualização — 2026-08-12 — modelo corrigido para `gemini-3.6-flash`
+
+Ao criar a chave no AI Studio, o dono do projeto encontrou `gemini-3.6-flash`, não
+`gemini-3-flash`. Verificado: **`gemini-3-flash-preview`** (a escolha original deste ticket e
+do research 008) **foi aposentado pela Google em 2026-07-15** — não é mais possível criar
+chave para ele. `gemini-3.6-flash` é o substituto atual, lançado em 2026-07-21.
+
+- **ID correto na API: `gemini-3.6-flash`** (com ponto — `gemini-3-6-flash`, com traço, é
+  rejeitado). `.env.example` corrigido.
+- **`thinkingLevel: "low"` continua controlável** nativamente na API da Google para este
+  modelo — a preocupação do research 008 (linha 357, "`gemini-3-6-flash` perde o
+  `reasoning_effort`") valia só para o wrapper da kie.ai, não para a API nativa.
+- **Custo mudou de patamar.** Preço oficial da Google: **US$1,50/1M tokens de entrada,
+  US$7,50/1M de saída** — contra US$0,25/US$1,50 do `gemini-3-flash-preview`. A estimativa de
+  ~R$130/mês (500 atendimentos) do research 008 está desatualizada; ordem de grandeza real
+  fica perto de R$650–780/mês no mesmo volume. Não há alternativa mais barata no mesmo nível
+  de capacidade — o modelo antigo não existe mais — mas o custo revisado fica registrado aqui
+  para quem for orçar.
+- **Modelo pinado agora: `gemini-3.6-flash`.** Ticket 018 (validação empírica do contrato)
+  deve testar contra ele, não contra o preview aposentado.
+
+Fontes: [Google AI — deprecations](https://ai.google.dev/gemini-api/docs/deprecations),
+[Google AI — thinking](https://ai.google.dev/gemini-api/docs/thinking),
+[GitHub Changelog — Gemini 3 Flash deprecated](https://github.blog/changelog/2026-07-31-gemini-2-5-pro-and-gemini-3-flash-deprecated/).

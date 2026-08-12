@@ -94,8 +94,11 @@ prototipagem, `/prototype`. Em tickets de research, `/research` como subagente.
   — function calling existe na kie.ai (o medo estrutural não se confirmou), **mas a
   recomendação é ir direto à Gemini API da Google, tier pago**, por LGPD (o tier pago não
   treina com os dados; a kie.ai não tem DPA) e por cache de contexto, que a kie.ai não tem e
-  que anula o desconto dela. Modelo `gemini-3-flash`, sempre com raciocínio em `low`. Custo
-  não é a variável decisiva — a diferença é de ~R$ 90/mês.
+  que anula o desconto dela. Modelo pinado `gemini-3-flash-preview`, sempre com raciocínio em
+  `low`. Custo não é a variável decisiva — a diferença é de ~R$ 90/mês. **Correção
+  2026-08-12** (ver [ticket 017](tickets/017-provedor-de-llm-e-billing.md)): esse modelo foi
+  aposentado pela Google em 2026-07-15; substituto é `gemini-3.6-flash`, com custo bem maior
+  (~R$650–780/mês no mesmo volume).
 
 - [Como funciona o atendimento da Lais Casa hoje, ponta a ponta](tickets/009-como-funciona-o-atendimento-hoje.md)
   — o fluxo real está descrito e o vocabulário do domínio virou [`CONTEXT.md`](../CONTEXT.md).
