@@ -269,6 +269,118 @@ isso fica para quando a rodada estiver completa):
 Nenhum dado pessoal (nota fiscal, conversa de cliente) chegou nesta rodada — nada a levar para
 `/dados/` ainda. As regras de manuseio abaixo continuam valendo quando chegarem.
 
+### Resposta bruta (texto integral)
+
+Fonte primária, guardada aqui por inteiro — o resto desta seção e os trechos citados nos sete
+tickets de origem são leitura derivada dela. Numeração é a do formulário que voltou, não a do
+roteiro (ver nota acima sobre o descolamento de uma casa).
+
+```
+Carimbo de data/hora: 2026-08-11 07:46:10.682000
+
+1. Voce atende mais pelo celular ou pelo computador?
+Metade e metade
+
+2. Se voce usa computador, utiliza o aplicativo do WhatsApp instalado ou o WhatsApp pelo navegador (Chrome/Edge)?
+Site no navegador
+
+Quando um cliente pergunta 'voces tem esse vaso?', o que voce costuma responder antes de verificar o estoque?
+Bom dia, vou verificar se eu tenho essa peça e logo te retorno
+
+3. Acontece de voce informar que um produto esta disponivel e depois descobrir que nao tinha?
+Raramente
+
+4. O que voce consegue responder de imediato, sem precisar consultar outra pessoa ou sistema?
+Nenhuma dessas informacoes
+
+5. Quando um cliente envia uma foto de um produto que viu em outro lugar e pergunta se voces tem algo parecido, isso acontece com que frequencia?
+As vezes
+
+6. Quando responde pelo WhatsApp, seu estilo costuma ser:
+Mensagens mais completas
+
+9. Voce costuma enviar audio para os clientes?
+As vezes
+
+10. Voce costuma usar emojis nas conversas?
+Alguns
+
+11. Em media, quanto tempo leva entre o cliente enviar uma mensagem e voces responderem?
+Alguns minutos
+
+12. O atendimento de um arquiteto e diferente do atendimento de um cliente comum?
+Sim, bastante
+
+O que, durante uma conversa, faz voce perceber que precisa assumir o atendimento pessoalmente?
+Quando ele está querendo uma produção ou comprar um produto
+
+13. Se alguem ja tivesse feito as primeiras perguntas ao cliente e repassasse o atendimento para voce, o que gostaria de receber junto para nao precisar ler toda a conversa novamente?
+A conversa inteira
+
+Como voces avaliam se um atendimento foi bem feito, mesmo quando nao resulta em uma venda?
+Quando o cliente tirou todas as dúvidas de forma clara e objetiva sem fazer o cliente perder tempo
+
+14. Depois de quanto tempo sem resposta voce considera que o cliente nao tem mais interesse?
+2-3 dias
+
+15. Como voces definem quem sera responsavel pelo proximo cliente novo? E, quando duas pessoas acabam respondendo o mesmo cliente, como voces resolvem?
+Temos uma cronologia de rotatividade
+
+16. A planilha de clientes costuma estar atualizada?
+Sempre em dia
+
+17. Voces utilizam o Google Agenda?
+Sim, e registramos todos os compromissos
+
+18. O e-mail utilizado para o trabalho e:
+@gmail.com
+
+19. Qual e o horario de atendimento de voces pelo WhatsApp?
+(Segunda a sexta: das ____ às ____ | Sábado: ( ) não atendemos ( ) das ____ às ____ | Domingo: ( ) não atendemos ( ) das ____ às ____)
+Seg a sexta 9 às 18 e sábado das 9 às 13
+
+20. Quando uma das consultoras esta de folga, ferias ou ausente, isso fica registrado em algum lugar?
+Escala/agenda
+
+21. Quando o cliente decide comprar, qual e o processo a partir desse momento? Como voces enviam a cotação?
+Informam o preco diretamente na conversa
+
+22. Em que momento a nota fiscal e emitida?
+Depende da situacao
+
+23. Em media, quanto tempo leva desde o primeiro contato ate a conclusão da venda para cliente comum?
+Alguns dias
+
+24. Em media, quanto tempo leva desde o primeiro contato ate a conclusão da venda para arquiteto?
+Alguns dias
+
+25. Na cotação do Maino, voces registram o telefone do cliente?
+Sempre
+
+26. Seria possível me enviar um exemplo de nota fiscal de uma venda? (Pode ser de uma venda antiga. Não precisamos dos dados do cliente — se preferir, pode ocultar ou apagar nome, CPF e outras informações pessoais antes de enviar. O objetivo é apenas entender quais informações constam na nota e verificar se existe alguma forma de relacionar a venda à conversa que originou o atendimento. Se possível, por favor envie o arquivo no whatsapp)
+Opção 1
+
+27. De aproximadamente 10 clientes que entram em contato pelo WhatsApp, quantos costumam ser arquitetos?
+8. E quando for arquiteto prefiro que seja direcionado a consultora e quando for cliente final para IA
+
+28. Quando chega uma planilha ou lista de produtos de um arquiteto, quanto tempo normalmente voces levam para responder?
+No mesmo dia
+
+29. Como voces identificam que a pessoa que esta entrando em contato e um arquiteto?
+Ja conhecemos a pessoa
+
+30. Ja aconteceu de voces acharem que a pessoa era arquiteto e depois descobrirem que nao era, ou o contrario? (Se aconteceu, o que levou vocês a essa interpretação?)
+Nunca
+
+31. Vocês conseguiriam separar 2 ou 3 atendimentos que consideram bons exemplos de como vocês gostariam que o atendimento fosse conduzido? (Pode ser uma conversa recente ou antiga e não precisa necessariamente ter resultado em venda. Se possível, envie o print ou o texto da conversa. Pode ocultar nome, telefone e qualquer outra informação pessoal. O objetivo é entender como vocês conduzem o atendimento e quais características devemos preservar na secretária de IA.)
+Por favor, enviar por WhatsApp
+```
+
+Nada de dado pessoal de cliente neste bloco — é a consultora falando do próprio processo. Por
+isso pode ficar versionado aqui, ao contrário do que vale para nota fiscal (pergunta 25) e
+exemplos de atendimento (pergunta 31/32), que continuam presas às regras de `/dados/` quando
+chegarem.
+
 ---
 
 ## Observação — vale mais que o roteiro
