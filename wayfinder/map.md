@@ -136,6 +136,13 @@ prototipagem, `/prototype`. Em tickets de research, `/research` como subagente.
   Freio de mão adiado para o [027](tickets/027-testar-self-hosted-no-numero-atual.md), mesma
   pergunta técnica. Abriu o [029](tickets/029-canal-de-notificacao-da-fila.md) (canal de
   notificação, não pode ser WhatsApp ativo).
+- [Escolher o modelo Gemini certo para a solução](tickets/030-escolher-modelo-gemini-ideal.md)
+  — comparação real entre os candidatos vivos da API nativa da Google recomenda **trocar
+  `gemini-3.6-flash` por `gemini-3.5-flash-lite`**: aceita áudio/imagem (incl. HEIC),
+  function calling e `thinkingLevel` `low`/`high` confirmados, ~75% mais barato (~R$87 vs.
+  ~R$353/mês em 500 atendimentos). `gemini-3.1-pro-preview` tem function calling nativo na
+  Google (a limitação era só do wrapper kie.ai). Troca ainda **não aplicada** em
+  `.env.example`/ticket 017 — fica para sessão de acompanhamento.
 
 ## Not yet specified
 

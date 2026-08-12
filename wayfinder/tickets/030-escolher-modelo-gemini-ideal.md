@@ -2,7 +2,7 @@
 id: "030"
 title: Escolher o modelo Gemini certo para a solução (áudio, imagem, texto, reasoning, custo)
 labels: [wayfinder:research]
-status: open
+status: closed
 assignee: Claude
 blocked-by: []
 ---
@@ -47,3 +47,34 @@ foi decidido no ticket 017 e não é questão aqui.
 custo estimado, function calling, controle de thinking) com fonte para cada linha, e uma
 recomendação clara de qual modelo pinar — mantendo `gemini-3.6-flash` ou trocando, com o
 porquê.
+
+## Resolução
+
+Research completo em [030 — Qual modelo Gemini pinar](../research/030-modelo-gemini-ideal.md).
+
+**Recomendação: trocar `gemini-3.6-flash` por `gemini-3.5-flash-lite`.** Não é o mesmo
+modelo que está pinado hoje — ver nota abaixo.
+
+Achados principais, contra `ai.google.dev`:
+
+- `gemini-3-pro-preview` está completamente desativado (shutdown 2026-03-09); quem faz o
+  papel de teto de referência hoje é `gemini-3.1-pro-preview`.
+- **`gemini-3.1-pro-preview` TEM function calling na API nativa da Google** — a limitação
+  que o research 008 achou (`functionCalling: false`) era do wrapper da kie.ai, não do
+  modelo.
+- Os dois candidatos Flash-Lite da geração atual (`gemini-3.5-flash-lite` e
+  `gemini-3.1-flash-lite`) aceitam áudio, imagem (inclusive HEIC) e vídeo, têm function
+  calling e thinking controlável — o medo do ticket de que Flash-Lite "corta multimodal"
+  não se confirmou para esta geração.
+- `gemini-3.5-flash-lite` tem `thinkingLevel` com `"low"`/`"high"` **confirmados** na
+  tabela oficial de thinking; `gemini-3.1-flash-lite` não aparece nessa tabela (só a
+  variante `-image` aparece), então fica de fora por essa lacuna de doc, apesar de ser
+  ~25% mais barato.
+- Custo estimado (500 atendimentos/mês, mesma metodologia do research 008): **~R$87/mês
+  em `gemini-3.5-flash-lite`, contra ~R$353/mês recalculado para `gemini-3.6-flash`** —
+  cerca de 75% mais barato, mantendo os quatro requisitos obrigatórios do ticket.
+- Risco de formato de áudio (OGG/Opus do WhatsApp vs. "OGG Vorbis" documentado) continua
+  sem confirmação — mas é igual para qualquer candidato, não é um fator de desempate.
+
+**Não mexi em `.env.example` nem no ticket 017** — por instrução explícita deste ticket,
+troca de modelo pinado fica para uma sessão de acompanhamento decidir se aplica.
