@@ -3,7 +3,7 @@ id: "017"
 title: Decidir o provedor de LLM e habilitar o billing
 labels: [wayfinder:task]
 status: open
-assignee:
+assignee: Claude
 blocked-by: []
 ---
 
