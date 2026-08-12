@@ -3,7 +3,7 @@ id: "027"
 title: Testar a conexão self-hosted como dispositivo adicional, antes de tocar no número da loja
 labels: [wayfinder:task]
 status: open
-assignee:
+assignee: Claude
 blocked-by: []
 ---
 
