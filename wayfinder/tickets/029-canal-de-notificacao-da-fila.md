@@ -2,7 +2,7 @@
 id: "029"
 title: Canal de notificação da fila de chamados
 labels: [wayfinder:research]
-status: open
+status: closed
 assignee: Claude
 blocked-by: []
 ---
@@ -37,3 +37,37 @@ checando o tempo todo.
 **Resolvido quando** houver uma recomendação clara de canal (ou combinação de canais), testável
 assim que o ticket [004](004-acesso-a-planilha-e-ao-catalogo.md) der acesso real à planilha —
 com o porquê das alternativas descartadas.
+
+---
+
+## Resolução
+
+Research completo em
+[029-canal-notificacao-fila.md](../research/029-canal-notificacao-fila.md). O achado central
+responde ao ponto técnico crítico: a documentação oficial do Apps Script confirma, em texto
+explícito e repetido nas páginas de triggers simples e instaláveis, que **gravação via API/script
+não dispara `onEdit` nem `onChange`** — e o agente vai escrever o chamado via Sheets API v4, não
+editando na UI. Isso descarta qualquer solução baseada em reagir a um evento de edição, incluindo,
+por inferência de engenharia (sem confirmação oficial em qualquer sentido, ver lacuna 1 do
+research), as próprias "Regras de notificação"/"Notificações condicionais" nativas do Sheets.
+
+**Recomendação: e-mail via Apps Script, disparado por trigger de tempo (time-driven, até 1x por
+minuto) que varre periodicamente a aba de chamados** — não por evento de edição. Esse desenho
+contorna o problema inteiro: não importa se a linha foi escrita por humano ou por API, o script lê
+o estado atual a cada execução. Custo zero, dentro das quotas oficiais (100 destinatários/dia em
+conta Gmail pessoal, folgado para o volume esperado), latência configurável até 1 minuto — melhor
+que os 30 minutos documentados para Notificações Condicionais e que os relatos de "alguns minutos"
+do recurso clássico.
+
+Alternativas descartadas, com razão registrada no research: SMS nativo não existe no Google
+(exigiria Twilio, dependência nova e paga, desproporcional antes do e-mail ser testado e
+reprovado); Zapier/Make/IFTTT resolvem o mesmo problema com conta externa e custo recorrente, sem
+ganho sobre o Apps Script (guardados como plano B); sinal físico na loja descartado por resolver o
+problema errado (a loja já tem gente por perto olhando celular) ao maior custo de infraestrutura
+entre as opções.
+
+**Pendência não-técnica, fora do escopo deste research:** confirmar com as consultoras se e-mail é
+canal que elas de fato checam no expediente — ver ticket
+[020](020-perguntas-para-as-consultoras.md). Se a resposta for não, a arquitetura de disparo
+(leitura periódica da fila) continua valendo; só o último passo (envio) trocaria de `MailApp` para
+Twilio ou uma integração de terceiro.

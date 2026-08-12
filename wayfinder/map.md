@@ -133,6 +133,16 @@ prototipagem, `/prototype`. Em tickets de research, `/research` como subagente.
   Freio de mão adiado para o [027](tickets/027-testar-self-hosted-no-numero-atual.md), mesma
   pergunta técnica. Abriu o [029](tickets/029-canal-de-notificacao-da-fila.md) (canal de
   notificação, não pode ser WhatsApp ativo).
+- [Canal de notificação da fila de chamados](tickets/029-canal-de-notificacao-da-fila.md) —
+  **e-mail via Apps Script, disparado por trigger de tempo (time-driven, até 1x/minuto)**, não
+  pelas Notificações nativas do Sheets nem por `onEdit`/`onChange`: a documentação oficial do
+  Apps Script confirma que gravação via API (como o agente vai escrever o chamado, via Sheets
+  API v4) não dispara esses eventos, e nada garante que as Notificações nativas se comportem
+  diferente. O time-driven trigger contorna o problema por completo, lendo o estado da planilha
+  a cada execução — custo zero dentro das quotas oficiais, latência de até 1 minuto. SMS, apps de
+  terceiro (Zapier/Make) e sinal físico na loja descartados por escrito. Pendência não-técnica:
+  confirmar com as consultoras (ver [020](tickets/020-perguntas-para-as-consultoras.md)) se
+  e-mail é canal que elas de fato checam.
 
 ## Not yet specified
 
