@@ -93,3 +93,44 @@ chave para ele. `gemini-3.6-flash` é o substituto atual, lançado em 2026-07-21
 Fontes: [Google AI — deprecations](https://ai.google.dev/gemini-api/docs/deprecations),
 [Google AI — thinking](https://ai.google.dev/gemini-api/docs/thinking),
 [GitHub Changelog — Gemini 3 Flash deprecated](https://github.blog/changelog/2026-07-31-gemini-2-5-pro-and-gemini-3-flash-deprecated/).
+
+---
+
+## Atualização — 2026-08-12 (2) — modelo trocado para `gemini-3.5-flash-lite`
+
+O [ticket 030](030-escolher-modelo-gemini-ideal.md) (research dedicado, ver
+[research 030](../research/030-modelo-gemini-ideal.md)) comparou de verdade os candidatos
+vivos da família Gemini — a atualização acima só tinha corrigido o pinado por eliminação
+(modelo antigo aposentado), não por comparação. Resultado: **`gemini-3.6-flash` não é a
+melhor opção**; `gemini-3.5-flash-lite` atende os mesmos requisitos obrigatórios por ~25% do
+custo. Decisão do dono do projeto: **trocar**.
+
+- **Atende os quatro requisitos obrigatórios do ticket**, com o mesmo nível de confirmação
+  na doc oficial que o `gemini-3.6-flash` tem: áudio (todos os formatos, incl. risco OGG/Opus
+  pendente — ver ticket 018), imagem (**incl. HEIC**), function calling, e `thinkingLevel`
+  com `"low"`/`"high"` confirmados em https://ai.google.dev/gemini-api/docs/thinking.
+- **Perfil declarado pela própria Google bate com a fase 1**: *"low-latency, cost-effective
+  multimodal model optimized for high-throughput execution for subagent tasks and document
+  parsing"* — extração de dado estruturado, não raciocínio aberto.
+- **Preço oficial, tier Standard/pago, confirmado em
+  https://ai.google.dev/gemini-api/docs/pricing (2026-08-12), texto exato da tabela:**
+  - Input: **"$0.30 (text / image / video / audio)"** por 1M tokens — mesmo preço pra
+    qualquer modalidade de entrada, sem sobretaxa de áudio/imagem.
+  - Output: **"$2.50"** por 1M tokens.
+  - Context caching: **"$0.03"** por 1M tokens de input + **"$1.00 / 1,000,000 tokens per
+    hour"** de armazenamento.
+  - Free tier: "Free of charge" em tudo — fora de cogitação pelo motivo de LGPD já registrado
+    nesta ticket.
+- **Custo estimado (500 atendimentos/mês, mesma metodologia do research 008): ~R$87/mês**,
+  contra ~R$353/mês recalculado para `gemini-3.6-flash` na mesma metodologia — **~75% mais
+  barato**. Números seguem sendo estimativa de uso (turnos, duração de áudio, nº de fotos por
+  chamado variam bastante e não estão medidos); o que é **dado concreto, não estimativa**, é a
+  tarifa em si, confirmada acima.
+
+**Modelo pinado agora: `gemini-3.5-flash-lite`.** `.env.example` e o wizard de setup
+atualizados. Ticket 018 (validação empírica) deve testar contra este modelo.
+
+Fontes: [research 030](../research/030-modelo-gemini-ideal.md),
+[Google AI — pricing](https://ai.google.dev/gemini-api/docs/pricing),
+[Google AI — thinking](https://ai.google.dev/gemini-api/docs/thinking),
+[Google AI — modelo gemini-3.5-flash-lite](https://ai.google.dev/gemini-api/docs/models/gemini-3.5-flash-lite).

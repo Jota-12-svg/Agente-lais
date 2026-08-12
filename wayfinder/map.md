@@ -97,8 +97,8 @@ prototipagem, `/prototype`. Em tickets de research, `/research` como subagente.
   que anula o desconto dela. Modelo pinado `gemini-3-flash-preview`, sempre com raciocínio em
   `low`. Custo não é a variável decisiva — a diferença é de ~R$ 90/mês. **Correção
   2026-08-12** (ver [ticket 017](tickets/017-provedor-de-llm-e-billing.md)): esse modelo foi
-  aposentado pela Google em 2026-07-15; substituto é `gemini-3.6-flash`, com custo bem maior
-  (~R$650–780/mês no mesmo volume).
+  aposentado pela Google em 2026-07-15. Modelo pinado hoje, após comparação real no [ticket
+  030](tickets/030-escolher-modelo-gemini-ideal.md): `gemini-3.5-flash-lite`.
 
 - [Como funciona o atendimento da Lais Casa hoje, ponta a ponta](tickets/009-como-funciona-o-atendimento-hoje.md)
   — o fluxo real está descrito e o vocabulário do domínio virou [`CONTEXT.md`](../CONTEXT.md).
