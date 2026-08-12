@@ -143,7 +143,11 @@ prototipagem, `/prototype`. Em tickets de research, `/research` como subagente.
   terceiro (Zapier/Make) e sinal físico na loja descartados por escrito. A fila em si já vive num
   lugar único e compartilhado — a aba do ticket 012 — independente do canal escolhido; o que falta
   confirmar é se o celular de cada consultora **avisa** quando chega e-mail (não só se elas checam
-  a caixa), ver [020](tickets/020-perguntas-para-as-consultoras.md).
+  a caixa), ver [020](tickets/020-perguntas-para-as-consultoras.md). Abriu o
+  [030](tickets/030-implementar-notificacao-da-fila.md) (construir o script) e o
+  [031](tickets/031-implementar-escrita-do-chamado-na-fila.md) (a metade do lado do agente —
+  escrever o chamado na fila —, que o ticket 012 já tinha decidido mas nenhum ticket ainda
+  implementava).
 
 ## Not yet specified
 

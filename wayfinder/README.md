@@ -34,6 +34,8 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 | 014 | [Como o agente soa — protótipo de atendimento no tom das consultoras](tickets/014-como-o-agente-soa.md) | prototype | 003 |
 | 018 | [Validar empiricamente o contrato do LLM](tickets/018-validar-contrato-do-llm.md) | task | 017 |
 | 019 | [De quais dispositivos a consultora pode responder sem cegar o agente](tickets/019-companion-windows-ponto-cego.md) | task | **em pausa** — premissa (Coexistence) não é mais o caminho; ver 016 |
+| 030 | [Implementar o script de notificação da fila (Apps Script)](tickets/030-implementar-notificacao-da-fila.md) | task | 004 |
+| 031 | [Implementar a escrita do chamado do agente na aba de fila (Sheets API)](tickets/031-implementar-escrita-do-chamado-na-fila.md) | task | 004 |
 
 ## Fechados
 
