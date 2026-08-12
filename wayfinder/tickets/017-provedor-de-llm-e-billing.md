@@ -2,7 +2,7 @@
 id: "017"
 title: Decidir o provedor de LLM e habilitar o billing
 labels: [wayfinder:task]
-status: open
+status: closed
 assignee: Claude
 blocked-by: []
 ---
@@ -58,11 +58,11 @@ O dono do projeto **acatou as duas recomendações**:
 **O ticket segue aberto** porque a parte executável depende de ação no console da Google, que
 só o dono da conta pode fazer:
 
-- [ ] Criar a API key no Google AI Studio (https://aistudio.google.com/apikey)
-- [ ] Vincular conta de cobrança para sair do free tier — **o free tier usa os dados para
+- [x] Criar a API key no Google AI Studio (https://aistudio.google.com/apikey)
+- [x] Vincular conta de cobrança para sair do free tier — **o free tier usa os dados para
       treinar**, e é essa a razão de existir esta etapa
-- [ ] Confirmar no painel que o projeto está no tier pago
-- [ ] Colocar a chave no `.env` como `GEMINI_API_KEY` (o `.env.example` já tem o campo)
+- [x] Confirmar no painel que o projeto está no tier pago
+- [x] Colocar a chave no `.env` como `GEMINI_API_KEY` (o `.env.example` já tem o campo)
 
 Enquanto isso não acontece, o desenvolvimento pode rodar na kie.ai ou no free tier **com dado
 sintético**. O que fica bloqueado é atender cliente de verdade, não construir.
@@ -134,3 +134,29 @@ Fontes: [research 030](../research/030-modelo-gemini-ideal.md),
 [Google AI — pricing](https://ai.google.dev/gemini-api/docs/pricing),
 [Google AI — thinking](https://ai.google.dev/gemini-api/docs/thinking),
 [Google AI — modelo gemini-3.5-flash-lite](https://ai.google.dev/gemini-api/docs/models/gemini-3.5-flash-lite).
+
+---
+
+## Resolução — 2026-08-12
+
+**Provedor:** Gemini API da Google (AI Studio), tier pago. **Modelo:** `gemini-3.5-flash-lite`
+(ver atualizações acima para o histórico de correção do modelo pinado). **Credencial:** vive
+em `GEMINI_API_KEY` no `.env` local do projeto (não versionado); `LLM_MODEL` no mesmo arquivo
+fixa o modelo.
+
+Os quatro itens do checklist foram executados pelo dono do projeto via o wizard interativo
+gerado nesta sessão. Confirmação final, não só pelo painel: chamada real contra
+`generateContent` retornou `HTTP 200`, com `"modelVersion": "gemini-3.5-flash-lite"` e
+`"serviceTier": "standard"` — confirma tier pago pela própria resposta da API, não só pelo
+badge do AI Studio. Achado incidental relevante para o ticket 018: mesmo com
+`thinkingLevel: "low"`, a resposta trouxe `thoughtSignature` preenchido — ponto de atenção
+para o ciclo de function calling que o 018 precisa validar.
+
+**Nota operacional:** na primeira tentativa, o valor colado em `GEMINI_API_KEY` veio corrompido
+(múltiplos colamentos concatenados no prompt de entrada oculta do wizard, mais um caractere de
+controle). Diagnosticado pelo tamanho e formato do valor no `.env` (nunca exibido em texto),
+corrigido reexecutando o wizard com um único paste. Fica registrado porque é um modo de falha
+fácil de repetir com `ask_secret`/entrada oculta em terminal.
+
+Desbloqueia o [ticket 018](018-validar-contrato-do-llm.md) (validação empírica do contrato),
+que deve testar contra `gemini-3.5-flash-lite`.

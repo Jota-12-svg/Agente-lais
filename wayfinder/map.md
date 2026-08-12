@@ -141,8 +141,17 @@ prototipagem, `/prototype`. Em tickets de research, `/research` como subagente.
   `gemini-3.6-flash` por `gemini-3.5-flash-lite`**: aceita áudio/imagem (incl. HEIC),
   function calling e `thinkingLevel` `low`/`high` confirmados, ~75% mais barato (~R$87 vs.
   ~R$353/mês em 500 atendimentos). `gemini-3.1-pro-preview` tem function calling nativo na
-  Google (a limitação era só do wrapper kie.ai). Troca ainda **não aplicada** em
-  `.env.example`/ticket 017 — fica para sessão de acompanhamento.
+  Google (a limitação era só do wrapper kie.ai). Troca **aplicada** em `.env.example` e no
+  ticket 017 no mesmo dia, após o dono do projeto confirmar a tarifa oficial da Google
+  (não estimada): US$0,30/1M entrada, US$2,50/1M saída, tier Standard pago.
+- [Decidir o provedor de LLM e habilitar o billing](tickets/017-provedor-de-llm-e-billing.md)
+  — **fechado.** Provedor: Gemini API da Google (AI Studio), tier pago. Modelo final:
+  `gemini-3.5-flash-lite` (corrigido duas vezes no mesmo dia — `gemini-3-flash-preview`
+  aposentado pela Google em 2026-07-15, sucessor `gemini-3.6-flash` depois trocado por
+  comparação real no [030](tickets/030-escolher-modelo-gemini-ideal.md)). Credencial em
+  `GEMINI_API_KEY` no `.env` local. Confirmado por chamada real à API, não só pelo painel:
+  `HTTP 200`, `serviceTier: "standard"`. Desbloqueou o
+  [018](tickets/018-validar-contrato-do-llm.md).
 
 ## Not yet specified
 
