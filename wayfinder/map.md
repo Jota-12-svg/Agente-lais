@@ -9,9 +9,10 @@ title: Agente de WhatsApp da Lais Casa
 
 Um agente de WhatsApp **em produção** atendendo clientes reais da Lais Casa: recebe o
 contato novo, faz a qualificação inicial (extrai os dados que a consultora precisa),
-responde dúvidas sobre o negócio e sobre produtos que ele conhece, verifica
-disponibilidade de horário de consultora e agenda, e **escala para uma consultora**
-quando a conversa exige julgamento humano — tudo no tom que as consultoras já usam hoje.
+responde dúvidas sobre o negócio e sobre produtos que ele conhece, e **escala para uma
+consultora** quando a conversa exige julgamento humano — tudo no tom que as consultoras já
+usam hoje. Agendar visita entra **se, e só se**, a agenda das consultoras se mostrar
+confiável; caso contrário o agente registra a intenção e escala.
 
 Junto com ele, em produção, o **laço de aprendizado**: cada atendimento gera registro de
 resultado (venda, reunião agendada, satisfação/insatisfação, fracasso) que alimenta uma
@@ -49,6 +50,15 @@ mais uma aba de datas importantes tipo aniversários).
 - **Fase 1 é só qualificação.** Enquanto não estiver treinado, o agente coleta dados e
   escala. Não vende, não negocia, não resolve dúvida complexa.
 
+**Vocabulário do domínio:** [`CONTEXT.md`](../CONTEXT.md) na raiz do repositório. É a
+linguagem única do projeto — vale para tickets, código e schema. Leia antes de nomear
+qualquer coisa.
+
+**Escalar é o produto, não o plano B.** Conferir disponibilidade é ato físico: a informação
+não existe até uma consultora andar pela loja e olhar. Boa parte dos atendimentos termina
+numa consultora **por definição do negócio**, não por falha do agente. Medir o agente por
+"conversas resolvidas sozinho" seria medir a coisa errada.
+
 **Skills a consultar em toda sessão:** `/grilling` e `/domain-modeling`. Em tickets de
 prototipagem, `/prototype`. Em tickets de research, `/research` como subagente.
 
@@ -84,8 +94,64 @@ prototipagem, `/prototype`. Em tickets de research, `/research` como subagente.
   — function calling existe na kie.ai (o medo estrutural não se confirmou), **mas a
   recomendação é ir direto à Gemini API da Google, tier pago**, por LGPD (o tier pago não
   treina com os dados; a kie.ai não tem DPA) e por cache de contexto, que a kie.ai não tem e
-  que anula o desconto dela. Modelo `gemini-3-flash`, sempre com raciocínio em `low`. Custo
-  não é a variável decisiva — a diferença é de ~R$ 90/mês.
+  que anula o desconto dela. Modelo pinado `gemini-3-flash-preview`, sempre com raciocínio em
+  `low`. Custo não é a variável decisiva — a diferença é de ~R$ 90/mês. **Correção
+  2026-08-12** (ver [ticket 017](tickets/017-provedor-de-llm-e-billing.md)): esse modelo foi
+  aposentado pela Google em 2026-07-15. Modelo pinado hoje, após comparação real no [ticket
+  030](tickets/030-escolher-modelo-gemini-ideal.md): `gemini-3.5-flash-lite`.
+
+- [Como funciona o atendimento da Lais Casa hoje, ponta a ponta](tickets/009-como-funciona-o-atendimento-hoje.md)
+  — o fluxo real está descrito e o vocabulário do domínio virou [`CONTEXT.md`](../CONTEXT.md).
+  Quatro pessoas num número compartilhado, **rodízio** para contato novo e cliente que volta
+  furando a fila. Agente **24/7** com a loja em horário comercial, prometendo **a loja e nunca
+  a pessoa**. **Só consumidor final** na fase 1 — planilha e lista longa escalam na hora, e na
+  dúvida escala, porque o erro barato é escalar demais. Transparência com nome próprio, sem
+  fingir ser gente e sem se anunciar robô. Agendamento **condicional** à agenda ser confiável,
+  o que resolve a contradição que o destino carregava. Abriu os tickets 019, 020 e 021.
+- [Inventariar e limpar o projeto Supabase](tickets/002-limpar-o-projeto-supabase.md) —
+  reaproveitado o projeto atual (`ewxmjbvaolfiafhghxbn`), em vez de criar um novo: o resíduo
+  do projeto anterior era pequeno e nomeado (schema `app`, dois papéis de login). Nenhum dado
+  era da Lais Casa. `DROP SCHEMA app CASCADE` e os dois `DROP ROLE` confirmados — banco em
+  estado virgem. Desbloqueou a rotação das credenciais (015).
+- [Escolher o parceiro Meta para o onboarding do WhatsApp](tickets/016-escolher-parceiro-meta.md)
+  — **reverte a recomendação de Coexistence do ticket 005.** O parceiro mais barato viável
+  (~R$300/mês) foi considerado inviável para o orçamento da loja. Depois de seis researches
+  (custo dos parceiros; "6 dispositivos" da loja não são Coexistence; caminho sem parceiro;
+  arquitetura self-hosted; número dedicado descartado por isolar o agente do ecossistema e
+  exigir duas contas de WhatsApp; mecanismo real de banimento via tokens de protocolo), a
+  decisão foi **agente self-hosted (Baileys/Evolution API) como dispositivo adicional no
+  número atual da loja**, sem parceiro Meta, sem número novo — risco de banimento real mas
+  mitigável, concentrado no número de produção, aceito conscientemente no lugar do custo.
+  Abriu o ticket [027](tickets/027-testar-self-hosted-no-numero-atual.md) para validar antes
+  de produção; pausou o [019](tickets/019-companion-windows-ponto-cego.md), específico do
+  ponto cego de Coexistence.
+- [Quando e como o agente escala para uma consultora](tickets/012-quando-e-como-o-agente-escala.md)
+  — **o agente não roteia, produz fila.** Ele nunca decide quem atende: lança o chamado numa
+  aba nova da planilha compartilhada (marcado com a dona, se houver, mas sem trava — qualquer
+  consultora pode pegar), preservando o rodízio como algo que elas controlam, não o agente.
+  Gatilhos automáticos: compra concreta, planilha de arquiteto, pedido de pessoa, irritação,
+  negociação de preço; disponibilidade **não** escala sozinha (resposta padrão primeiro). O
+  agente anuncia a passagem sem nome; quem se identifica é a consultora. Handoff é definitivo,
+  com janela curta de retomada cujo número fica para o [013](tickets/013-sinal-de-sucesso-do-aprendizado.md).
+  Freio de mão adiado para o [027](tickets/027-testar-self-hosted-no-numero-atual.md), mesma
+  pergunta técnica. Abriu o [029](tickets/029-canal-de-notificacao-da-fila.md) (canal de
+  notificação, não pode ser WhatsApp ativo).
+- [Escolher o modelo Gemini certo para a solução](tickets/030-escolher-modelo-gemini-ideal.md)
+  — comparação real entre os candidatos vivos da API nativa da Google recomenda **trocar
+  `gemini-3.6-flash` por `gemini-3.5-flash-lite`**: aceita áudio/imagem (incl. HEIC),
+  function calling e `thinkingLevel` `low`/`high` confirmados, ~75% mais barato (~R$87 vs.
+  ~R$353/mês em 500 atendimentos). `gemini-3.1-pro-preview` tem function calling nativo na
+  Google (a limitação era só do wrapper kie.ai). Troca **aplicada** em `.env.example` e no
+  ticket 017 no mesmo dia, após o dono do projeto confirmar a tarifa oficial da Google
+  (não estimada): US$0,30/1M entrada, US$2,50/1M saída, tier Standard pago.
+- [Decidir o provedor de LLM e habilitar o billing](tickets/017-provedor-de-llm-e-billing.md)
+  — **fechado.** Provedor: Gemini API da Google (AI Studio), tier pago. Modelo final:
+  `gemini-3.5-flash-lite` (corrigido duas vezes no mesmo dia — `gemini-3-flash-preview`
+  aposentado pela Google em 2026-07-15, sucessor `gemini-3.6-flash` depois trocado por
+  comparação real no [030](tickets/030-escolher-modelo-gemini-ideal.md)). Credencial em
+  `GEMINI_API_KEY` no `.env` local. Confirmado por chamada real à API, não só pelo painel:
+  `HTTP 200`, `serviceTier: "standard"`. Desbloqueou o
+  [018](tickets/018-validar-contrato-do-llm.md).
 
 ## Not yet specified
 

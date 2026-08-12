@@ -17,6 +17,7 @@ service-account*.json
 /dados/
 /conversas/
 *.export.txt
+/Respostas consultoras/
 
 
 # =============================================================================
