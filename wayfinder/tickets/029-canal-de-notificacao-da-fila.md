@@ -3,7 +3,7 @@ id: "029"
 title: Canal de notificação da fila de chamados
 labels: [wayfinder:research]
 status: open
-assignee:
+assignee: Claude
 blocked-by: []
 ---
 
