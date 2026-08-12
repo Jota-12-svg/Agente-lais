@@ -3,7 +3,7 @@ id: "012"
 title: Quando e como o agente escala para uma consultora
 labels: [wayfinder:grilling]
 status: open
-assignee:
+assignee: Claude
 blocked-by: ["009"]
 ---
 
