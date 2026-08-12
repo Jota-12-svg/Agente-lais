@@ -9,9 +9,10 @@ title: Agente de WhatsApp da Lais Casa
 
 Um agente de WhatsApp **em produção** atendendo clientes reais da Lais Casa: recebe o
 contato novo, faz a qualificação inicial (extrai os dados que a consultora precisa),
-responde dúvidas sobre o negócio e sobre produtos que ele conhece, verifica
-disponibilidade de horário de consultora e agenda, e **escala para uma consultora**
-quando a conversa exige julgamento humano — tudo no tom que as consultoras já usam hoje.
+responde dúvidas sobre o negócio e sobre produtos que ele conhece, e **escala para uma
+consultora** quando a conversa exige julgamento humano — tudo no tom que as consultoras já
+usam hoje. Agendar visita entra **se, e só se**, a agenda das consultoras se mostrar
+confiável; caso contrário o agente registra a intenção e escala.
 
 Junto com ele, em produção, o **laço de aprendizado**: cada atendimento gera registro de
 resultado (venda, reunião agendada, satisfação/insatisfação, fracasso) que alimenta uma
@@ -48,6 +49,15 @@ mais uma aba de datas importantes tipo aniversários).
   atendimento não se adapta ao agente.
 - **Fase 1 é só qualificação.** Enquanto não estiver treinado, o agente coleta dados e
   escala. Não vende, não negocia, não resolve dúvida complexa.
+
+**Vocabulário do domínio:** [`CONTEXT.md`](../CONTEXT.md) na raiz do repositório. É a
+linguagem única do projeto — vale para tickets, código e schema. Leia antes de nomear
+qualquer coisa.
+
+**Escalar é o produto, não o plano B.** Conferir disponibilidade é ato físico: a informação
+não existe até uma consultora andar pela loja e olhar. Boa parte dos atendimentos termina
+numa consultora **por definição do negócio**, não por falha do agente. Medir o agente por
+"conversas resolvidas sozinho" seria medir a coisa errada.
 
 **Skills a consultar em toda sessão:** `/grilling` e `/domain-modeling`. Em tickets de
 prototipagem, `/prototype`. Em tickets de research, `/research` como subagente.
@@ -86,6 +96,58 @@ prototipagem, `/prototype`. Em tickets de research, `/research` como subagente.
   treina com os dados; a kie.ai não tem DPA) e por cache de contexto, que a kie.ai não tem e
   que anula o desconto dela. Modelo `gemini-3-flash`, sempre com raciocínio em `low`. Custo
   não é a variável decisiva — a diferença é de ~R$ 90/mês.
+
+- [Como funciona o atendimento da Lais Casa hoje, ponta a ponta](tickets/009-como-funciona-o-atendimento-hoje.md)
+  — o fluxo real está descrito e o vocabulário do domínio virou [`CONTEXT.md`](../CONTEXT.md).
+  Quatro pessoas num número compartilhado, **rodízio** para contato novo e cliente que volta
+  furando a fila. Agente **24/7** com a loja em horário comercial, prometendo **a loja e nunca
+  a pessoa**. **Só consumidor final** na fase 1 — planilha e lista longa escalam na hora, e na
+  dúvida escala, porque o erro barato é escalar demais. Transparência com nome próprio, sem
+  fingir ser gente e sem se anunciar robô. Agendamento **condicional** à agenda ser confiável,
+  o que resolve a contradição que o destino carregava. Abriu os tickets 019, 020 e 021.
+- [Inventariar e limpar o projeto Supabase](tickets/002-limpar-o-projeto-supabase.md) —
+  reaproveitado o projeto atual (`ewxmjbvaolfiafhghxbn`), em vez de criar um novo: o resíduo
+  do projeto anterior era pequeno e nomeado (schema `app`, dois papéis de login). Nenhum dado
+  era da Lais Casa. `DROP SCHEMA app CASCADE` e os dois `DROP ROLE` confirmados — banco em
+  estado virgem. Desbloqueou a rotação das credenciais (015).
+- [Escolher o parceiro Meta para o onboarding do WhatsApp](tickets/016-escolher-parceiro-meta.md)
+  — **reverte a recomendação de Coexistence do ticket 005.** O parceiro mais barato viável
+  (~R$300/mês) foi considerado inviável para o orçamento da loja. Depois de seis researches
+  (custo dos parceiros; "6 dispositivos" da loja não são Coexistence; caminho sem parceiro;
+  arquitetura self-hosted; número dedicado descartado por isolar o agente do ecossistema e
+  exigir duas contas de WhatsApp; mecanismo real de banimento via tokens de protocolo), a
+  decisão foi **agente self-hosted (Baileys/Evolution API) como dispositivo adicional no
+  número atual da loja**, sem parceiro Meta, sem número novo — risco de banimento real mas
+  mitigável, concentrado no número de produção, aceito conscientemente no lugar do custo.
+  Abriu o ticket [027](tickets/027-testar-self-hosted-no-numero-atual.md) para validar antes
+  de produção; pausou o [019](tickets/019-companion-windows-ponto-cego.md), específico do
+  ponto cego de Coexistence.
+- [Quando e como o agente escala para uma consultora](tickets/012-quando-e-como-o-agente-escala.md)
+  — **o agente não roteia, produz fila.** Ele nunca decide quem atende: lança o chamado numa
+  aba nova da planilha compartilhada (marcado com a dona, se houver, mas sem trava — qualquer
+  consultora pode pegar), preservando o rodízio como algo que elas controlam, não o agente.
+  Gatilhos automáticos: compra concreta, planilha de arquiteto, pedido de pessoa, irritação,
+  negociação de preço; disponibilidade **não** escala sozinha (resposta padrão primeiro). O
+  agente anuncia a passagem sem nome; quem se identifica é a consultora. Handoff é definitivo,
+  com janela curta de retomada cujo número fica para o [013](tickets/013-sinal-de-sucesso-do-aprendizado.md).
+  Freio de mão adiado para o [027](tickets/027-testar-self-hosted-no-numero-atual.md), mesma
+  pergunta técnica. Abriu o [029](tickets/029-canal-de-notificacao-da-fila.md) (canal de
+  notificação, não pode ser WhatsApp ativo).
+- [Canal de notificação da fila de chamados](tickets/029-canal-de-notificacao-da-fila.md) —
+  **e-mail via Apps Script, disparado por trigger de tempo (time-driven, até 1x/minuto)**, não
+  pelas Notificações nativas do Sheets nem por `onEdit`/`onChange`: a documentação oficial do
+  Apps Script confirma que gravação via API (como o agente vai escrever o chamado, via Sheets
+  API v4) não dispara esses eventos, e nada garante que as Notificações nativas se comportem
+  diferente. O time-driven trigger contorna o problema por completo, lendo o estado da planilha
+  a cada execução — custo zero dentro das quotas oficiais, latência de até 1 minuto. SMS, apps de
+  terceiro (Zapier/Make) e sinal físico na loja descartados por escrito. A fila em si já vive num
+  lugar único e compartilhado — a aba do ticket 012 — independente do canal escolhido; o que falta
+  confirmar é se o celular de cada consultora **avisa** quando chega e-mail (não só se elas checam
+  a caixa), ver [020](tickets/020-perguntas-para-as-consultoras.md). Abriu o
+  [030](tickets/030-implementar-notificacao-da-fila.md) (construir o script) e o
+  [031](tickets/031-implementar-escrita-do-chamado-na-fila.md) (a metade do lado do agente —
+  escrever o chamado na fila —, que o ticket 012 já tinha decidido mas nenhum ticket ainda
+  implementava).
 
 ## Not yet specified
 

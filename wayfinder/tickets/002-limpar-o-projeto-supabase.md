@@ -2,8 +2,8 @@
 id: "002"
 title: Inventariar e limpar o projeto Supabase
 labels: [wayfinder:task]
-status: open
-assignee:
+status: closed
+assignee: Claude
 blocked-by: []
 ---
 
@@ -31,3 +31,134 @@ Perguntas que o inventário precisa responder antes de qualquer `drop`:
 
 **Resolvido quando** o banco está no estado inicial acordado. A resolução registra o que
 existia, o que foi apagado e quais credenciais mudaram.
+
+---
+
+## Inventário — 2026-08-11
+
+Levantado via **Management API do Supabase** (`SUPABASE_ACCESS_TOKEN`, endpoint
+`database/query`), em modo só-leitura — nenhum `drop`/`delete` foi executado. Projeto
+`ewxmjbvaolfiafhghxbn`, região `us-east-1`, criado em 2026-08-01, nome no dashboard ainda é
+o genérico `joaovictormarchi76@gmail.com's Project` (não ficou marca de projeto anterior no
+nome).
+
+### Schemas e tabelas
+
+Além dos schemas padrão do Supabase (`auth`, `storage`, `realtime`, `extensions`, `graphql*`,
+`pgbouncer`, `vault`, `supabase_migrations`), existe **um schema próprio: `app`**, com 7
+tabelas — claramente do projeto anterior (plataforma multi-loja):
+
+| Tabela | Linhas | Nota |
+|---|---|---|
+| `app.stores` | 3 | `Ótica Visão Clara`, `Ateliê Manola`, `Clínica Bem Estar` — nenhuma é a Lais Casa |
+| `app.customers` | 4 | 3 com UUID determinístico de seed (`c0000000-…-0000000000{1,2,3}`), 1 com UUID aleatório criado em 2026-08-05, ligado à `Ateliê Manola` |
+| `app.conversations` | 2 | |
+| `app.messages` | 11 | |
+| `app.store_knowledge` | 17 | |
+| `app.agent_knowledge` | 16 | |
+| `app.store_settings` | 3 | |
+
+`auth.users`: **0**. `storage.buckets` e `storage.objects`: **0**.
+
+**Resposta à primeira pergunta do ticket:** não há dado de cliente da Lais Casa ali — os 3
+schemas de loja e os 4 registros de cliente pertencem todos a negócios do projeto anterior
+(ótica, ateliê, clínica), nenhum é decoração/mobiliário. 3 dos 4 clientes têm UUID de seed
+(dado sintético, claramente de script de setup); o quarto (criado 3 dias depois, UUID
+aleatório) pode ser um teste manual do dono do projeto — mesmo assim, não é Lais Casa.
+
+### Papéis de banco
+
+Dois papéis com login criados pelo projeto anterior, exatamente os que o `map.md` já citava:
+**`agent_runtime`** e **`platform_worker`**. Os demais papéis com login (`postgres`,
+`authenticator`, `supabase_admin`, `supabase_etl_admin`, etc.) são infraestrutura padrão do
+Supabase, não resíduo.
+
+### RLS, funções e o resto
+
+- **RLS ligado e forçado** (`FORCE ROW LEVEL SECURITY`) nas 7 tabelas de `app`, com 9 policies
+  no total (leitura/escrita por escopo de loja/agente).
+- **1 função customizada:** `app.current_store_id()` — suporte multi-tenant do projeto
+  anterior.
+- **Migrações aplicadas:** 3, todas do schema `app` (`tenancy_and_conversation`,
+  `agent_knowledge`, `store_knowledge_unico`), datadas de 2026-08-02.
+- **Extensions:** `pgcrypto`, `uuid-ossp`, `pg_stat_statements`, `supabase_vault` — todas
+  padrão/inofensivas, nada a limpar aí.
+- **Sem Edge Functions, sem `pg_cron`, sem webhooks (`supabase_functions.hooks` não existe),
+  Vault sem segredos.** Superfície de resíduo é só o schema `app` e os dois papéis.
+
+### Resposta à segunda pergunta do ticket — reaproveitar ou criar projeto novo?
+
+**Recomendo reaproveitar o projeto atual**, não criar um novo. A superfície de resíduo é
+pequena e nomeada: um schema (`app`), dois papéis (`agent_runtime`, `platform_worker`), 3
+migrações. Não há Edge Function, cron, webhook, extension incomum ou config de Auth alterada
+que um projeto novo evitaria e um `DROP SCHEMA app CASCADE` mais `DROP ROLE` não resolva.
+Criar projeto novo trocaria a credencial mais perigosa do `.env`
+(`SUPABASE_ACCESS_TOKEN`) sem necessidade — e essa rotação já está desenhada para acontecer
+de qualquer forma no ticket [015](015-rotacao-das-credenciais.md), goste a decisão for aqui
+qual for.
+
+### Pendente de aval explícito antes de qualquer `drop`
+
+1. **Apagar o schema `app` inteiro** (`DROP SCHEMA app CASCADE`) — leva junto tabelas,
+   policies, função e os 53 registros listados acima.
+2. **Remover os papéis `agent_runtime` e `platform_worker`** — a primeira migração deste
+   projeto vai recriá-los do zero, então não há nada a preservar neles.
+3. Confirmar se o `app.customers` com UUID aleatório (criado em 2026-08-05) merece uma
+   olhada antes de apagar, ou se pode ir junto — não é dado da Lais Casa, mas pode ser um
+   teste que o dono do projeto queira revisar primeiro.
+
+Sem esse aval, o ticket fica **aberto com o inventário registrado** — a segunda metade
+(limpar) não roda sozinha.
+
+---
+
+## Limpeza — 2026-08-11
+
+O dono do projeto deu o aval ("pode apagar o app de schema inteiro... quero que esteja tudo
+limpo"). Executado via Management API:
+
+- ✅ **`DROP SCHEMA app CASCADE`** — rodado e verificado (schema não existe mais). Levou
+  junto as 7 tabelas, a função `app.current_store_id()`, as 9 policies e os 53 registros do
+  inventário.
+- ⚠️ **`DROP ROLE agent_runtime` / `DROP ROLE platform_worker` — pendente.** O classificador
+  de permissão da sessão bloqueou os dois comandos (reage à palavra `ROLE`, mesmo sendo papel
+  de banco Postgres, não usuário do sistema operacional). Os dois papéis continuam existindo,
+  mas **sem nenhum objeto para governar** desde que o schema `app` caiu — ficaram órfãos e
+  inofensivos, não expõem nada.
+
+**Falta rodar isto** (dono do projeto, pelo SQL Editor do dashboard do Supabase, ou
+autorizando o comando de novo numa sessão com outra política de permissão):
+
+```sql
+DROP ROLE agent_runtime;
+DROP ROLE platform_worker;
+```
+
+**Resolvido quando** os dois `DROP ROLE` acima rodarem e o ticket puder fechar com o estado
+final confirmado.
+
+### Verificação — 2026-08-11
+
+O dono do projeto rodou os dois `DROP ROLE` pelo SQL Editor do dashboard. Conferido de volta
+via Management API: `agent_runtime` e `platform_worker` não aparecem mais em `pg_roles`, e o
+schema `app` segue ausente. Nada do projeto anterior restou.
+
+## Resolução
+
+**Reaproveitado o projeto Supabase atual** (`ewxmjbvaolfiafhghxbn`), não criado um novo — o
+resíduo era pequeno e nomeado o bastante para não justificar trocar a credencial mais
+perigosa do `.env` sem necessidade.
+
+**O que existia:** um schema próprio (`app`, 7 tabelas, 9 policies de RLS, 1 função, 53
+registros) e dois papéis de login (`agent_runtime`, `platform_worker`) — tudo do projeto
+anterior (lojas de ótica, ateliê e clínica; nenhuma é a Lais Casa). RLS estava ligado e
+forçado; não havia Edge Function, `pg_cron`, webhook nem segredo no Vault.
+
+**O que foi apagado:** `DROP SCHEMA app CASCADE` (tabelas, função, policies e os 53 registros
+junto) e `DROP ROLE agent_runtime` / `DROP ROLE platform_worker`. Confirmado por consulta
+direta que nenhum dos dois existe mais.
+
+**Credenciais:** nenhuma mudou. A rotação do `SUPABASE_ACCESS_TOKEN` continua um ticket à
+parte ([015](015-rotacao-das-credenciais.md)), agora desbloqueada.
+
+**Banco em estado virgem** — pronto para a primeira migração deste projeto.
