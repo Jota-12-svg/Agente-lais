@@ -122,6 +122,17 @@ prototipagem, `/prototype`. Em tickets de research, `/research` como subagente.
   Abriu o ticket [027](tickets/027-testar-self-hosted-no-numero-atual.md) para validar antes
   de produção; pausou o [019](tickets/019-companion-windows-ponto-cego.md), específico do
   ponto cego de Coexistence.
+- [Quando e como o agente escala para uma consultora](tickets/012-quando-e-como-o-agente-escala.md)
+  — **o agente não roteia, produz fila.** Ele nunca decide quem atende: lança o chamado numa
+  aba nova da planilha compartilhada (marcado com a dona, se houver, mas sem trava — qualquer
+  consultora pode pegar), preservando o rodízio como algo que elas controlam, não o agente.
+  Gatilhos automáticos: compra concreta, planilha de arquiteto, pedido de pessoa, irritação,
+  negociação de preço; disponibilidade **não** escala sozinha (resposta padrão primeiro). O
+  agente anuncia a passagem sem nome; quem se identifica é a consultora. Handoff é definitivo,
+  com janela curta de retomada cujo número fica para o [013](tickets/013-sinal-de-sucesso-do-aprendizado.md).
+  Freio de mão adiado para o [027](tickets/027-testar-self-hosted-no-numero-atual.md), mesma
+  pergunta técnica. Abriu o [029](tickets/029-canal-de-notificacao-da-fila.md) (canal de
+  notificação, não pode ser WhatsApp ativo).
 
 ## Not yet specified
 

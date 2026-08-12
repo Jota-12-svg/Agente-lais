@@ -42,6 +42,16 @@ parte da névoa sobre o mecanismo de aprendizado.
 
 ---
 
+## Nota — dependência do ticket 012
+
+O ticket [012](012-quando-e-como-o-agente-escala.md) (fechado em 2026-08-12) passou a depender
+do limiar de "contato perdido" decidido aqui para um segundo uso: a **janela de retomada** após
+um handoff — quanto tempo o agente ainda reafirma "a consultora já vai te atender" antes de
+tratar um contato que volta como atendimento novo do zero. É o mesmo conceito, dois usos; ao
+fechar este ticket, decidir um único número serve para os dois, não dois números separados.
+
+---
+
 ## Respostas — ticket 020 (2026-08-11, resposta 1 de 4)
 
 - **Atendimento bom mesmo sem venda:** *"Quando o cliente tirou todas as dúvidas de forma
