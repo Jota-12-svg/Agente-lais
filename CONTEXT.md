@@ -55,6 +55,15 @@ Coletar do contato o que a consultora precisa saber antes de assumir a conversa.
 escopo do agente na fase 1.
 _Avoid_: triagem, pré-venda, filtro.
 
+**Atendimento qualificado** (`qualified_engagement`):
+Um **atendimento** com o suficiente para a consultora priorizar e assumir sem recomeçar: nome,
+o que a pessoa quer e para quando; orçamento e origem entram se vierem à tona, não travam.
+É o gatilho de **escalada** "por completude" — distinto dos gatilhos por evento (compra,
+irritação, planilha) do ticket 012. Contato novo → chamado no **rodízio**; cliente conhecido →
+chamado para a consultora dona. Ticket
+[010](wayfinder/tickets/010-o-que-e-um-lead-qualificado.md).
+_Avoid_: lead qualificado, lead quente, oportunidade.
+
 **Escalada** (`handoff`):
 Passar o atendimento do agente para uma consultora. **Não é o plano B do agente — é o produto
 dele**: conferir disponibilidade é ato físico, então boa parte dos atendimentos termina numa
@@ -111,8 +120,6 @@ _Avoid_: base, CRM, cadastro.
 Termos que o projeto vai precisar e que **nenhuma decisão definiu ainda**. Não invente
 significado para eles:
 
-- **Lead qualificado** — o que exatamente torna um atendimento suficientemente qualificado
-  para escalar. Ticket [010](wayfinder/tickets/010-o-que-e-um-lead-qualificado.md).
 - **Sinal de sucesso** — o que conta como atendimento bem-sucedido, e como isso é capturado.
   Ticket [013](wayfinder/tickets/013-sinal-de-sucesso-do-aprendizado.md).
 - **Contato perdido** — a partir de quando um atendimento sem resposta é dado como perdido.

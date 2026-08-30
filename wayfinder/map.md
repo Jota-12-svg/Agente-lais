@@ -140,6 +140,19 @@ prototipagem, `/prototype`. Em tickets de research, `/research` como subagente.
   para o 014 comparar linha a linha, nem material bruto para o laço de aprendizado calibrar)
   por desbloqueio. Mitigado em parte pela planilha de clientes do ticket 004, já acessível.
   Se as conversas aparecerem depois, revisar 010/013/014 contra elas.
+- [O que é um lead qualificado e que dados o agente extrai](tickets/010-o-que-e-um-lead-qualificado.md)
+  — **o agente não é formulário: é atendente que entrega valor aos dois lados.** Campos:
+  núcleo (nome, o que procura, para quando, modo do atendimento) + oportunistas (orçamento,
+  origem, e-mail, intenção de visita) + lookup automático de "já é cliente" pela planilha.
+  **Nada é obrigatório a ponto de barrar um contato**; cada campo oportunista é tentado uma
+  vez, encaixado na conversa. Quatro regras de condução (responde o cliente primeiro, sem
+  pergunta isolada, uma leva curta por vez, na dúvida escala); a redação fica para o 014.
+  Arquiteto → escala imediata sem coletar nada. Cliente conhecido → qualificação leve, escala
+  para a dona. **Destino dos dados:** Supabase é a memória interna do agente (todo atendimento,
+  inclusive os que esfriam) — as consultoras não mexem nele; o chamado escalado vira um
+  **relance** na fila do 012 (telefone, nome, o que quer, para quando, orçamento, novo/cliente,
+  horário, gatilho), nunca a conversa inteira (essa fica no próprio WhatsApp); o agente jamais
+  escreve nas abas das consultoras. Vocabulário: `Atendimento qualificado` no `CONTEXT.md`.
 - [Canal de notificação da fila de chamados](tickets/029-canal-de-notificacao-da-fila.md) —
   **e-mail via Apps Script, disparado por trigger de tempo (time-driven, até 1x/minuto)**, não
   pelas Notificações nativas do Sheets nem por `onEdit`/`onChange`: a documentação oficial do
@@ -164,8 +177,10 @@ Névoa em escopo, ainda sem nitidez para virar ticket:
   toma — prompt que evolui, recuperação de casos parecidos, memória por cliente,
   fine-tune? Só fica nítido depois de existir um sinal de sucesso definido e de eu ver
   conversas reais.
-- **Modelo de dados no Supabase.** Esquema de clientes, conversas, produtos e aprendizado.
-  Depende de saber que campos a qualificação extrai e como o catálogo é representado.
+- **Modelo de dados no Supabase.** Esquema de clientes, conversas, produtos e aprendizado. O
+  ticket 010 já fixou os campos que a qualificação extrai e que o Supabase é a memória interna
+  do agente (todo atendimento, inclusive os perdidos); falta o esquema em si e como o catálogo
+  é representado.
 - **Stack e hospedagem do runtime.** Onde o agente roda, como recebe webhook, como
   sobrevive a reinício no meio de uma conversa. Já se sabe uma restrição: se o áudio OGG/Opus
   do WhatsApp precisar de transcodificação, o ambiente terá de suportar binário nativo
