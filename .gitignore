@@ -19,6 +19,15 @@ service-account*.json
 *.export.txt
 /Respostas consultoras/
 
+# Planilhas e dumps de dados em qualquer lugar do repo — a carteira de clientes,
+# mailing, exportação do Maino. Se precisar versionar um exemplo, anonimize e
+# tire a extensão de planilha.
+*.xlsx
+*.xls
+*.xlsm
+*.csv
+*.ods
+
 
 # =============================================================================
 # Dependências e build
