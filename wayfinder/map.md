@@ -133,6 +133,13 @@ prototipagem, `/prototype`. Em tickets de research, `/research` como subagente.
   Freio de mão adiado para o [027](tickets/027-testar-self-hosted-no-numero-atual.md), mesma
   pergunta técnica. Abriu o [029](tickets/029-canal-de-notificacao-da-fila.md) (canal de
   notificação, não pode ser WhatsApp ativo).
+- [Conseguir a exportação das conversas das consultoras](tickets/003-exportacao-das-conversas-das-consultoras.md)
+  — **a exportação não foi viável.** Fechado com um substituto, por decisão do dono do projeto:
+  a análise que ele mesmo fez de como as consultoras respondem, alimentada nas sessões de
+  grilling (010, 013) e no protótipo (014). Troca deliberada de fidelidade (sem corpus real
+  para o 014 comparar linha a linha, nem material bruto para o laço de aprendizado calibrar)
+  por desbloqueio. Mitigado em parte pela planilha de clientes do ticket 004, já acessível.
+  Se as conversas aparecerem depois, revisar 010/013/014 contra elas.
 - [Canal de notificação da fila de chamados](tickets/029-canal-de-notificacao-da-fila.md) —
   **e-mail via Apps Script, disparado por trigger de tempo (time-driven, até 1x/minuto)**, não
   pelas Notificações nativas do Sheets nem por `onEdit`/`onChange`: a documentação oficial do

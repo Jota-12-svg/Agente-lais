@@ -3,7 +3,7 @@ id: "010"
 title: O que é um lead qualificado e que dados o agente extrai
 labels: [wayfinder:grilling]
 status: open
-assignee:
+assignee: Claude
 blocked-by: ["009", "003"]
 ---
 
