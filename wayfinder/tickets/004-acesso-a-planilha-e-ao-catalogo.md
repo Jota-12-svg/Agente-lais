@@ -80,13 +80,13 @@ de edição à planilha viva não vem com o `.xlsx`** — ver "Pendências que i
    número que chega contra o diretório de profissionais — o que é um **sinal de classificação
    "é arquiteto"**, não de "já é cliente" (útil para 011/012).
 
-3. **`CONTEXT.md` descreve a planilha de forma imprecisa.** Diz "uma aba por consultora
-   listando os clientes dela e uma aba de datas importantes". Na realidade: **3 abas de
-   consultora** (PAMELLA, GABRIELA, JOSLAINE) — **nada para a 4ª pessoa / a dona**; elas são
-   mais lista-de-arquiteto + log de brindes do que cadastro de cliente; **não há aba isolada
-   de "datas importantes"** — aniversário aparece em colunas dentro de cada aba de consultora
-   (e a JOSLAINE tem uma coluna `ANIVERSÁRIO`). Ajustar o `CONTEXT.md` é decisão do dono do
-   projeto — registrado aqui e no handover, não alterado unilateralmente.
+3. **`CONTEXT.md` descrevia a planilha de forma imprecisa** — corrigido nesta sessão. Dizia
+   "uma aba por consultora listando os clientes dela e uma aba de datas importantes". Na
+   realidade: **3 abas de consultora** (PAMELLA, GABRIELA, JOSLAINE — as três que atendem;
+   a 4ª consultora não faz atendimento, confirmado pelo dono); elas são mais lista-de-arquiteto
+   + log de brindes do que cadastro de cliente; **não há aba isolada de "datas importantes"** —
+   aniversário aparece em colunas dentro de cada aba de consultora (e a JOSLAINE tem uma coluna
+   `ANIVERSÁRIO`).
 
 4. **Encoding.** Os cabeçalhos vêm com mojibake cp1252 (`OBSERVA��O`, `ANIVERS�RIO`).
    Cosmético; quem ler a planilha viva pela Sheets API recebe UTF-8 correto.
@@ -101,17 +101,22 @@ de edição à planilha viva não vem com o `.xlsx`** — ver "Pendências que i
 - **[011](011-o-que-o-agente-pode-dizer-sobre-produto.md) / [012](012-quando-e-como-o-agente-escala.md):**
   o diretório de ~1283 escritórios com telefone é um sinal usável de detecção de arquiteto.
 
+### Confirmado com o dono do projeto (2026-08-30)
+
+- **`CARTEIRA+MAILLING.xlsx` é a planilha viva** — em conteúdo. É a cópia que enviaram ao dono
+  para trabalhar localmente; o acesso à planilha do Google Sheets das consultoras vem **no
+  momento do setup do agente na loja**, para garantir dado sempre atualizado.
+- **As 3 abas de consultora estão certas.** A loja tem quatro consultoras; **só três fazem o
+  atendimento** e têm aba. O `CONTEXT.md` dizia "quatro" e falava da dona "que também atende" —
+  corrigido nesta sessão.
+
 ### Pendências que isto abre (não bloqueiam o fechamento)
 
-- **Confirmar com o dono do projeto** se `CARTEIRA+MAILLING.xlsx` **é** a "planilha
-  compartilhada" que as consultoras mantêm "sempre em dia" (perguntas 16/17 do ticket 020) —
-  as seções de cliente das abas de consultora parecem desatualizadas nesta exportação — ou se
-  é um recorte de mailing e a planilha viva de clientes é outra.
-- **Acesso de edição à planilha viva do Google** (Sheets API / Apps Script): necessário para
-  os tickets [030](030-implementar-notificacao-da-fila.md) e
-  [031](031-implementar-escrita-do-chamado-na-fila.md). O `.xlsx` deu a estrutura, não o
-  acesso. Fica no escopo do 031 (que já prevê decidir o mecanismo de autenticação de escrita).
-- **Revisar `CONTEXT.md`** e possivelmente a resolução do [010](010-o-que-e-um-lead-qualificado.md)
-  à luz da descoberta 2 — decisão do dono do projeto.
-- O número real de consultoras (3 abas aqui vs. "quatro" no `CONTEXT.md`) → pergunta para o
-  ticket 020 / dono do projeto.
+- **Acesso à planilha viva do Google** (Sheets API / Apps Script): virá no setup na loja.
+  Necessário para os tickets [030](030-implementar-notificacao-da-fila.md) e
+  [031](031-implementar-escrita-do-chamado-na-fila.md) — o desenho de autenticação de escrita
+  pode adiantar; o teste de ponta a ponta espera o acesso.
+- **Resolução do [010](010-o-que-e-um-lead-qualificado.md) precisa de um ajuste** (descoberta
+  2): o lookup "já é cliente" por telefone não alcança consumidor final. O que resta é casar o
+  número contra o diretório de arquitetos como sinal de classificação "é arquiteto". Decisão do
+  dono do projeto — fora do escopo deste ticket.

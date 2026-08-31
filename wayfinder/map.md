@@ -177,9 +177,10 @@ prototipagem, `/prototype`. Em tickets de research, `/research` como subagente.
   consultoras (só 3 abas de consultora, nenhuma para a 4ª pessoa); sem aba isolada de datas
   importantes. **O "lookup por telefone: já é cliente?" do ticket 010 não se sustenta para
   consumidor final** — onde há telefone confiável são arquitetos (serve como sinal de
-  classificação, não de "já é cliente"). Abriu pendências: confirmar se é a planilha viva de
-  trabalho, obter acesso de edição (escopo do 031), e revisar `CONTEXT.md` / resolução do 010 —
-  decisões do dono do projeto. Desbloqueou 030 e 031.
+  classificação, não de "já é cliente"). Dono confirmou: é a planilha viva (cópia local; acesso
+  ao Google Sheets vem no setup na loja) e a 4ª consultora não atende, então 3 abas está certo.
+  `CONTEXT.md` corrigido. Pendências: acesso de edição à planilha (escopo do 031) e um ajuste
+  na resolução do 010 (lookup "já é cliente" não alcança consumidor final). Desbloqueou 030 e 031.
 
 ## Not yet specified
 

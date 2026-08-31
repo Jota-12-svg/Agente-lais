@@ -14,8 +14,9 @@ detalhe de implementação, no código.
 ### Pessoas
 
 **Consultora** (`advisor`):
-Pessoa da Lais Casa que atende clientes. São quatro no total — três consultoras e a dona da
-loja, que também atende. O feminino é proposital: são todas mulheres.
+Pessoa da Lais Casa que atende clientes. Quatro no total; **três fazem o atendimento no
+WhatsApp** e têm aba na planilha compartilhada (PAMELLA, GABRIELA, JOSLAINE). O feminino é
+proposital: são todas mulheres.
 _Avoid_: vendedora, atendente, operador.
 
 **Contato** (`contact`):
@@ -111,8 +112,13 @@ De onde o contato veio antes de chamar no WhatsApp — Instagram, site, indicaç
 _Avoid_: canal, campanha, mídia.
 
 **Planilha compartilhada** (`shared_sheet`):
-A planilha do Google que a loja usa hoje, com uma aba por consultora listando os clientes dela
-e uma aba de datas importantes. **É a fonte de verdade do vínculo cliente↔consultora.**
+A planilha do Google que a loja usa hoje: diretório-mestre de escritórios de arquitetura,
+lista de mailing, uma aba por consultora que atende (três) com a carteira de arquitetos dela
+e o registro de brindes/aniversários, e logs de visitas e entregas. Guarda o vínculo
+cliente↔consultora **sobretudo para arquitetos**; para consumidor final é esparso e sem chave
+de contato (ver ticket [004](wayfinder/tickets/004-acesso-a-planilha-e-ao-catalogo.md)). A
+cópia local de trabalho é `dados/CARTEIRA+MAILLING.xlsx`; o acesso à planilha viva vem no
+setup do agente na loja.
 _Avoid_: base, CRM, cadastro.
 
 ### Ainda sem definição
