@@ -4,7 +4,7 @@ title: O que o agente pode afirmar sobre produto e disponibilidade
 labels: [wayfinder:grilling]
 status: open
 assignee:
-blocked-by: ["009", "004"]
+blocked-by: ["009", "032"]
 ---
 
 ## Question

@@ -169,6 +169,18 @@ prototipagem, `/prototype`. Em tickets de research, `/research` como subagente.
   escrever o chamado na fila —, que o ticket 012 já tinha decidido mas nenhum ticket ainda
   implementava).
 
+- [Inspecionar a planilha de carteira/mailing de clientes](tickets/004-acesso-a-planilha-e-ao-catalogo.md)
+  — **o ticket 004 foi dividido**: a planilha foi inspecionada e fechou aqui; catálogo do Mainô
+  e planilhas de arquiteto foram para o [032](tickets/032-catalogo-do-maino-e-planilha-de-arquiteto.md).
+  `CARTEIRA+MAILLING.xlsx` é, na maior parte, **diretório de arquitetos + mailing + registro de
+  relacionamento**, não um CRM de consumidor final. 8 abas; formato **não uniforme** entre as
+  consultoras (só 3 abas de consultora, nenhuma para a 4ª pessoa); sem aba isolada de datas
+  importantes. **O "lookup por telefone: já é cliente?" do ticket 010 não se sustenta para
+  consumidor final** — onde há telefone confiável são arquitetos (serve como sinal de
+  classificação, não de "já é cliente"). Abriu pendências: confirmar se é a planilha viva de
+  trabalho, obter acesso de edição (escopo do 031), e revisar `CONTEXT.md` / resolução do 010 —
+  decisões do dono do projeto. Desbloqueou 030 e 031.
+
 ## Not yet specified
 
 Névoa em escopo, ainda sem nitidez para virar ticket:
@@ -187,7 +199,8 @@ Névoa em escopo, ainda sem nitidez para virar ticket:
   (ffmpeg) — o que elimina boa parte das opções serverless. Depende de
   [Validar empiricamente o contrato do LLM](tickets/018-validar-contrato-do-llm.md).
 - **Fluxo do arquiteto.** O agente recebe uma planilha com dezenas de itens — o que ele faz
-  com ela é um segundo fluxo inteiro, não uma variação do primeiro.
+  com ela é um segundo fluxo inteiro, não uma variação do primeiro. Só ganha nitidez depois
+  de ver planilhas reais — ticket [032](tickets/032-catalogo-do-maino-e-planilha-de-arquiteto.md).
 - **Superfície para as consultoras.** Como elas veem, corrigem e assumem uma conversa do
   agente; como marcam que uma venda aconteceu.
 - **LGPD.** Consentimento, retenção e o que pode ser guardado de conversa de cliente.

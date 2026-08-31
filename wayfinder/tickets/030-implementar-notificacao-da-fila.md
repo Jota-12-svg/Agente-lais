@@ -40,3 +40,21 @@ mas só confere na prática).
 **Resolvido quando** o script estiver rodando contra a planilha real, testado com uma linha
 escrita via API (não só manualmente), e a consultora confirmar que o e-mail chegou dentro da
 latência esperada.
+
+---
+
+## Nota — inspeção do ticket 004 (2026-08-30)
+
+A estrutura da planilha foi inspecionada (ver `## Resolução` no
+[004](004-acesso-a-planilha-e-ao-catalogo.md)). O que isso muda para este ticket:
+
+- A **aba de fila ainda não existe** — será criada pelo ticket
+  [031](031-implementar-escrita-do-chamado-na-fila.md); o layout de colunas é decisão do 031,
+  não desta planilha.
+- **Os e-mails das consultoras não estão na exportação** — a coluna `E-mail` do diretório é de
+  arquitetos. A pergunta 19 do ticket [020](020-perguntas-para-as-consultoras.md) indicou
+  `@gmail.com`; os endereços em si ainda precisam ser coletados.
+- **Acesso de edição à planilha viva** (para vincular o Apps Script) ainda não obtido — ver a
+  mesma pendência no 031.
+- Cabeçalhos da planilha vêm com mojibake cp1252 no `.xlsx`; via Apps Script / Sheets API o
+  texto chega em UTF-8.

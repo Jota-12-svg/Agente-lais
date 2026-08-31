@@ -42,3 +42,24 @@ resolvida antes, e a integração no código real espera o runtime.
 **Resolvido quando** o agente conseguir escrever uma linha real na aba de fila da planilha de
 produção (ou de teste, se produção ainda não estiver liberada), com o esquema documentado e sem
 duplicar em caso de retry.
+
+---
+
+## Nota — inspeção do ticket 004 (2026-08-30)
+
+A estrutura da planilha foi inspecionada (ver `## Resolução` no
+[004](004-acesso-a-planilha-e-ao-catalogo.md)). O que isso muda para este ticket:
+
+- **A aba de fila não existe na planilha atual** — as abas existentes são diretório de
+  arquitetos, mailing, abas de relacionamento por consultora e logs de VISITAS/Entregas. O
+  layout da aba de fila é decisão deste ticket (comportamento já fixado no
+  [012](012-quando-e-como-o-agente-escala.md); o relance a gravar está detalhado na resolução
+  do [010](010-o-que-e-um-lead-qualificado.md)).
+- **Confirmar antes de escrever** se `CARTEIRA+MAILLING.xlsx` corresponde à planilha viva onde
+  a aba de fila deve morar, ou se a planilha compartilhada de trabalho é outra (pendência
+  aberta na resolução do 004).
+- O **acesso de edição via Sheets API** continua sendo escopo deste ticket — não veio com a
+  exportação `.xlsx`.
+- As abas VISITAS e Entregas usam um layout de **blocos de colunas por consultora**; se a aba
+  de fila seguir a convenção da casa, considerar isso, mas o 012 decidiu fila **sem trava por
+  consultora** (qualquer uma pega) — provavelmente uma tabela única com coluna "dona" opcional.
