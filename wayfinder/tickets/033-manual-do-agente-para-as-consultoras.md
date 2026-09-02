@@ -2,8 +2,8 @@
 id: "033"
 title: Manual do agente para as consultoras — que forma toma e o que cobre
 labels: [wayfinder:grilling]
-status: open
-assignee:
+status: in-progress
+assignee: sessão-grilling-033
 blocked-by: []
 ---
 
