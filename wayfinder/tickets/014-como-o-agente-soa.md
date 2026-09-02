@@ -2,8 +2,8 @@
 id: "014"
 title: Como o agente soa — protótipo de atendimento no tom das consultoras
 labels: [wayfinder:prototype]
-status: open
-assignee:
+status: in-progress
+assignee: sessão 2026-09-02 (worktree como-o-agente-soa-014)
 blocked-by: ["003", "009"]
 ---
 
