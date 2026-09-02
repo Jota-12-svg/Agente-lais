@@ -319,7 +319,7 @@ em vez de $${r.precoAtual.input}/1M. No <code>gemini-3.5-flash-lite</code> o cac
 <p style="font-size:.8rem"><a href="/">← voltar ao chat</a> · <a href="/custos.json">JSON</a> · terminal: <code>node custos.mjs</code></p>`;
 }
 
-createServer(async (req, res) => {
+const server = createServer(async (req, res) => {
   try {
     if (req.method === 'GET' && (req.url === '/' || req.url === '/index.html')) {
       return send(res, 200, 'text/html; charset=utf-8', INDEX_HTML);
@@ -433,7 +433,18 @@ createServer(async (req, res) => {
     console.error('  erro:', err.message);
     return send(res, 500, 'application/json', JSON.stringify({ error: err.message }));
   }
-}).listen(PORT);
+});
+
+server.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.log(`  ⚠  a porta ${PORT} já está em uso — provavelmente o servidor já está rodando.`);
+    console.log(`     abra http://localhost:${PORT} no navegador. (para reiniciar, feche o outro primeiro.)\n`);
+    process.exit(0);
+  }
+  console.error('  erro ao subir o servidor:', err.message);
+  process.exit(1);
+});
+server.listen(PORT);
 
 // Limpa objetos de cache órfãos de execuções anteriores (marcados com nosso displayName).
 if (creds) cache.cleanup(creds.key).catch(() => {});

@@ -1,24 +1,36 @@
 # Protótipo de tom — teste ao vivo com a "Manu" (ticket 014)
 
+## ▶ Para a apresentação — começa aqui
+
+1. **Dê dois cliques em `iniciar-teste.bat`** (nesta pasta). Abre uma janela preta — deixe
+   aberta.
+2. Abra **http://localhost:4014** no navegador.
+3. Se disser que a porta já está em uso, **o servidor já está rodando** — é só abrir o link.
+4. Para parar: feche a janela preta.
+
+Se o `.bat` não funcionar, abra o PowerShell nesta pasta e rode:
+`node --env-file="C:\Agente Lais\.env" run.mjs`
+
+Precisa de **Node** (já instalado, 22.20) e da `GEMINI_API_KEY` no `C:\Agente Lais\.env` (já
+está, tier pago). Nada de internet além da API do Gemini. Roda 100% local.
+
+---
+
 > **Protótipo descartável.** Não é o runtime do agente. Serve para uma coisa só: você
 > conversar com a Manu como se fosse um cliente e sentir se o tom está certo. A decisão de
 > stack de produção é outra história (névoa do mapa, depende do ticket 018).
 
 O que está sendo testado é o **`system-prompt.md`** — as instruções da Manu, destiladas dos
-tickets 009, 010 (+ addendum), 012 e 014. O resto é encanamento.
+tickets 009, 010 (+ addendum), 011, 012 e 014.
 
-## Como rodar
-
-Precisa de **Node 20+** (já tem: 22.20) e da `GEMINI_API_KEY` do `.env` do projeto (a mesma
-do ticket 017, tier pago).
+## Como rodar (detalhe)
 
 ```sh
 cd "C:\Agente Lais\.claude\worktrees\wayfinder+como-o-agente-soa-014\prototipo-tom-014"
 node --env-file="C:\Agente Lais\.env" run.mjs
 ```
 
-Se preferir não passar o `--env-file`, só `node run.mjs` também funciona — o script procura o
-`.env` do projeto sozinho. Se não achar, ele diz o que fazer.
+`node run.mjs` sem o `--env-file` também funciona — o script acha o `.env` do projeto sozinho.
 
 Depois abra **http://localhost:4014** no navegador.
 
