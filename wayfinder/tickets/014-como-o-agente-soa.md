@@ -70,6 +70,16 @@ Versão em página, estilo conversa de WhatsApp, para leitura no celular:
 [`014-prototipo-tom.html`](014-prototipo-tom.html). (Publicar como Artifact para comentário
 linha a linha ficou pendente de aprovação nesta sessão — abrir quando o dono quiser.)
 
+**Ambiente de teste ao vivo** (2026-09-02): `prototipo-tom-014/` na raiz do repo — servidor
+Node sem dependências que põe o dono conversando com a "Manu" de verdade, via
+`gemini-3.6-flash` (a chave do `.env`, tier pago). O que está sob teste é o
+`prototipo-tom-014/system-prompt.md` — as regras da tabela acima destiladas em instruções.
+Rodar: `node --env-file="C:\Agente Lais\.env" run.mjs` → `http://localhost:4014`. Descartável;
+o que sair do teste (tom aprovado, ajustes, respostas às perguntas abertas) volta para cá.
+Nota para o 018: o campo que passou o `thinking_level` foi
+`generationConfig.thinkingConfig.thinkingLevel` (testado nesta máquina, resposta com
+`serviceTier: "standard"`).
+
 ### Especificação de tom — proposta v1
 
 | Dimensão | Proposta v1 | De onde vem |

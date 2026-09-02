@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Manu · teste ao vivo</title>
+<style>
+  :root {
+    --ground: #e7e9e0;
+    --panel: #ffffff;
+    --sunk: #f0f1ea;
+    --ink: #23271f;
+    --ink-soft: #5b6053;
+    --ink-faint: #8a8e7e;
+    --accent: #3f6b53;
+    --accent-ink: #2c4c3b;
+    --agent-bubble: #ffffff;
+    --agent-edge: #e0e0d4;
+    --client-bubble: #d7ecd2;
+    --client-edge: #c2ddba;
+    --hairline: #d7d8cc;
+    --danger: #a3412e;
+    --font: "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ground: #14160f;
+      --panel: #1f2219;
+      --sunk: #191c14;
+      --ink: #e9e9df;
+      --ink-soft: #a4a795;
+      --ink-faint: #7c8070;
+      --accent: #8fc0a0;
+      --accent-ink: #a9d3b7;
+      --agent-bubble: #262a20;
+      --agent-edge: #363b2d;
+      --client-bubble: #2f4133;
+      --client-edge: #3f5443;
+      --hairline: #363a2c;
+      --danger: #e0805f;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--font);
+    font-size: 15px;
+    line-height: 1.5;
+    display: flex;
+    justify-content: center;
+  }
+  .app {
+    width: 100%;
+    max-width: 560px;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    background: var(--panel);
+    border-left: 1px solid var(--hairline);
+    border-right: 1px solid var(--hairline);
+  }
+
+  header {
+    padding: 0.7rem 0.9rem;
+    background: var(--accent);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    flex: none;
+  }
+  @media (prefers-color-scheme: dark) { header { color: #10160f; } }
+  .avatar {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: rgba(255,255,255,.22);
+    display: grid; place-items: center;
+    font-weight: 700; font-size: 1rem;
+    flex: none;
+  }
+  .who h1 { margin: 0; font-size: 1rem; font-weight: 600; }
+  .who p { margin: 0; font-size: 0.72rem; opacity: .85; }
+
+  .toolbar {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.5rem 0.9rem;
+    background: var(--sunk);
+    border-bottom: 1px solid var(--hairline);
+    font-size: 0.78rem;
+    flex: none;
+    flex-wrap: wrap;
+  }
+  .toolbar label { display: flex; align-items: center; gap: 0.35rem; cursor: pointer; color: var(--ink-soft); }
+  .toolbar button {
+    margin-left: auto;
+    font: inherit;
+    font-size: 0.76rem;
+    color: var(--danger);
+    background: none;
+    border: 1px solid currentColor;
+    border-radius: 6px;
+    padding: 0.15rem 0.55rem;
+    cursor: pointer;
+  }
+  .toolbar a { color: var(--accent-ink); }
+
+  .stream {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem 0.85rem 1.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    background:
+      radial-gradient(circle at 20% 10%, color-mix(in srgb, var(--accent) 5%, transparent), transparent 40%),
+      var(--sunk);
+  }
+  .msg {
+    max-width: 82%;
+    padding: 0.45rem 0.65rem 0.5rem;
+    border-radius: 10px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-size: 0.92rem;
+    box-shadow: 0 1px 1px rgba(0,0,0,.05);
+  }
+  .msg.agent {
+    align-self: flex-start;
+    background: var(--agent-bubble);
+    border: 1px solid var(--agent-edge);
+    border-bottom-left-radius: 3px;
+  }
+  .msg.client {
+    align-self: flex-end;
+    background: var(--client-bubble);
+    border: 1px solid var(--client-edge);
+    border-bottom-right-radius: 3px;
+  }
+  .msg.error {
+    align-self: center;
+    background: transparent;
+    border: 1px dashed var(--danger);
+    color: var(--danger);
+    font-size: 0.8rem;
+    max-width: 92%;
+  }
+  .meta-line {
+    align-self: flex-start;
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    color: var(--ink-faint);
+    margin: -0.1rem 0 0.3rem 0.2rem;
+  }
+  .typing {
+    align-self: flex-start;
+    font-size: 0.8rem;
+    color: var(--ink-faint);
+    font-style: italic;
+    padding: 0.3rem 0.2rem;
+  }
+  .hint {
+    align-self: center;
+    text-align: center;
+    color: var(--ink-faint);
+    font-size: 0.8rem;
+    max-width: 80%;
+    margin: auto 0;
+    padding: 1rem 0;
+  }
+
+  form {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.6rem 0.7rem;
+    background: var(--sunk);
+    border-top: 1px solid var(--hairline);
+    flex: none;
+  }
+  textarea {
+    flex: 1;
+    resize: none;
+    font: inherit;
+    padding: 0.5rem 0.7rem;
+    border-radius: 18px;
+    border: 1px solid var(--hairline);
+    background: var(--panel);
+    color: var(--ink);
+    max-height: 120px;
+  }
+  textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+  form button {
+    flex: none;
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    border: none;
+    background: var(--accent);
+    color: #fff;
+    font-size: 1.1rem;
+    cursor: pointer;
+  }
+  @media (prefers-color-scheme: dark) { form button { color: #10160f; } }
+  form button:disabled { opacity: .5; cursor: default; }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="avatar">M</div>
+    <div class="who">
+      <h1>Manu</h1>
+      <p id="sub">assistente da Laís Casa · protótipo</p>
+    </div>
+  </header>
+
+  <div class="toolbar">
+    <label><input type="checkbox" id="fora"> fora do horário de atendimento</label>
+    <a href="/system-prompt" target="_blank" rel="noopener">ver instruções da Manu</a>
+    <button id="reset" type="button">Reiniciar conversa</button>
+  </div>
+
+  <div class="stream" id="stream">
+    <p class="hint">Você é o <b>cliente</b>. Mande a primeira mensagem como se estivesse chamando o WhatsApp da loja — um “oi”, uma dúvida, uma foto descrita em texto. A Manu responde de verdade.</p>
+  </div>
+
+  <form id="form">
+    <textarea id="input" rows="1" placeholder="Escreva como cliente…" autocomplete="off"></textarea>
+    <button id="sendbtn" type="submit" aria-label="Enviar">➤</button>
+  </form>
+</div>
+
+<script>
+  const stream = document.getElementById('stream');
+  const form = document.getElementById('form');
+  const input = document.getElementById('input');
+  const sendbtn = document.getElementById('sendbtn');
+  const foraChk = document.getElementById('fora');
+  const sub = document.getElementById('sub');
+
+  let history = [];   // [{role:'client'|'agent', text}]
+  let busy = false;
+
+  fetch('/health').then(r => r.json()).then(h => {
+    sub.textContent = h.ok
+      ? `assistente da Laís Casa · ${h.model} · thinking ${h.thinking}`
+      : 'SEM CHAVE — veja o console do servidor';
+  }).catch(() => {});
+
+  function clearHint() {
+    const h = stream.querySelector('.hint');
+    if (h) h.remove();
+  }
+
+  function bubble(role, text) {
+    clearHint();
+    const el = document.createElement('div');
+    el.className = 'msg ' + role;
+    el.textContent = text;
+    stream.appendChild(el);
+    stream.scrollTop = stream.scrollHeight;
+    return el;
+  }
+
+  function metaLine(text) {
+    const el = document.createElement('div');
+    el.className = 'meta-line';
+    el.textContent = text;
+    stream.appendChild(el);
+    stream.scrollTop = stream.scrollHeight;
+  }
+
+  async function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+  async function send(text) {
+    if (busy || !text.trim()) return;
+    busy = true;
+    sendbtn.disabled = true;
+
+    bubble('client', text);
+    history.push({ role: 'client', text });
+
+    const typing = document.createElement('div');
+    typing.className = 'typing';
+    typing.textContent = 'Manu está digitando…';
+    stream.appendChild(typing);
+    stream.scrollTop = stream.scrollHeight;
+
+    try {
+      const r = await fetch('/chat', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ history, foraDoExpediente: foraChk.checked }),
+      });
+      const data = await r.json();
+      typing.remove();
+
+      if (data.error) {
+        bubble('error', 'erro do servidor: ' + data.error);
+      } else {
+        const parts = data.text.split(/^\s*---\s*$/m).map(s => s.trim()).filter(Boolean);
+        for (let i = 0; i < parts.length; i++) {
+          if (i > 0) {
+            const t2 = document.createElement('div');
+            t2.className = 'typing';
+            t2.textContent = 'Manu está digitando…';
+            stream.appendChild(t2);
+            stream.scrollTop = stream.scrollHeight;
+            await sleep(650);
+            t2.remove();
+          }
+          bubble('agent', parts[i]);
+        }
+        history.push({ role: 'agent', text: data.text });
+        const u = data.usage || {};
+        metaLine(
+          `${data.ms}ms · ${data.model} · campo: ${data.thinkingField}` +
+          (u.promptTokenCount != null ? ` · in ${u.promptTokenCount} / out ${u.candidatesTokenCount ?? '?'}` : '') +
+          (u.thoughtsTokenCount != null ? ` / thinking ${u.thoughtsTokenCount}` : '') +
+          (data.finishReason && data.finishReason !== 'STOP' ? ` · ${data.finishReason}` : '')
+        );
+      }
+    } catch (err) {
+      typing.remove();
+      bubble('error', 'falha de rede: ' + err.message);
+    } finally {
+      busy = false;
+      sendbtn.disabled = false;
+      input.focus();
+    }
+  }
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const t = input.value;
+    input.value = '';
+    input.style.height = 'auto';
+    send(t);
+  });
+
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      form.requestSubmit();
+    }
+  });
+  input.addEventListener('input', () => {
+    input.style.height = 'auto';
+    input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+  });
+
+  document.getElementById('reset').addEventListener('click', () => {
+    history = [];
+    stream.innerHTML = '<p class="hint">Conversa reiniciada. Mande a primeira mensagem como cliente.</p>';
+    input.focus();
+  });
+
+  input.focus();
+</script>
+</body>
+</html>
