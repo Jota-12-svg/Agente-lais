@@ -188,6 +188,19 @@ prototipagem, `/prototype`. Em tickets de research, `/research` como subagente.
   `CONTEXT.md` corrigido. Pendências: acesso de edição à planilha (escopo do 031) e um ajuste
   na resolução do 010 (lookup "já é cliente" não alcança consumidor final). Desbloqueou 030 e 031.
 
+- [Decidir o provedor de LLM e habilitar o billing](tickets/017-provedor-de-llm-e-billing.md)
+  — **provedor confirmado, modelo re-decidido.** A `GEMINI_API_KEY` já no `.env` (formato
+  `AQ.…`, o formato atual do AI Studio) foi testada: responde e devolve `serviceTier:
+  "standard"` — o projeto Google por trás dela **já está no tier pago** (exigência de LGPD
+  satisfeita), sem precisar criar chave nova nem vincular billing. Modelo: **`gemini-3.6-flash`**
+  (o `gemini-3-flash` do 008 deixou de existir — `404` em set/2026), id fixo, sempre
+  `thinking_level: "minimal"` (contrato dos modelos 3.x, não o `reasoning_effort` da era 2.5).
+  Plano B a validar com ~20–30 casos reais: `gemini-3.5-flash-lite`; fallback multimodal
+  pontual: `gemini-3-flash-preview`. Custo não decidiu — no volume real (~10/dia informado
+  pela dona) são ~R$ 15–40/mês, diferença entre os dois modelos ~R$ 8–42/mês. Research em
+  [`017-escolha-do-modelo-gemini.md`](research/017-escolha-do-modelo-gemini.md) (seções 1–10:
+  escolha; 11: custeio no volume real). Desbloqueou o 018.
+
 ## Not yet specified
 
 Névoa em escopo, ainda sem nitidez para virar ticket:

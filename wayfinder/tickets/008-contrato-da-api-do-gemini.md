@@ -86,3 +86,25 @@ de ticket R$ 2.000–50.000.
 **Abre dois tickets:**
 [Decidir o provedor de LLM e habilitar o billing](017-provedor-de-llm-e-billing.md) e
 [Validar empiricamente o contrato do LLM](018-validar-contrato-do-llm.md).
+
+---
+
+## Addendum — 2026-09-01 · modelo e contrato de raciocínio desatualizados
+
+Dois achados operacionais acima **envelheceram** e foram corrigidos no ticket
+[017](017-provedor-de-llm-e-billing.md) (research
+[`017-escolha-do-modelo-gemini.md`](../research/017-escolha-do-modelo-gemini.md)):
+
+- **`gemini-3-flash` não existe mais** — `v1beta/models/gemini-3-flash:generateContent`
+  devolve `404` em setembro/2026 (`gemini-2.5-flash` idem, *"no longer available to new
+  users"*). O modelo escolhido passa a ser **`gemini-3.6-flash`** (GA, sem shutdown
+  anunciado), com `gemini-3.5-flash-lite` como plano B a validar.
+- **`reasoning_effort: "low"` / `include_thoughts: false` é o contrato da era 2.5, não o dos
+  modelos 3.x.** O parâmetro atual é **`thinking_level: "minimal"`** (em `generationConfig`).
+  O 3.7-flash foi descartado por não aceitar `"minimal"`.
+- **O risco de áudio OGG/Opus se resolveu na doc:** `audio/ogg` e `audio/opus` estão ambos
+  na lista de MIME types aceitos hoje — **não precisa transcodificar** (ainda vale um teste
+  real com um `.ogg` de WhatsApp, escopo do 018).
+
+O resto da resolução (ir direto à Google por LGPD e cache; interface fina de LLM; kie.ai só
+com dado sintético) **continua de pé**.

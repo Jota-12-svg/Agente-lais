@@ -2,8 +2,8 @@
 id: "017"
 title: Decidir o provedor de LLM e habilitar o billing
 labels: [wayfinder:task]
-status: open
-assignee:
+status: closed
+assignee: Claude
 blocked-by: []
 ---
 
@@ -66,3 +66,76 @@ só o dono da conta pode fazer:
 
 Enquanto isso não acontece, o desenvolvimento pode rodar na kie.ai ou no free tier **com dado
 sintético**. O que fica bloqueado é atender cliente de verdade, não construir.
+
+---
+
+## Resolução — 2026-09-01
+
+Sessão com o dono do projeto. O provedor da decisão de 2026-08-10 **continua valendo**; o que
+mudou foi o **modelo** (o id fixado não existe mais) e a **execução** (a chave já estava no
+lugar).
+
+### Provedor e chave — tier pago confirmado
+
+- **Gemini API da Google (AI Studio), tier pago.** A `GEMINI_API_KEY` já presente no `.env`
+  (formato `AQ.…` — que é o formato **atual** das chaves do AI Studio, não uma credencial
+  temporária, como se chegou a suspeitar nesta sessão) foi testada contra
+  `v1beta/models/*:generateContent` em 2026-09-01: responde `200` e devolve
+  **`serviceTier: "standard"`** — ou seja, o projeto Google por trás dela **já está no tier
+  pago**, não no free. Isso satisfaz a exigência de LGPD do ticket (o free tier treina com os
+  dados; o pago, não).
+- **Checklist da "Decisão tomada — 2026-08-10" dispensado:** não foi preciso criar chave nova
+  nem vincular billing — a chave existente já atende. O wizard de criação de chave
+  (`/wizard`) chegou a ser montado nesta sessão e fica no scratchpad, não usado.
+- **A credencial mora só no `.env`**, como `GEMINI_API_KEY`. Não entra no git (`.gitignore`),
+  não vai para chat/PR/log.
+- **Pendência menor, não bloqueante:** se algum dia o dono quiser um projeto Google Cloud
+  **dedicado** só para o agente (linha de custo isolada), é troca de uma linha no `.env` +
+  novo teste de `serviceTier`. Não bloqueia nada.
+
+### Modelo
+
+Pesquisa completa em [`research/017-escolha-do-modelo-gemini.md`](../research/017-escolha-do-modelo-gemini.md)
+(seções 1–10: escolha do modelo contra a doc oficial; seção 11: custeio no volume real de
+~10 atendimentos/dia).
+
+- **`gemini-3.6-flash`** — id fixo, nunca o alias `gemini-flash-latest`. Substitui o
+  `gemini-3-flash` da decisão de 2026-08-10 e do research 008, que **deixou de existir**
+  (`404` em setembro/2026; `gemini-2.5-flash` idem). É GA ("Stable"), sem data de
+  descontinuação anunciada, e aceita o nível mínimo de raciocínio.
+- **`thinking_level: "minimal"` em toda chamada.** Contrato novo dos modelos 3.x — substitui
+  o `reasoning_effort: "low"` + `include_thoughts: false` da era 2.5 que a decisão de
+  2026-08-10 tinha escrito. `thinking_summaries` desligado/`auto`. (O `gemini-3.7-flash` foi
+  descartado justamente por não aceitar `"minimal"` — piso `"low"`, gasta mais tokens de
+  pensamento, que são cobrados como saída — e por ser afinado para coding/agentic, altitude
+  errada para qualificação.)
+- **Plano B: `gemini-3.5-flash-lite`** — a comparar com `gemini-3.6-flash` num teste de
+  ~20–30 casos reais (áudio com sotaque, planilha fotografada, aderência à regra de escalar)
+  antes de qualquer troca. Enquanto o teste não existe, produção vai de `gemini-3.6-flash`.
+- **Fallback multimodal pontual: `gemini-3-flash-preview`** — só para reprocessar uma imagem
+  que o modelo principal não conseguiu ler; nunca como principal (é Preview, 2 semanas de
+  aviso de deprecação).
+- **Custo não decidiu.** No volume real (~10/dia, ~300/mês) o `gemini-3.6-flash` sai
+  ~R$ 15–40/mês em 2026; a diferença para o `flash-lite` é ~R$ 8–42/mês. Imaterial para uma
+  loja de ticket R$ 2.000–50.000. A escolha entre os dois é só de qualidade e latência.
+
+### Restrições que saem desta decisão
+
+- **Interface fina de LLM desde a primeira linha** (mantido do 008): trocar de modelo ou de
+  provedor tem de ser trocar base URL, header e nome do modelo.
+- **System prompt precisa de ≥ ~4.096 tokens para ser cacheável** nos modelos 3.x (mínimo de
+  cache da geração). Abaixo disso, sem cache explícito. Achado da seção 11: no
+  `gemini-3.6-flash`, um prefixo de 5k **cacheado** sai mais barato que 1,5k sem cache — o
+  hit de cache é 10× mais barato que entrada normal.
+- **kie.ai:** só protótipo e fallback **com dado sintético**, nunca dado real (sem DPA).
+
+### Execução
+
+- `LLM_MODEL=gemini-3.6-flash` gravado no `.env` (estava `gemini-3.5-flash-lite`, resíduo).
+- `.env.example` corrigido: `LLM_MODEL=gemini-3-flash` → `gemini-3.6-flash`, com nota sobre
+  `thinking_level` e o plano B.
+- Addendum no research [008](008-contrato-da-api-do-gemini.md) apontando o modelo e o
+  contrato de thinking desatualizados.
+- **Desbloqueia o [018](018-validar-contrato-do-llm.md)** — a validação empírica agora tem
+  provedor e modelo definidos. A seção 10 do research 017 ("Lacunas — o que só teste com a
+  chave e com dado real fecha") é insumo direto para o 018.
