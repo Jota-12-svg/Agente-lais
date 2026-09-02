@@ -48,13 +48,30 @@ mensagem.
 
 ## O que a linha cinza embaixo de cada resposta quer dizer
 
-`420ms · gemini-3.6-flash · campo: thinkingConfig.thinkingLevel · in 812 / out 96 / thinking 41`
+`612ms · gemini-3.6-flash · in 1768 / out 52 · $0.00149 · R$ 0,0082`
 
-- **tempo** da chamada
-- **modelo** que respondeu (versão real devolvida pela API)
-- **campo** que funcionou para passar o `thinking_level` — dado direto para o **ticket 018**
-  (a doc não fixa se é `generationConfig.thinkingLevel` ou `...thinkingConfig.thinkingLevel`)
-- **tokens** de entrada / saída / pensamento
+- **tempo** da chamada · **modelo** que respondeu · **tokens** entrada / saída (/ pensamento)
+- **custo estimado** da chamada, em US$ e R$
+
+## Tracking de custo
+
+Toda chamada à API é estimada e registrada. Fontes de preço: research 017 §11.1
+(`pricing.mjs`). Três formas de olhar:
+
+| Onde | O quê |
+|---|---|
+| **barra no topo do chat** | acumulado da sessão do servidor + desta conversa + nº de respostas |
+| **`http://localhost:4014/custos`** | painel: total, média por conversa / por mensagem, por modelo, projeção mensal |
+| **`node custos.mjs`** | o mesmo resumo no terminal |
+| **`custos.jsonl`** | log linha a linha (uma por chamada) — fora do git, some no `.gitignore` |
+
+**É estimativa** — token count × preço de tabela × câmbio ~R$ 5,50/US$. O número da **fatura
+real** está no painel do [Google AI Studio](https://aistudio.google.com/). A projeção mensal
+do painel fica *abaixo* do research 017 §11.4 (~R$ 28/mês típico) de propósito: o protótipo
+não usa cache de prefixo nem tool calls, que pesam em produção.
+
+`pricing.mjs` é reaproveitável: quando o runtime de produção existir, a mesma lógica de custo
+por chamada entra na interface fina de LLM.
 
 ## Anotações para a próxima sessão
 

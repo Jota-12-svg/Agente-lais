@@ -109,6 +109,17 @@
   }
   .toolbar a { color: var(--accent-ink); }
 
+  .costbar {
+    padding: 0.35rem 0.9rem;
+    background: var(--sunk);
+    border-bottom: 1px solid var(--hairline);
+    font-size: 0.74rem;
+    color: var(--ink-faint);
+    font-family: var(--mono);
+    flex: none;
+  }
+  .costbar span { color: var(--ink-soft); font-weight: 600; }
+
   .stream {
     flex: 1;
     overflow-y: auto;
@@ -219,8 +230,14 @@
 
   <div class="toolbar">
     <label><input type="checkbox" id="fora"> fora do horário de atendimento</label>
-    <a href="/system-prompt" target="_blank" rel="noopener">ver instruções da Manu</a>
+    <a href="/system-prompt" target="_blank" rel="noopener">instruções</a>
+    <a href="/custos" target="_blank" rel="noopener">custos</a>
     <button id="reset" type="button">Reiniciar conversa</button>
+  </div>
+  <div class="costbar" id="costbar" hidden>
+    <span id="cost-session">R$ 0,00</span> nesta sessão ·
+    <span id="cost-conv">R$ 0,00</span> nesta conversa ·
+    <span id="cost-calls">0</span> respostas
   </div>
 
   <div class="stream" id="stream">
@@ -243,6 +260,19 @@
 
   let history = [];   // [{role:'client'|'agent', text}]
   let busy = false;
+  let conversationId = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()));
+  let convBrl = 0;
+
+  const costbar = document.getElementById('costbar');
+  const brl = (n) => 'R$ ' + n.toFixed(n < 0.1 ? 4 : 2).replace('.', ',');
+  function updateCostbar(session) {
+    costbar.hidden = false;
+    if (session) {
+      document.getElementById('cost-session').textContent = brl(session.brl);
+      document.getElementById('cost-calls').textContent = session.calls;
+    }
+    document.getElementById('cost-conv').textContent = brl(convBrl);
+  }
 
   fetch('/health').then(r => r.json()).then(h => {
     sub.textContent = h.ok
@@ -293,7 +323,7 @@
       const r = await fetch('/chat', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ history, foraDoExpediente: foraChk.checked }),
+        body: JSON.stringify({ history, foraDoExpediente: foraChk.checked, conversationId }),
       });
       const data = await r.json();
       typing.remove();
@@ -316,12 +346,16 @@
         }
         history.push({ role: 'agent', text: data.text });
         const u = data.usage || {};
+        const cost = data.cost || {};
+        if (cost.brl != null) convBrl += cost.brl;
         metaLine(
-          `${data.ms}ms · ${data.model} · campo: ${data.thinkingField}` +
+          `${data.ms}ms · ${data.model}` +
           (u.promptTokenCount != null ? ` · in ${u.promptTokenCount} / out ${u.candidatesTokenCount ?? '?'}` : '') +
-          (u.thoughtsTokenCount != null ? ` / thinking ${u.thoughtsTokenCount}` : '') +
+          (u.thoughtsTokenCount ? ` / think ${u.thoughtsTokenCount}` : '') +
+          (cost.usd != null ? ` · ${'$' + cost.usd.toFixed(5)} · ${brl(cost.brl)}` : '') +
           (data.finishReason && data.finishReason !== 'STOP' ? ` · ${data.finishReason}` : '')
         );
+        updateCostbar(data.session);
       }
     } catch (err) {
       typing.remove();
@@ -354,6 +388,9 @@
 
   document.getElementById('reset').addEventListener('click', () => {
     history = [];
+    conversationId = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()));
+    convBrl = 0;
+    updateCostbar();
     stream.innerHTML = '<p class="hint">Conversa reiniciada. Mande a primeira mensagem como cliente.</p>';
     input.focus();
   });

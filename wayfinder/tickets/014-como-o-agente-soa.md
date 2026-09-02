@@ -76,6 +76,9 @@ Node sem dependências que põe o dono conversando com a "Manu" de verdade, via
 `prototipo-tom-014/system-prompt.md` — as regras da tabela acima destiladas em instruções.
 Rodar: `node --env-file="C:\Agente Lais\.env" run.mjs` → `http://localhost:4014`. Descartável;
 o que sair do teste (tom aprovado, ajustes, respostas às perguntas abertas) volta para cá.
+Traz **tracking de custo** por chamada (`pricing.mjs`, preços do research 017 §11.1): barra no
+chat, painel em `/custos`, `node custos.mjs`, log `custos.jsonl`. É estimativa — fatura real
+no painel do AI Studio. Medido: ~R$ 0,008 por resposta sem cache de prefixo.
 Nota para o 018: o campo que passou o `thinking_level` foi
 `generationConfig.thinkingConfig.thinkingLevel` (testado nesta máquina, resposta com
 `serviceTier: "standard"`).
