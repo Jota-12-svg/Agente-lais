@@ -2,8 +2,8 @@
 id: "037"
 title: Construir a plataforma das consultoras — v1
 labels: [wayfinder:task]
-status: open
-assignee:
+status: in-progress
+assignee: sessão 2026-09-02 (build da plataforma v1)
 blocked-by: ["035"]
 ---
 
