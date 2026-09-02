@@ -135,12 +135,37 @@ resposta do ticket 020). Fixar um número diferente aqui duplicaria a decisão e
 
 ### Freio de mão
 
-**Adiado para o ticket [027](027-testar-self-hosted-no-numero-atual.md).** O mecanismo cogitado
-(a consultora digita um comando na própria conversa do WhatsApp, o agente reconhece e cala)
-depende exatamente da mesma pergunta técnica que o item 3 do 027 já testa: se uma mensagem
-mandada por um companion gera evento do lado do Baileys. Decidir aqui seria chutar algo que só
-o teste real responde.
+Dois freios, dois donos:
+
+- **Por conversa** (uma consultora quer calar o agente num atendimento específico):
+  **adiado para o ticket [027](027-testar-self-hosted-no-numero-atual.md).** O mecanismo
+  cogitado — a consultora digita um comando na própria conversa do WhatsApp, o agente
+  reconhece e cala — depende da mesma pergunta técnica que o item 3 do 027 testa: se uma
+  mensagem mandada por um companion gera evento do lado do Baileys. Na prática, o mecanismo
+  de detecção de handoff já cobre a maior parte disso de graça (qualquer mensagem humana
+  silencia o agente ali).
+- **Global** (desligar o agente inteiro, em todas as conversas, por mau funcionamento):
+  ticket [036](036-freio-de-mao-global.md). É responsabilidade de implementação, não
+  decisão de design — todo serviço em produção precisa de um desligamento de emergência.
 
 **Tickets abertos por este:** [029](029-canal-de-notificacao-da-fila.md) (canal de notificação).
 **Dependência criada:** [013](013-sinal-de-sucesso-do-aprendizado.md) precisa decidir o limiar de
 "contato perdido" também para a janela de retomada aqui descrita — mesmo conceito, dois usos.
+
+---
+
+## Addendum — 2026-09-02 (fechamento do ticket 013)
+
+A **janela de retomada** e o "reinício total" acima têm agora um número: **3 dias**, o mesmo do
+`terminal_state = esfriado` decidido no 013 (um número só para os dois usos, como este ticket
+pedia). Um contato que volta em até 3 dias após a escalada segue no mesmo atendimento (o agente
+só reafirma "a consultora já vai te atender"); passando de 3 dias, é atendimento novo do zero,
+no rodízio. Arredonda para cima o "2–3 dias" da consultora (levantamento 1 do 020).
+
+O **veículo** da fila — que este ticket desenhou como uma aba da planilha compartilhada — é
+retomado pelo ticket [035](035-plataforma-central-das-consultoras.md): decisão do dono
+(2026-09-02) de tirar a fila da planilha e pô-la numa plataforma própria sobre o Supabase
+(v1: fila de chamados + marcação de desfecho, incluindo o `advisor_verdict` do 013). O
+**comportamento** definido aqui — o agente produz fila e não roteia, dona anexada sem trava,
+aviso nunca por WhatsApp ativo — continua intacto; muda só onde a fila mora. Ver o
+reenquadramento de 029/030/031 no próprio 035.

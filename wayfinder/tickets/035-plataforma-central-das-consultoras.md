@@ -11,6 +11,13 @@ blocked-by: []
 > outra sessão abrir o [033](033-manual-do-agente-para-as-consultoras.md) (manual do agente)
 > quase ao mesmo tempo. Renumerado para **035** ao reconciliar — 034 já está reservado pelo
 > 033 para a redação do manual. O conteúdo é o mesmo desde a criação.
+>
+> **Consolidação (reconciliação de 2026-09-02):** o fechamento do ticket
+> [013](013-sinal-de-sucesso-do-aprendizado.md), numa terceira branch paralela, tinha aberto
+> um ticket `033-superficie-das-consultoras-para-o-agente` para a mesma superfície (onde a
+> consultora recebe o chamado, julga o atendimento com o `advisor_verdict` e assume a
+> conversa). Como é o mesmo assunto que este ticket, foi **consolidado aqui** — este 035 é o
+> ticket único da superfície das consultoras. Todas as referências do 013 apontam para cá.
 
 ## Question
 
@@ -59,11 +66,14 @@ outros tickets" abaixo).
    (`pendente` / `assumido` / `fechado`) + `assumido_por` + `desfecho` + timestamps.
    Fechar a lista exata e os nomes (inglês, conforme `CLAUDE.md`).
 5. **Taxonomia de desfecho do v1 e como ela conversa com o [013](013-sinal-de-sucesso-do-aprendizado.md).**
-   O 013 decide **quais são os sinais** e o que se aprende com o fracasso; este ticket decide
-   **onde a consultora clica** (a captura "com atrito quase zero" que o 013 pede no enunciado).
-   Se o 013 ainda estiver aberto, o v1 usa um conjunto provisório e o 013 tem a palavra final
-   — mesmo arranjo que 012↔013 para "contato perdido". **Não fixar aqui um sinal de sucesso
-   que é decisão do 013.**
+   O 013 **está fechado** e já decidiu os sinais: `terminal_state`
+   (`escalado` / `resolvido_sem_escalada` / `esfriado` / `fora_de_escopo`), `business_outcome`
+   (`virou_venda` / `virou_visita` / `sem_venda` / `perdido`) quando escala, e o
+   `advisor_verdict` da consultora (`agente_mandou_bem` / `agente_atrapalhou` + nota livre) —
+   este último é **o sinal de maior peso do aprendizado**. Este ticket decide **onde a
+   consultora clica** para registrar `business_outcome` + `advisor_verdict` ao fechar um
+   chamado, com o atrito quase zero que o 013 pede. **Não relitigar a taxonomia — ela é
+   decisão fechada do 013;** aqui é só a superfície.
 6. **Substituição × coexistência.** A plataforma substitui a aba da fila por completo desde o
    dia 1, ou há um período em que as duas convivem? (A fila nunca existiu na planilha ainda —
    ver nota do 004 —, então provavelmente é substituição limpa, mas confirmar.)
@@ -73,6 +83,11 @@ outros tickets" abaixo).
 
 ### Impacto em outros tickets
 
+- **[013](013-sinal-de-sucesso-do-aprendizado.md)** (fechado, grilling) — decidiu os sinais
+  (`terminal_state`, `business_outcome`, `advisor_verdict`) e que a captura do `advisor_verdict`
+  é "manual, um canal só, atrito quase zero". Este ticket é esse canal. O 013 deixou explícito
+  que *onde e como* a consultora registra é trabalho deste ticket; a taxonomia não se relitiga
+  aqui.
 - **[029](029-canal-de-notificacao-da-fila.md)** (fechado, research) — o **enunciado**
   (canal de aviso sem WhatsApp ativo) continua válido e é retomado aqui; a **conclusão**
   (e-mail via Apps Script varrendo a planilha) **cai** com a fila saindo da planilha. Ao
@@ -96,6 +111,8 @@ Cobre a **primeira fatia** da névoa **"Superfície para as consultoras"**: ver 
 assumir um chamado, marcar o desfecho. Ver e **corrigir a conversa** do agente dentro da
 plataforma, e o fluxo de "assumir uma conversa em andamento", ficam para depois do v1.
 
-**Resolvido quando** estiverem decididos: canal de aviso, login, stack/hospedagem, esquema
-da tabela e taxonomia de desfecho do v1 — e estiver registrado o que fazer com 029/030/031.
-A construção da plataforma em si é o passo seguinte (deste ticket ou de um que ele abrir).
+**Resolvido quando** estiverem decididos: canal de aviso, login, stack/hospedagem e esquema
+da tabela — mais como a consultora registra `business_outcome` + `advisor_verdict` na tela
+(a taxonomia em si já é decisão fechada do 013) — e estiver registrado o que fazer com
+029/030/031. A construção da plataforma em si é o passo seguinte (deste ticket ou de um que
+ele abrir).

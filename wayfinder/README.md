@@ -16,7 +16,6 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 
 | # | Ticket | Tipo |
 |---|---|---|
-| 013 | [Sinal de sucesso — o que se mede e como é capturado](tickets/013-sinal-de-sucesso-do-aprendizado.md) | grilling |
 | 014 | [Como o agente soa — protótipo de atendimento no tom das consultoras](tickets/014-como-o-agente-soa.md) | prototype |
 | 015 | [Decidir a rotação das credenciais expostas](tickets/015-rotacao-das-credenciais.md) | task |
 | 020 | [Perguntas a levar às consultoras](tickets/020-perguntas-para-as-consultoras.md) | task |
@@ -25,6 +24,7 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 | 032 | [Obter o catálogo do Mainô e exemplos de planilha de arquiteto](tickets/032-catalogo-do-maino-e-planilha-de-arquiteto.md) | task |
 | 033 | [Manual do agente para as consultoras — que forma toma e o que cobre](tickets/033-manual-do-agente-para-as-consultoras.md) | grilling |
 | 035 | [Plataforma central das consultoras — substrato da fila e desfecho](tickets/035-plataforma-central-das-consultoras.md) | grilling |
+| 036 | [Freio de mão global — desligamento de emergência do agente](tickets/036-freio-de-mao-global.md) | task |
 
 > **033** entra desbloqueado, mas com resolução em dois momentos: o grilling (forma, público,
 > estrutura, o que se pede às consultoras) roda agora; a redação do manual vira o ticket **034**,
@@ -34,7 +34,13 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 > pô-la numa plataforma própria sobre o Supabase (v1: fila + marcar desfecho). Grilling
 > decide canal de aviso, login, stack, esquema e taxonomia de desfecho. **Reenquadra
 > 029/030/031** — 030 e 031 foram para Bloqueados. (Nasceu como "033" numa sessão paralela;
-> renumerado para 035 na reconciliação — ver nota no topo do ticket.)
+> renumerado para 035 na reconciliação — ver nota no topo do ticket.) O fechamento do 013,
+> em outra branch, tinha aberto um `033-superficie-das-consultoras` para essa mesma
+> superfície; **consolidado no 035** na reconciliação de 2026-09-02.
+>
+> **036** nasceu da reconciliação de 2026-09-02: o freio de mão **global** (desligar o agente
+> inteiro) tinha sido separado do 012 numa branch paralela e se perdeu ao re-aplicar o 012 na
+> trunk. Requisito já decidido, não é design novo.
 >
 > **004 foi dividido** (2026-08-30): a planilha de clientes foi inspecionada e o 004 fechou; o
 > catálogo do Mainô e as planilhas de arquiteto foram para o **032**, que segue aberto e ainda
@@ -66,5 +72,6 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 | 018 | [Validar empiricamente o contrato do LLM](tickets/018-validar-contrato-do-llm.md) | task | function calling OK em HTTP cru (mas `thoughtSignature` das `functionCall` é obrigatório no reenvio, senão 400); áudio OGG/Opus inline sem ffmpeg; HEIC OK; cache mínimo 1024 (não 4096); áudio 25 tok/s (não 32); `minimal` vs `low` = 540 tokens + 3× latência |
 | 002 | [Inventariar e limpar o projeto Supabase](tickets/002-limpar-o-projeto-supabase.md) | task | schema `app` e papéis do projeto anterior apagados; banco em estado virgem |
 | 016 | [Escolher o parceiro Meta para o onboarding do WhatsApp](tickets/016-escolher-parceiro-meta.md) | research | seis researches (016/022/023/024/025/026); decisão: self-hosted no número atual, sem parceiro — abriu 027 |
-| 012 | [Quando e como o agente escala para uma consultora](tickets/012-quando-e-como-o-agente-escala.md) | grilling | roteamento por fila (não atribuição), gatilhos, transparência, freio de mão adiado para 027 — abriu 029; janela de retomada depende do 013 |
-| 029 | [Canal de notificação da fila de chamados](tickets/029-canal-de-notificacao-da-fila.md) | research | [research/029](research/029-canal-notificacao-fila.md); e-mail via Apps Script com time-driven trigger, contornando a limitação de `onEdit`/`onChange` não disparar para gravação via API |
+| 012 | [Quando e como o agente escala para uma consultora](tickets/012-quando-e-como-o-agente-escala.md) | grilling | roteamento por fila (não atribuição), gatilhos, transparência; freio de mão por conversa → 027, freio global → 036; abriu 029; janela de retomada = **3 dias** (addendum, decidido no 013); veículo da fila reenquadrado pelo 035 |
+| 029 | [Canal de notificação da fila de chamados](tickets/029-canal-de-notificacao-da-fila.md) | research | [research/029](research/029-canal-notificacao-fila.md); e-mail via Apps Script com time-driven trigger, contornando a limitação de `onEdit`/`onChange` não disparar para gravação via API — **veículo reenquadrado pelo 035** (fila sai da planilha) |
+| 013 | [Sinal de sucesso — o que se mede e como é capturado](tickets/013-sinal-de-sucesso-do-aprendizado.md) | grilling | fase 1 mede qualidade da qualificação, não desfecho de negócio; taxonomia `terminal_state` + `business_outcome`; `advisor_verdict` da consultora é o sinal de maior peso; `sem_venda`/`perdido`/`esfriado` neutros de propósito; nº único de 3 dias (esfriado + retomada); `CONTEXT.md` ganhou `Sinal de sucesso` e `Atendimento esfriado`; veículo do `advisor_verdict` → 035. Fechado em branch paralela, integrado na reconciliação de 2026-09-02 |
