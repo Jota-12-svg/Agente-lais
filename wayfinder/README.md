@@ -17,7 +17,6 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 | # | Ticket | Tipo |
 |---|---|---|
 | 013 | [Sinal de sucesso — o que se mede e como é capturado](tickets/013-sinal-de-sucesso-do-aprendizado.md) | grilling |
-| 014 | [Como o agente soa — protótipo de atendimento no tom das consultoras](tickets/014-como-o-agente-soa.md) | prototype |
 | 015 | [Decidir a rotação das credenciais expostas](tickets/015-rotacao-das-credenciais.md) | task |
 | 018 | [Validar empiricamente o contrato do LLM](tickets/018-validar-contrato-do-llm.md) | task |
 | 020 | [Perguntas a levar às consultoras](tickets/020-perguntas-para-as-consultoras.md) | task |
@@ -34,6 +33,10 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 > **030 e 031** saíram de Bloqueados com o fechamento do 004, mas ainda dependem de **acesso de
 > edição à planilha viva do Google** — pendência dentro do escopo deles, não um bloqueio de
 > ticket.
+>
+> **014 saiu da fronteira** (2026-09-02): reivindicado, protótipo v1 escrito (sete transcrições
+> + especificação de tom em `tickets/014-como-o-agente-soa.md`). `in-progress` — fecha quando
+> o dono do projeto reagir às transcrições e às 8 perguntas abertas.
 
 ## Bloqueados
 
