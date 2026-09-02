@@ -45,7 +45,7 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 | 019 | [De quais dispositivos a consultora pode responder sem cegar o agente](tickets/019-companion-windows-ponto-cego.md) | task | **em pausa** — premissa (Coexistence) não é mais o caminho; ver 016 |
 | 031 | [Implementar a escrita do chamado do agente na fila (INSERT no Supabase)](tickets/031-implementar-escrita-do-chamado-na-fila.md) | task | runtime do agente (035 fechado — esquema pronto); alvo é `INSERT` no Supabase + `chatModify markRead:false` |
 | 036 | [Freio de mão global — desligamento de emergência do agente](tickets/036-freio-de-mao-global.md) | task | stack de runtime (névoa) — requisito registrado, mecanismo depende de onde o agente roda |
-| 037 | [Construir a plataforma das consultoras — v1](tickets/037-construir-plataforma-consultoras-v1.md) | task | runtime do agente (035 fechado — esquema e desenho prontos); **puxável para adiantar schema/protótipo** com dados semeados |
+| 037 | [Construir a plataforma das consultoras — v1](tickets/037-construir-plataforma-consultoras-v1.md) | task | **em build** (branch `feat/plataforma-consultoras`, PR à parte) — código pronto (migrations, RLS, web app Svelte, Edge Function, `deploy-wizard.sh`); falta o dono rodar o wizard (deploy + e-mails reais + teste de ponta a ponta) |
 
 ## Fechados
 

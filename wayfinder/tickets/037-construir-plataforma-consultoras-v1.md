@@ -72,3 +72,34 @@ decisões que ele fechou. Três peças:
 **Resolvido quando** a plataforma estiver no ar, uma consultora conseguir logar, ver um
 chamado (semeado ou real), assumir, fechar com desfecho + veredito, e o e-mail de aviso
 chegar — tudo testado de ponta a ponta.
+
+---
+
+## Progresso — 2026-09-02 (sessão de build)
+
+**Código pronto e na branch `feat/plataforma-consultoras`** (PR à parte). Pasta
+[`advisor-platform/`](../../advisor-platform/):
+
+| Peça | Estado |
+|---|---|
+| `supabase/migrations/*_handoffs.sql` | tabela `handoffs` com o esquema do 035 §6 na íntegra, 5 enums, `advisor_allowlist`, índice da fila (`status`,`created_at`), publicação Realtime. Coluna extra `notified_at` (idempotência). |
+| `supabase/migrations/*_rls.sql` | RLS: `is_allowed_advisor()`; advisors da allow-list **leem e atualizam** `handoffs`; **sem** política de `INSERT` nem `DELETE` para o navegador; allow-list legível por qualquer autenticado. |
+| `supabase/seed.sql` | 4 e-mails placeholder + 4 chamados fictícios — exercita a tela sem o agente. |
+| `web/` | SPA Vite + **Svelte 5**. Uma tela. Login Google → guarda de allow-list → fila ao vivo (Realtime), ordenada por espera → **Assumir** (trava suave, "FULANA pegou às HHhMM", qualquer uma devolve à fila) → **Fechar** (`business_outcome` + `advisor_verdict` + nota; some da fila). PT-BR, mobile-first, alvos de toque grandes. `npm run build` passa. |
+| `supabase/functions/notify-handoff/` | Edge Function (Deno). Database Webhook no `INSERT` → e-mail via **Resend** para os 4, com o relance + link. Idempotência pelo header `Idempotency-Key` do Resend (**não** usa service role key). |
+| `deploy-wizard.sh` | wizard bash de 10 estágios que o dono roda: `supabase link` + `db push`, allow-list real, Resend, Cloudflare Pages, OAuth do Google, provider no Supabase, deploy da função, Database Webhook, teste de ponta a ponta. |
+
+**Falta para fechar** (tudo depende do dono — passos do wizard):
+
+1. Rodar `advisor-platform/deploy-wizard.sh`.
+2. E-mails reais das 4 (hoje placeholder) + resposta da pergunta 34 do 020.
+3. Teste de ponta a ponta: logar, ver chamado, assumir, fechar, e-mail chega.
+
+**Decisão que ficou pendente para o dono** — o 035 §6 e o
+[031](031-implementar-escrita-do-chamado-na-fila.md) dizem "INSERT via *service role*",
+mas o `CLAUDE.md` §4 e o `.env` **vetam a secret key** (`sb_secret_...`). Este build **não a
+introduziu**: a RLS só define que o navegador não insere; *como* o agente insere (papel
+Postgres dedicado com `GRANT INSERT` × service role) é decisão do 031, e o `CLAUDE.md` pede
+"discuta antes de introduzi-la". A Edge Function já foi escrita sem depender dela.
+
+O ticket segue **`in-progress`** até o deploy + teste de ponta a ponta.
