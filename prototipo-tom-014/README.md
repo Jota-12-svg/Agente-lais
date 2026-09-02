@@ -58,6 +58,28 @@ promete a loja, não a pessoa).
   de uma lista de itens (= arquiteto, escala), nota de voz (ela devolve o entendimento por
   escrito).
 
+### Passagem para a consultora (handoff)
+
+O que se garante aqui: **a Manu nunca responde ao mesmo tempo que a consultora.** Regras dos
+tickets 009 e 012.
+
+- Barra de baixo, **enviar como: [Cliente] [Consultora]**. Trocar para **Consultora** e
+  mandar uma mensagem = uma consultora humana entrou na conversa (balão com borda dourada).
+- A partir daí a Manu fica **em silêncio** nessa conversa — se o cliente escrever, aparece
+  uma linha "a Manu está em silêncio", não um balão dela.
+- A Manu também pode **escalar sozinha**: quando um gatilho do ticket 012 aparece (compra
+  concreta, pediu uma pessoa, irritação, negociação de preço, planilha de arquiteto…), ela
+  manda o aviso de passagem e emite um sinal interno `[[ESCALAR: motivo]]` (removido antes
+  de chegar ao cliente). O estado vira **escalado** e ela para de responder.
+- O chip acima do chat mostra o estado: `qualificando` → `escalado` → `com a consultora`.
+- **retomada (cliente volta dias depois):** marque a checkbox e mande como cliente — a Manu
+  responde **só uma vez**, reafirmando que a consultora vai atender, sem retomar a
+  qualificação. O número exato de dias dessa janela é decisão do ticket 013.
+- **ponto cego** (checkbox na barra de cima — ticket 009 / research 019): simula a consultora
+  respondendo de um dispositivo que o agente não enxerga (WhatsApp para Windows). A mensagem
+  dela não gera evento, a Manu **não sabe** que ela assumiu e **responde por cima** — é o
+  risco que o projeto ainda tem que resolver (provável saída: WhatsApp Web).
+
 Clique em **"instruções"** para ler o system prompt. Ajuste o `system-prompt.md`, **reinicie
 o servidor** (Ctrl+C e rode de novo — ele lê o arquivo no boot), e prove de novo.
 

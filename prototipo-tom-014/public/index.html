@@ -258,6 +258,70 @@
 
   .msg img { max-width: 220px; border-radius: 8px; display: block; margin-bottom: 0.3rem; }
   .msg audio { max-width: 240px; display: block; margin-bottom: 0.3rem; }
+
+  .msg .who {
+    display: block;
+    font-family: var(--mono); font-size: 0.62rem; font-weight: 600;
+    letter-spacing: 0.05em; text-transform: uppercase;
+    margin-bottom: 0.2rem;
+  }
+  /* consultora humana assumindo */
+  .msg.advisor {
+    align-self: flex-start;
+    background: var(--client-bubble);
+    border: 1px solid var(--client-edge);
+    border-left: 3px solid #b6893c;
+    border-bottom-left-radius: 3px;
+  }
+  .msg.advisor .who { color: #9a6b28; }
+  @media (prefers-color-scheme: dark) { .msg.advisor .who { color: #d6a860; } }
+
+  .divider {
+    align-self: center; text-align: center;
+    font-family: var(--mono); font-size: 0.68rem;
+    color: var(--ink-faint);
+    padding: 0.35rem 0.8rem; margin: 0.3rem 0;
+    border-top: 1px solid var(--hairline);
+    border-bottom: 1px solid var(--hairline);
+    max-width: 92%;
+  }
+  .divider.warn { color: var(--danger); border-color: var(--danger); }
+  .silent {
+    align-self: center; text-align: center;
+    font-size: 0.8rem; font-style: italic;
+    color: var(--ink-faint);
+    max-width: 88%; padding: 0.3rem 0;
+  }
+
+  .state-chip {
+    font-family: var(--mono); font-size: 0.7rem;
+    padding: 0.35rem 0.9rem;
+    background: var(--sunk);
+    border-bottom: 1px solid var(--hairline);
+    color: var(--ink-soft);
+    flex: none;
+  }
+  .state-chip b { color: var(--ink); }
+  .state-chip.escalado b { color: #9a6b28; }
+  .state-chip.com_consultora b { color: #3f6b53; }
+
+  .sender {
+    display: flex; align-items: center; gap: 0.5rem;
+    padding: 0.4rem 0.7rem;
+    background: var(--sunk);
+    border-top: 1px solid var(--hairline);
+    font-size: 0.76rem; color: var(--ink-soft);
+    flex: none; flex-wrap: wrap;
+  }
+  .sender .seg { display: flex; border: 1px solid var(--hairline); border-radius: 6px; overflow: hidden; }
+  .sender .seg button {
+    font: inherit; font-size: 0.76rem;
+    background: var(--panel); color: var(--ink-soft);
+    border: none; padding: 0.2rem 0.6rem; cursor: pointer;
+  }
+  .sender .seg button.on { background: var(--accent); color: #fff; }
+  @media (prefers-color-scheme: dark) { .sender .seg button.on { color: #10160f; } }
+  .sender label { display: flex; align-items: center; gap: 0.3rem; cursor: pointer; }
 </style>
 </head>
 <body>
@@ -273,6 +337,7 @@
   <div class="toolbar">
     <label><input type="checkbox" id="fora"> fora do horário</label>
     <label title="usa cachedContents com o system prompt estático"><input type="checkbox" id="cache" checked> cache de prefixo</label>
+    <label title="ticket 009 / research 019: mensagem de um dispositivo não suportado (WhatsApp p/ Windows) não gera evento — o agente não vê"><input type="checkbox" id="blind"> ponto cego</label>
     <label>modelo
       <select id="model">
         <option value="gemini-3.5-flash-lite">3.5-flash-lite</option>
@@ -290,11 +355,20 @@
     <span id="cost-calls">0</span> resp. ·
     <span id="cost-rate" title="preço usado na estimativa">—</span>
   </div>
+  <div class="state-chip" id="statechip">estado: <b>qualificando</b> — a Manu atende</div>
 
   <div class="stream" id="stream">
-    <p class="hint">Você é o <b>cliente</b>. Mande a primeira mensagem como se estivesse chamando o WhatsApp da loja — texto, uma <b>imagem</b> (📎: foto de um produto, de um ambiente, um print de lista) ou um <b>áudio</b> gravado (🎤). A Manu responde de verdade.</p>
+    <p class="hint">Você é o <b>cliente</b> — texto, <b>imagem</b> (📎) ou <b>áudio</b> gravado (🎤). Para testar a passagem do atendimento, troque para <b>Consultora</b> na barra de baixo: assim que ela fala, a Manu para de responder.</p>
   </div>
 
+  <div class="sender">
+    enviar como
+    <span class="seg">
+      <button type="button" id="asClient" class="on">Cliente</button>
+      <button type="button" id="asAdvisor">Consultora</button>
+    </span>
+    <label id="retomadaWrap" hidden><input type="checkbox" id="retomada"> retomada (cliente volta dias depois)</label>
+  </div>
   <div class="attach-tray" id="tray" hidden></div>
   <form id="form">
     <input type="file" id="file" accept="image/*,audio/*" hidden multiple>
@@ -317,10 +391,18 @@
   const attachBtn = document.getElementById('attachbtn');
   const recBtn = document.getElementById('recbtn');
   const tray = document.getElementById('tray');
+  const blindChk = document.getElementById('blind');
+  const statechip = document.getElementById('statechip');
+  const asClientBtn = document.getElementById('asClient');
+  const asAdvisorBtn = document.getElementById('asAdvisor');
+  const retomadaChk = document.getElementById('retomada');
+  const retomadaWrap = document.getElementById('retomadaWrap');
 
   let pending = [];  // anexos aguardando envio: [{mimeType, data(base64), name}]
-  let history = [];   // [{role:'client'|'agent', text, attachments?}]
+  let history = [];   // [{role:'client'|'agent'|'advisor', text, attachments?}]
   let busy = false;
+  let sender = 'client';      // quem está enviando agora
+  let hstate = 'qualificando'; // estado do handoff no cliente
   let conversationId = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()));
   let convBrl = 0;
 
@@ -355,6 +437,12 @@
     clearHint();
     const el = document.createElement('div');
     el.className = 'msg ' + role;
+    if (role === 'advisor') {
+      const w = document.createElement('span');
+      w.className = 'who';
+      w.textContent = 'Consultora';
+      el.appendChild(w);
+    }
     for (const a of attachments || []) {
       if (a.mimeType && a.mimeType.startsWith('image/')) {
         const img = document.createElement('img');
@@ -386,16 +474,64 @@
     stream.scrollTop = stream.scrollHeight;
   }
 
+  function divider(text, warn) {
+    const el = document.createElement('div');
+    el.className = 'divider' + (warn ? ' warn' : '');
+    el.textContent = text;
+    stream.appendChild(el);
+    stream.scrollTop = stream.scrollHeight;
+  }
+  function silentLine(text) {
+    const el = document.createElement('div');
+    el.className = 'silent';
+    el.textContent = text;
+    stream.appendChild(el);
+    stream.scrollTop = stream.scrollHeight;
+  }
+
+  const STATE_LABEL = {
+    qualificando: 'qualificando</b> — a Manu atende',
+    escalado: 'escalado</b> — a Manu passou; aguardando a consultora',
+    com_consultora: 'com a consultora</b> — a Manu não responde',
+  };
+  function setState(s) {
+    if (!s || s === hstate) { retomadaWrap.hidden = hstate === 'qualificando'; return; }
+    hstate = s;
+    statechip.className = 'state-chip ' + s;
+    statechip.innerHTML = 'estado: <b>' + (STATE_LABEL[s] || s + '</b>');
+    retomadaWrap.hidden = s === 'qualificando';
+    if (s === 'qualificando') retomadaChk.checked = false;
+  }
+
   async function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
   async function send(text, attachments) {
     attachments = attachments || [];
     if (busy || (!text.trim() && !attachments.length)) return;
+    const who = sender;
     busy = true;
     sendbtn.disabled = true;
 
-    bubble('client', text, attachments);
-    history.push({ role: 'client', text, attachments });
+    bubble(who === 'advisor' ? 'advisor' : 'client', text, attachments);
+    history.push({ role: who === 'advisor' ? 'advisor' : 'client', text, attachments });
+
+    // --- consultora enviando ---
+    if (who === 'advisor') {
+      try {
+        const r = await fetch('/chat', {
+          method: 'POST', headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ history, conversationId, as: 'advisor', blindSpot: blindChk.checked }),
+        });
+        const data = await r.json();
+        if (data.blindSpot) divider('⚠ ' + data.nota, true);
+        else { divider('— a consultora assumiu · a Manu não responde mais —'); setState(data.status); }
+      } catch (err) {
+        bubble('error', 'falha de rede: ' + err.message);
+      } finally {
+        busy = false; sendbtn.disabled = false; input.focus();
+      }
+      return;
+    }
 
     const typing = document.createElement('div');
     typing.className = 'typing';
@@ -407,13 +543,20 @@
       const r = await fetch('/chat', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ history, foraDoExpediente: foraChk.checked, conversationId, model: modelSel.value, cache: cacheChk.checked }),
+        body: JSON.stringify({ history, foraDoExpediente: foraChk.checked, conversationId, model: modelSel.value, cache: cacheChk.checked, retomada: retomadaChk.checked }),
       });
       const data = await r.json();
       typing.remove();
 
       if (data.error) {
         bubble('error', 'erro do servidor: ' + data.error);
+      } else if (data.silent) {
+        silentLine('a Manu está em silêncio — ' + data.nota);
+      } else if (data.retomada) {
+        bubble('agent', data.text);
+        history.push({ role: 'agent', text: data.text });
+        metaLine('janela de retomada · ' + data.nota);
+        retomadaChk.checked = false;
       } else {
         const parts = data.text.split(/^\s*---\s*$/m).map(s => s.trim()).filter(Boolean);
         for (let i = 0; i < parts.length; i++) {
@@ -446,6 +589,10 @@
           metaLine('⚠ cache pedido mas não usado: ' + (data.cache.erro || 'motivo desconhecido'));
         }
         updateCostbar(data.session, cost.rate);
+        if (data.escalou) {
+          divider('— a Manu escalou: ' + data.escalou.motivo + ' · aguardando a consultora —');
+        }
+        setState(data.status);
       }
     } catch (err) {
       typing.remove();
@@ -467,6 +614,19 @@
     renderTray();
     send(t, atts);
   });
+
+  // ---- quem envia: cliente ou consultora ----
+  function setSender(s) {
+    sender = s;
+    asClientBtn.classList.toggle('on', s === 'client');
+    asAdvisorBtn.classList.toggle('on', s === 'advisor');
+    input.placeholder = s === 'advisor'
+      ? 'Escreva como consultora (a Pamella, a Gabi ou a Joslaine)…'
+      : 'Escreva como cliente…';
+    attachBtn.style.display = recBtn.style.display = s === 'advisor' ? 'none' : '';
+  }
+  asClientBtn.addEventListener('click', () => setSender('client'));
+  asAdvisorBtn.addEventListener('click', () => setSender('advisor'));
 
   // ---- anexos (imagem / áudio) ----
   function renderTray() {
@@ -577,8 +737,10 @@
     renderTray();
     conversationId = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()));
     convBrl = 0;
+    hstate = null; setState('qualificando');
+    setSender('client');
     updateCostbar();
-    stream.innerHTML = '<p class="hint">Conversa reiniciada. Mande a primeira mensagem como cliente — texto, imagem (📎) ou áudio gravado (🎤).</p>';
+    stream.innerHTML = '<p class="hint">Conversa reiniciada. Você é o <b>cliente</b> — texto, imagem (📎) ou áudio (🎤). Troque para <b>Consultora</b> na barra de baixo para simular a passagem do atendimento.</p>';
     input.focus();
   });
 

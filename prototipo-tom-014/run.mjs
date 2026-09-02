@@ -21,6 +21,14 @@ const CUSTOS_LOG = join(HERE, 'custos.jsonl');
 const session = { started: new Date().toISOString(), calls: 0, usd: 0, brl: 0 };
 const SP_TOKENS_APPROX = Math.round(readFileSync(join(HERE, 'system-prompt.md'), 'utf8').length / 3.7);
 
+// Estado do handoff por conversa. status: 'qualificando' | 'escalado' | 'com_consultora'.
+// Regra (tickets 009/012): depois de escalar OU de uma consultora falar, a Manu fica em
+// SILÊNCIO nessa conversa — não responde por cima. Única exceção: janela de retomada curta
+// (o cliente volta dias depois → uma reafirmação, sem retomar a qualificação; o número exato
+// é decisão do ticket 013).
+const handoff = new Map();
+const REAFIRMACAO = 'Oi! Sua conversa já está com uma das nossas consultoras — ela te responde por aqui assim que possível. Qualquer coisa, é só aguardar que ela te procura.';
+
 function parseEnv(txt) {
   const env = {};
   for (const line of txt.split(/\r?\n/)) {
@@ -80,7 +88,8 @@ if (!creds) {
 }
 console.log(`  abra:     http://localhost:${PORT}`);
 console.log(`  custos:   http://localhost:${PORT}/custos    ·    cache: http://localhost:${PORT}/cache`);
-console.log(`  cache de prefixo: liga/desliga na barra do chat (cria um cachedContents com o system prompt)\n`);
+console.log(`  cache de prefixo: liga/desliga na barra do chat (cria um cachedContents com o system prompt)`);
+console.log(`  handoff: "enviar como Consultora" na barra → o agente cala; toggle do ponto cego simula o dispositivo não suportado\n`);
 
 // A doc oficial (research 017) diz que os modelos 3.x usam `thinking_level` em
 // `generationConfig`, mas não fixa se é `generationConfig.thinkingLevel` ou
@@ -111,12 +120,14 @@ async function askManu(history, foraDoExpediente, modelOverride, usarCache) {
   // A mídia entra como `inlineData` em `parts`, junto do texto.
   const turnosCliente = history.map((m) => {
     const parts = [];
-    if (m.text && m.text.trim()) parts.push({ text: m.text });
+    // turno da consultora: entra rotulado (a API vê como 'model', mas o texto marca a autoria)
+    if (m.role === 'advisor' && m.text) parts.push({ text: '[mensagem enviada por uma consultora humana] ' + m.text });
+    else if (m.text && m.text.trim()) parts.push({ text: m.text });
     for (const a of m.attachments || []) {
       if (a && a.mimeType && a.data) parts.push({ inlineData: { mimeType: a.mimeType, data: a.data } });
     }
     if (parts.length === 0) parts.push({ text: '(mensagem vazia)' });
-    return { role: m.role === 'agent' ? 'model' : 'user', parts };
+    return { role: (m.role === 'agent' || m.role === 'advisor') ? 'model' : 'user', parts };
   });
 
   // Resolve o cache de prefixo, se pedido. O prefixo cacheado é SÓ o system prompt estático;
@@ -325,7 +336,40 @@ createServer(async (req, res) => {
     if (req.method === 'POST' && req.url === '/chat') {
       let raw = '';
       for await (const chunk of req) raw += chunk;
-      const { history = [], foraDoExpediente = false, conversationId = 'sem-id', model, cache: usarCache = false } = JSON.parse(raw || '{}');
+      const { history = [], foraDoExpediente = false, conversationId = 'sem-id', model, cache: usarCache = false,
+              as: autor = 'client', blindSpot = false, retomada = false } = JSON.parse(raw || '{}');
+
+      const st = handoff.get(conversationId) || { status: 'qualificando' };
+
+      // --- mensagem enviada pela CONSULTORA ---
+      if (autor === 'advisor') {
+        // dispositivo não suportado (ticket 009 / research 019): o agente não recebe o evento.
+        if (!blindSpot) { st.status = 'com_consultora'; st.since = Date.now(); }
+        handoff.set(conversationId, st);
+        return send(res, 200, 'application/json', JSON.stringify({
+          advisor: true, status: st.status, blindSpot,
+          nota: blindSpot
+            ? 'PONTO CEGO: a consultora respondeu de um dispositivo que o agente não enxerga (ex.: WhatsApp para Windows). O agente NÃO sabe que ela assumiu e pode responder por cima.'
+            : 'A consultora assumiu. O agente entra em silêncio nesta conversa.',
+        }));
+      }
+
+      // --- mensagem do CLIENTE com a conversa já escalada / com a consultora ---
+      if (st.status === 'escalado' || st.status === 'com_consultora') {
+        if (retomada) {
+          // janela de retomada (ticket 012): uma reafirmação, sem retomar a qualificação.
+          return send(res, 200, 'application/json', JSON.stringify({
+            text: REAFIRMACAO, retomada: true, status: st.status,
+            nota: 'Janela de retomada: o agente responde SÓ para reafirmar. Não retoma a qualificação. O número exato de dias é decisão do ticket 013.',
+          }));
+        }
+        return send(res, 200, 'application/json', JSON.stringify({
+          silent: true, status: st.status, motivo: st.motivo || null,
+          nota: st.status === 'escalado'
+            ? 'O agente já escalou e está em silêncio — aguardando a consultora. Não responde ao cliente.'
+            : 'A consultora está no atendimento. O agente não responde por cima.',
+        }));
+      }
 
       // guarda de tamanho: o limite de request inline da Gemini é 20 MB (prompt + mídias).
       const mediaBytes = history.reduce((n, m) => n + (m.attachments || []).reduce((k, a) => k + (a?.data?.length || 0) * 0.75, 0), 0);
@@ -336,6 +380,21 @@ createServer(async (req, res) => {
       const t0 = Date.now();
       const out = await askManu(history, foraDoExpediente, model, usarCache);
       out.ms = Date.now() - t0;
+
+      // --- detecta o sinal de escalada [[ESCALAR: motivo]] ---
+      const mEsc = out.text.match(/\[\[\s*ESCALAR\s*:?\s*([^\]]*?)\s*\]\]/i);
+      if (mEsc) {
+        out.text = out.text
+          .replace(/\n*\s*\[\[\s*ESCALAR[^\]]*\]\]\s*/i, '')
+          .replace(/\s*\n\s*-{3,}\s*$/, '')  // separador `---` dangling antes do marcador
+          .trim();
+        st.status = 'escalado';
+        st.motivo = (mEsc[1] || '').trim() || 'não informado';
+        st.since = Date.now();
+        out.escalou = { motivo: st.motivo };
+      }
+      handoff.set(conversationId, st);
+      out.status = st.status;
 
       // --- tracking de custo ---
       const c = costOfCall(out.model, out.usage);

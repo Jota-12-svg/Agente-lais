@@ -77,11 +77,18 @@ Node sem dependências que põe o dono conversando com a "Manu" de verdade, via
 Rodar: `node --env-file="C:\Agente Lais\.env" run.mjs` → `http://localhost:4014`. Descartável;
 o que sair do teste (tom aprovado, ajustes, respostas às perguntas abertas) volta para cá.
 Barra do chat: seletor de modelo (default `gemini-3.5-flash-lite`), toggle **fora do horário**,
-toggle **cache de prefixo**, **📎 anexar imagem/áudio** e **🎤 gravar nota de voz** (a mídia
-vai como `inlineData` pra Gemini). **Tracking de custo** por chamada (`pricing.mjs`): linha
-cinza sob cada resposta, barra acumulada, `/custos`, `node custos.mjs`, `node calibrar.mjs`
-(calibra contra o billing), log `custos.jsonl`. Editar o `system-prompt.md` exige reiniciar o
-servidor.
+toggle **cache de prefixo**, **📎 imagem/áudio**, **🎤 nota de voz**, **enviar como
+Cliente/Consultora** (handoff) e toggle **ponto cego**. **Tracking de custo** por chamada
+(`pricing.mjs`): linha cinza, barra, `/custos`, `node custos.mjs`, `node calibrar.mjs`, log
+`custos.jsonl`. Editar o `system-prompt.md` exige reiniciar o servidor.
+
+**Handoff no protótipo** (regras dos tickets 009/012): "enviar como **Consultora**" põe uma
+humana na conversa → a Manu fica **em silêncio** (não responde por cima). A Manu também escala
+sozinha ao ver um gatilho do 012 — emite `[[ESCALAR: motivo]]` (interno, removido antes do
+cliente) e para de responder. Chip de estado: `qualificando` → `escalado` → `com a
+consultora`. Toggle **ponto cego** (009 / research 019) simula a consultora respondendo de um
+dispositivo não suportado — a Manu não vê e responde por cima. Janela de **retomada** (o
+número de dias é decisão do 013): uma reafirmação, sem retomar a qualificação.
 
 **Achados de custo (02/09, medidos):**
 - Promo de 2026 do `gemini-3.6-flash` ($0,75/$3,75) **não vale nesta conta** — billing real =
