@@ -22,12 +22,11 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 | 021 | [Instagram como porta de entrada para o WhatsApp](tickets/021-instagram-porta-de-entrada.md) | task |
 | 027 | [Testar a conexão self-hosted como dispositivo adicional, antes de tocar no número da loja](tickets/027-testar-self-hosted-no-numero-atual.md) | task |
 | 032 | [Obter o catálogo do Mainô e exemplos de planilha de arquiteto](tickets/032-catalogo-do-maino-e-planilha-de-arquiteto.md) | task |
-| 033 | [Manual do agente para as consultoras — que forma toma e o que cobre](tickets/033-manual-do-agente-para-as-consultoras.md) | grilling |
 
-> **033** entra desbloqueado, mas com resolução em dois momentos: o grilling (forma, público,
-> estrutura, o que se pede às consultoras) roda agora; a redação do manual vira o ticket **034**,
-> bloqueado por 011, 014, estratégia de rollout e agora também pelo **037** (o manual descreve
-> a plataforma).
+> **033 fechado** (2026-09-02, grilling): a **forma** do manual está decidida — um documento,
+> duas partes (A "o que o agente faz" / B "no dia a dia"), Google Doc, tom concreto com prints
+> do 014, quatro pedidos à consultora + seção do freio de mão. A **redação** é o ticket
+> **034** (Bloqueados), por 011, 014, 036, 037 e pela estratégia de rollout.
 >
 > **036** e **037** nascem/ficam bloqueados pela stack de runtime (névoa do mapa) — ver
 > Bloqueados. O **036** (freio de mão global) foi separado do 012 numa branch paralela e se
@@ -43,6 +42,7 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 |---|---|---|---|
 | 011 | [O que o agente pode afirmar sobre produto e disponibilidade](tickets/011-o-que-o-agente-pode-dizer-sobre-produto.md) | grilling | 032 |
 | 019 | [De quais dispositivos a consultora pode responder sem cegar o agente](tickets/019-companion-windows-ponto-cego.md) | task | **em pausa** — premissa (Coexistence) não é mais o caminho; ver 016 |
+| 034 | [Redigir o manual do agente para as consultoras](tickets/034-redigir-o-manual-do-agente.md) | task | 011, 014, 036, 037 + estratégia de rollout (névoa) — forma decidida no 033, falta a redação |
 | 031 | [Implementar a escrita do chamado do agente na fila (INSERT no Supabase)](tickets/031-implementar-escrita-do-chamado-na-fila.md) | task | runtime do agente (035 fechado — esquema pronto); alvo é `INSERT` no Supabase + `chatModify markRead:false` |
 | 036 | [Freio de mão global — desligamento de emergência do agente](tickets/036-freio-de-mao-global.md) | task | stack de runtime (névoa) — requisito registrado, mecanismo depende de onde o agente roda |
 | 037 | [Construir a plataforma das consultoras — v1](tickets/037-construir-plataforma-consultoras-v1.md) | task | runtime do agente (035 fechado — esquema e desenho prontos); **puxável para adiantar schema/protótipo** com dados semeados |
@@ -69,3 +69,4 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 | 013 | [Sinal de sucesso — o que se mede e como é capturado](tickets/013-sinal-de-sucesso-do-aprendizado.md) | grilling | fase 1 mede qualidade da qualificação, não desfecho de negócio; taxonomia `terminal_state` + `business_outcome`; `advisor_verdict` da consultora é o sinal de maior peso; `sem_venda`/`perdido`/`esfriado` neutros de propósito; nº único de 3 dias (esfriado + retomada); `CONTEXT.md` ganhou `Sinal de sucesso` e `Atendimento esfriado`; veículo do `advisor_verdict` → 035. Fechado em branch paralela, integrado na reconciliação de 2026-09-02 |
 | 035 | [Plataforma central das consultoras — substrato da fila e desfecho](tickets/035-plataforma-central-das-consultoras.md) | grilling | plataforma web única sobre o Supabase (ver fila, assumir, fechar, `advisor_verdict`); Vite + framework leve, sem backend, login Google, Realtime; notificação **só e-mail** (webhook Supabase → Edge Function → Resend), SMS depois; agente marca conversa como "não lida" no WhatsApp ao escalar (validar no 027); esquema `handoffs` fixado; chamado fechado some da fila; construção espera o runtime — fecha 029 (conclusão)/030 (absorvido), reenquadra 031, abre 037; `CONTEXT.md` ganhou `Chamado` e `Plataforma das consultoras` |
 | 030 | [Implementar o script de notificação da fila (Apps Script)](tickets/030-implementar-notificacao-da-fila.md) | task | **substituído pelo 037** — a fila saiu da planilha, o disparo virou Database Webhook do Supabase; nada a construir aqui |
+| 033 | [Manual do agente para as consultoras — que forma toma](tickets/033-manual-do-agente-para-as-consultoras.md) | grilling | forma decidida (não a redação): um documento, duas partes (A "o que faz" estável / B "no dia a dia"); Google Doc; tom concreto com prints do 014; quatro pedidos à consultora + seção do freio de mão (fecha "quem aciona" do 036 incluindo consultoras); dono do manual = João Victor; abriu o **034** (redação), bloqueado por 011, 014, 036, 037 + rollout |

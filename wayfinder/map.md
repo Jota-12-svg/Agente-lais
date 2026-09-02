@@ -245,6 +245,19 @@ prototipagem, `/prototype`. Em tickets de research, `/research` como subagente.
   [037](tickets/037-construir-plataforma-consultoras-v1.md) (build). `CONTEXT.md` ganhou
   `Chamado` e `Plataforma das consultoras`.
 
+- [Manual do agente para as consultoras — que forma toma](tickets/033-manual-do-agente-para-as-consultoras.md)
+  — **grilling da forma, não da redação.** Um documento só, duas partes: **A "O que o agente
+  faz"** (estável) e **B "No dia a dia"** (operacional, com data no cabeçalho). Público: as 3
+  consultoras que atendem + a dona, registro de referência consultável. Fonte markdown no
+  repo, entregue como Google Doc. Tom concreto, segunda pessoa, sem jargão, com prints reais
+  do 014. Pede **quatro coisas** à consultora (assumir da fila; marcar desfecho + veredito;
+  avisar erro; responder pelo WhatsApp de sempre), abrindo pelo que o agente faz por elas.
+  Seção própria para o **freio de mão** (kill switch do 036) como feature que a consultora
+  aciona — o que **fecha "quem aciona" do 036** incluindo as consultoras. Dono do manual:
+  João Victor. Entrega: Parte A antes do piloto + demo ao vivo; Parte B no arranque do
+  piloto. Abriu o [034](tickets/034-redigir-o-manual-do-agente.md) (redação), bloqueado por
+  011, 014, 036, 037 e pela estratégia de rollout.
+
 ## Not yet specified
 
 Névoa em escopo, ainda sem nitidez para virar ticket:
@@ -283,7 +296,9 @@ Névoa em escopo, ainda sem nitidez para virar ticket:
   029/030/031.
 - **LGPD.** Consentimento, retenção e o que pode ser guardado de conversa de cliente.
 - **Estratégia de rollout.** Piloto com uma consultora, horário limitado, fallback quando
-  o agente falha.
+  o agente falha. Bloqueia a redação do manual das consultoras
+  ([034](tickets/034-redigir-o-manual-do-agente.md)): define o canal de aviso de erro, o
+  momento de entrega de cada parte e o piloto que dispara a checagem de manutenção.
 - **Migração da planilha compartilhada.** Se os clientes saem da planilha para o Supabase,
   ou se os dois coexistem.
 

@@ -38,8 +38,12 @@ ticket 012. Aqui é o botão único que derruba o agente inteiro.
 - **Efeito imediato e abrangente.** O desligamento atinge **todas as conversas em
   andamento**, não só as mensagens que chegarem depois. Enquanto desligado, o agente não
   responde nada (ou responde só uma linha neutra de "já te respondo", a decidir).
-- **Quem aciona.** Dono do projeto e/ou consultoras com acesso — a definir na implementação.
-  Não é um controle que o cliente final vê.
+- **Quem aciona.** Dono do projeto **e as consultoras** — decisão do dono em 2026-09-02, no
+  fecho do [033](033-manual-do-agente-para-as-consultoras.md): o manual do agente promete a
+  feature à consultora como algo que ela aciona quando o agente atende errado. Logo a
+  implementação **precisa** de um controle acionável por quem não abre terminal (candidato
+  natural: um botão na plataforma das consultoras do 035). Não é um controle que o cliente
+  final vê.
 - **Como se sabe que está desligado.** Um sinal visível para quem opera (log, cor na
   plataforma do 035, e-mail de confirmação) para não ficar dúvida se o agente está no ar.
 - **Religar.** O caminho de volta — e se conversas que chegaram durante o apagão precisam de
@@ -50,7 +54,11 @@ ticket 012. Aqui é o botão único que derruba o agente inteiro.
 - **012** — a seção "Freio de mão" ganha um ponteiro para cá ao fechar este ticket.
 - **027** — cobre o freio **por conversa** (mensagem de companion → evento no Baileys); não
   cobre este.
-- **035** — se o mecanismo escolhido for uma flag no Supabase, encosta no esquema do 035.
+- **035** — se o mecanismo escolhido for uma flag no Supabase, encosta no esquema do 035; e
+  o botão acionável pela consultora (ver "Quem aciona") mora naturalmente nessa plataforma.
+- **033 / 034** — o manual do agente descreve este freio como feature das consultoras
+  (Parte B, seção "Se o agente começar a errar feio"). O [034](034-redigir-o-manual-do-agente.md)
+  está bloqueado por este ticket.
 - **Névoa "Stack e hospedagem do runtime"** — o ponto de integração no código depende de
   onde e como o agente roda; a decisão do mecanismo pode esperar isso, mas o **requisito**
   fica registrado desde já.
