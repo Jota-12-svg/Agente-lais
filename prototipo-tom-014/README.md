@@ -65,25 +65,43 @@ Toda chamada é estimada (a partir dos tokens **reais** que a API devolve) e reg
 | **`node custos.mjs`** | o mesmo resumo no terminal |
 | **`custos.jsonl`** | log linha a linha — fora do git |
 
-### Preço e calibração — importante
+### Por que 4 mensagens custam ~R$ 0,07
 
-A doc da Google lista um preço **promocional** de 2026 para o `gemini-3.6-flash`
-($0,75 in / $3,75 out). **Essa promo não estava valendo nesta conta** em 02/09/2026: o
-billing real subiu ~2× mais rápido que a estimativa promocional. Por isso o `pricing.mjs`
-usa o **preço cheio** ($1,50 in / $7,50 out), que bateu com o billing.
+Não é a sua mensagem de texto (essa é ~30 tokens). O que pesa: **a API não tem memória**, então
+**toda** chamada reenvia (a) o `system-prompt.md` inteiro — ~1.680 tokens, as instruções da
+Manu — e (b) a conversa toda até ali. Numa conversa de 4 turnos, o system prompt sozinho é
+**~80% dos tokens de entrada** (ele vai 4 vezes). Daí ~R$ 0,018/resposta.
 
-Para deixar exato na sua conta: converse um pouco, veja o total em `/custos`, compare com o
-delta do painel do [Google AI Studio](https://aistudio.google.com/) (tem ~10 min de atraso) e,
-se divergir, ajuste no `.env`:
+**Em produção isso cai muito:** o system prompt vira *cache de prefixo* — a parte fixa custa
+1/10 do preço (research 017 §5). Aí a conversa de 4 turnos sai por ~R$ 0,03 em vez de R$ 0,07.
+O protótipo não faz isso de propósito (é throwaway). O `gemini-3.5-flash-lite` também corta
+~4× — teste no seletor de modelo.
+
+### Preço e calibração
+
+A doc da Google lista preço **promocional** 2026 para o `gemini-3.6-flash` ($0,75/$3,75), mas
+**essa promo não está valendo nesta conta** — o billing real bate com o **preço cheio**
+($1,50/$7,50), que é o padrão do `pricing.mjs`. Medição de 02/09: estimativa a preço cheio
+ficou dentro de ~8% do billing (fator ×0,92).
+
+**Para confirmar / ajustar na sua conta** — medição limpa contra o billing:
 
 ```
-COST_CALIBRATION=0.5      # se a promo valer pra você (metade do preço cheio)
-# ou, granular:
-GEMINI_PRICE_IN=0.75
-GEMINI_PRICE_OUT=3.75
+node calibrar.mjs start                  # zera o log, explica o passo a passo
+# ... anota o billing, conversa com a Manu, espera ~15 min, anota de novo ...
+node calibrar.mjs 0,88 0,97               # compara e diz o fator
 ```
 
-Continua sendo **estimativa** — o número que conta é o do painel do AI Studio.
+Se o fator sair longe de 1, ponha no `.env`:
+
+```
+COST_CALIBRATION=0.92     # multiplica todas as estimativas
+# ou granular:
+GEMINI_PRICE_IN=1.34
+GEMINI_PRICE_OUT=6.70
+```
+
+Continua **estimativa** — o número que conta é o do painel do [AI Studio](https://aistudio.google.com/).
 
 ### Comparar modelos
 

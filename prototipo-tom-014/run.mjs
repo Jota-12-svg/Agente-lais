@@ -18,6 +18,7 @@ const HERE = dirname(fileURLToPath(import.meta.url));
 const PORT = Number(process.env.PROTOTIPO_PORT) || 4014;
 const CUSTOS_LOG = join(HERE, 'custos.jsonl');
 const session = { started: new Date().toISOString(), calls: 0, usd: 0, brl: 0 };
+const SP_TOKENS_APPROX = Math.round(readFileSync(join(HERE, 'system-prompt.md'), 'utf8').length / 3.7);
 
 function parseEnv(txt) {
   const env = {};
@@ -185,6 +186,8 @@ function custosResumo() {
     mediaPorConversaBrl: mediaPorConversa,
     mediaPorChamadaBrl: mediaPorChamada,
     projecaoMensalBrl: projMensalBrl,
+    systemPromptTokens: SP_TOKENS_APPROX,
+    systemPromptPct: total.tokIn > 0 ? Math.round((100 * SP_TOKENS_APPROX * rows.length) / total.tokIn) : 0,
     sessaoAtual: session,
     cambioUsdBrl: USD_BRL,
     calibracao: CALIBRATION,
@@ -230,6 +233,10 @@ function custosPage() {
   ${linhasModelo || '<tr><td colspan="4">sem dados ainda</td></tr>'}
 </table>
 <p><b>Tokens somados:</b> entrada ${r.total.tokIn.toLocaleString('pt-BR')} · saída ${r.total.tokOut.toLocaleString('pt-BR')} · pensamento ${r.total.tokThoughts.toLocaleString('pt-BR')}</p>
+<p class="aviso"><b>Onde o dinheiro vai:</b> o <code>system-prompt.md</code> (~${r.systemPromptTokens} tokens, as instruções da Manu) é
+reenviado em <b>toda</b> chamada — a API não tem memória. Isso é <b>~${r.systemPromptPct}%</b> dos tokens de entrada
+desta janela. Sua mensagem de texto é ~30 tokens; o que pesa é o manual que viaja junto.
+Em produção isso é <b>cacheado</b> (10× mais barato na parte fixa) — ver research 017 §5.</p>
 <p><b>Preço usado:</b> $${r.precoAtual.input}/1M entrada · $${r.precoAtual.output}/1M saída · calibração ×${r.calibracao}</p>
 <p class="aviso">${r.aviso}</p>
 <p class="aviso"><b>Calibrar:</b> converse um pouco, anote o total daqui, compare com o delta do painel de
