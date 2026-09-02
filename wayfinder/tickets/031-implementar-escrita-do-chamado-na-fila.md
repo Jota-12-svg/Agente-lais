@@ -4,8 +4,16 @@ title: Implementar a escrita do chamado do agente na aba de fila (Sheets API)
 labels: [wayfinder:task]
 status: open
 assignee:
-blocked-by: ["004"]
+blocked-by: ["035"]
 ---
+
+> **Reenquadrado em 2026-09-02 — ver [035](035-plataforma-central-das-consultoras.md).** O
+> dono decidiu que a fila vive numa plataforma sobre o **Supabase**, não numa aba da
+> planilha. A **intenção deste ticket continua** — o agente escreve o chamado quando escala
+> —, mas o alvo muda de **Sheets API v4** para **Supabase**, o que elimina a conta de
+> serviço + a delegação de domínio discutidas abaixo. Bloqueado pelo 035 (esquema da tabela
+> e stack); segue dependendo da arquitetura do runtime para o ponto de integração no código.
+> O texto abaixo é o desenho antigo (Sheets), mantido como histórico.
 
 ## Question
 

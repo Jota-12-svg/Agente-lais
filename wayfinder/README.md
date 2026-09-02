@@ -22,22 +22,23 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 | 020 | [Perguntas a levar às consultoras](tickets/020-perguntas-para-as-consultoras.md) | task |
 | 021 | [Instagram como porta de entrada para o WhatsApp](tickets/021-instagram-porta-de-entrada.md) | task |
 | 027 | [Testar a conexão self-hosted como dispositivo adicional, antes de tocar no número da loja](tickets/027-testar-self-hosted-no-numero-atual.md) | task |
-| 030 | [Implementar o script de notificação da fila (Apps Script)](tickets/030-implementar-notificacao-da-fila.md) | task |
-| 031 | [Implementar a escrita do chamado do agente na aba de fila (Sheets API)](tickets/031-implementar-escrita-do-chamado-na-fila.md) | task |
 | 032 | [Obter o catálogo do Mainô e exemplos de planilha de arquiteto](tickets/032-catalogo-do-maino-e-planilha-de-arquiteto.md) | task |
 | 033 | [Manual do agente para as consultoras — que forma toma e o que cobre](tickets/033-manual-do-agente-para-as-consultoras.md) | grilling |
+| 035 | [Plataforma central das consultoras — substrato da fila e desfecho](tickets/035-plataforma-central-das-consultoras.md) | grilling |
 
 > **033** entra desbloqueado, mas com resolução em dois momentos: o grilling (forma, público,
 > estrutura, o que se pede às consultoras) roda agora; a redação do manual vira o ticket **034**,
 > bloqueado por 011, 013, 014 e por uma decisão de estratégia de rollout.
 >
+> **035** (2026-09-02): o dono decidiu tirar a fila de chamados da planilha compartilhada e
+> pô-la numa plataforma própria sobre o Supabase (v1: fila + marcar desfecho). Grilling
+> decide canal de aviso, login, stack, esquema e taxonomia de desfecho. **Reenquadra
+> 029/030/031** — 030 e 031 foram para Bloqueados. (Nasceu como "033" numa sessão paralela;
+> renumerado para 035 na reconciliação — ver nota no topo do ticket.)
+>
 > **004 foi dividido** (2026-08-30): a planilha de clientes foi inspecionada e o 004 fechou; o
 > catálogo do Mainô e as planilhas de arquiteto foram para o **032**, que segue aberto e ainda
 > bloqueia **011**.
->
-> **030 e 031** saíram de Bloqueados com o fechamento do 004, mas ainda dependem de **acesso de
-> edição à planilha viva do Google** — pendência dentro do escopo deles, não um bloqueio de
-> ticket.
 
 ## Bloqueados
 
@@ -45,6 +46,8 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 |---|---|---|---|
 | 011 | [O que o agente pode afirmar sobre produto e disponibilidade](tickets/011-o-que-o-agente-pode-dizer-sobre-produto.md) | grilling | 032 |
 | 019 | [De quais dispositivos a consultora pode responder sem cegar o agente](tickets/019-companion-windows-ponto-cego.md) | task | **em pausa** — premissa (Coexistence) não é mais o caminho; ver 016 |
+| 030 | [Implementar o script de notificação da fila (Apps Script)](tickets/030-implementar-notificacao-da-fila.md) | task | 035 — desenho antigo (planilha) obsoleto; reescreve ou fecha ao resolver o 035 |
+| 031 | [Implementar a escrita do chamado do agente na fila](tickets/031-implementar-escrita-do-chamado-na-fila.md) | task | 035 — alvo muda de Sheets API para Supabase |
 
 ## Fechados
 

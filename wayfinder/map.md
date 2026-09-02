@@ -237,7 +237,11 @@ Névoa em escopo, ainda sem nitidez para virar ticket:
   com ela é um segundo fluxo inteiro, não uma variação do primeiro. Só ganha nitidez depois
   de ver planilhas reais — ticket [032](tickets/032-catalogo-do-maino-e-planilha-de-arquiteto.md).
 - **Superfície para as consultoras.** Como elas veem, corrigem e assumem uma conversa do
-  agente; como marcam que uma venda aconteceu.
+  agente; como marcam que uma venda aconteceu. **Parcialmente endereçada pelo ticket
+  [035](tickets/035-plataforma-central-das-consultoras.md)** (2026-09-02): o dono decidiu
+  substituir a fila-na-planilha por uma plataforma própria sobre o Supabase — v1 cobre ver a
+  fila, assumir e marcar desfecho. Ver/corrigir a conversa dentro da plataforma continua na
+  névoa. Reenquadra os tickets 029/030/031.
 - **LGPD.** Consentimento, retenção e o que pode ser guardado de conversa de cliente.
 - **Estratégia de rollout.** Piloto com uma consultora, horário limitado, fallback quando
   o agente falha.

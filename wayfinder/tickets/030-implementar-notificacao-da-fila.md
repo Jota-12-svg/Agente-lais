@@ -4,8 +4,15 @@ title: Implementar o script de notificação da fila (Apps Script)
 labels: [wayfinder:task]
 status: open
 assignee:
-blocked-by: ["004"]
+blocked-by: ["035"]
 ---
+
+> **Suspenso em 2026-09-02 — ver [035](035-plataforma-central-das-consultoras.md).** O dono
+> decidiu tirar a fila da planilha compartilhada e pô-la numa plataforma própria sobre o
+> Supabase. Um Apps Script vinculado ao Google Sheet, varrendo a aba de fila, **deixa de
+> fazer sentido**. Este ticket fica bloqueado pelo 035: ao fechar o 035, ou é reescrito para
+> o canal de aviso escolhido (Telegram / e-mail / web push) ou é fechado como substituído.
+> O que segue abaixo descreve o desenho antigo (planilha) e está mantido só como histórico.
 
 ## Question
 
