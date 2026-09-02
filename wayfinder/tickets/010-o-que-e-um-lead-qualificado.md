@@ -182,3 +182,96 @@ escrita — tickets 030/031.
 
 Entrou em [`CONTEXT.md`](../../CONTEXT.md) o termo **Atendimento qualificado**
 (`qualified_engagement`), e a linha "Lead qualificado" saiu de "Ainda sem definição".
+
+---
+
+## Addendum — 2026-09-01 · o lookup por telefone não alcança consumidor final
+
+> Esta seção **substitui**, na resolução acima: a linha "Já é cliente da casa | lookup na
+> planilha pelo telefone" da tabela de campos, a subseção "Contato que já é cliente da casa",
+> e a menção a "cliente conhecido → escala para a dona" onde ela aparecer. Sessão de grilling
+> em 2026-09-01 com o dono do projeto. O ticket **continua `closed`** — o addendum documenta a
+> revisão, não reabre.
+
+### O que motivou
+
+A inspeção da planilha (ver `## Resolução` do ticket
+[004](004-acesso-a-planilha-e-ao-catalogo.md)) mostrou que **não existe chave de contato para
+consumidor final** na planilha: as listas `CLIENTE FINAL` das abas das consultoras somam ~30
+nomes, sem telefone. Onde há telefone confiável (`LISTA DE PROFISSIONAIS COMPLETA`, `GERAL`,
+`CONTATO` da JOSLAINE) são **arquitetos**. O lookup "esse número já é cliente da consultora
+X?" não é viável para consumidor final na fase 1 — e não é só falta de acesso ao Google
+Sheets: o dado não existe hoje.
+
+### 1. O lookup vira match contra o diretório de arquitetos
+
+O único casamento por telefone que a planilha sustenta é contra o **diretório de arquitetos**
+(`LISTA DE PROFISSIONAIS COMPLETA`, `GERAL`, `CONTATO` da JOSLAINE). Ele entra como **sinal
+secundário e best-effort** de classificação do modo:
+
+- Se o número do contato bate num escritório do diretório, o agente trata o atendimento como
+  **arquiteto** e aplica a regra do arquiteto (escala na hora, com o mínimo).
+- Se não bate, o agente **não conclui nada** — a maioria dos arquitetos não vai estar num
+  diretório com telefone certo, e a normalização de telefone da planilha é imperfeita (formatos
+  variados — ver 004).
+- O match **nunca é pré-requisito**: se a planilha estiver indisponível em runtime, o
+  atendimento segue normal. Acesso de leitura à planilha viva vem no setup do agente na loja.
+- Consistente com o "na dúvida escala" do mapa: um falso positivo custa uma escalada a mais,
+  que é o erro barato.
+
+Na tabela de campos, a linha "Já é cliente da casa | lookup na planilha pelo telefone |
+automático" é **substituída** por:
+
+| Campo | Origem | Peso |
+|---|---|---|
+| Provável arquiteto | match do telefone no diretório de arquitetos da planilha | automático, best-effort — se bate, aplica a regra do arquiteto |
+
+### 2. "Cliente conhecido" cai da fase 1 para consumidor final
+
+A subseção "Contato que já é cliente da casa" tinha o lookup por telefone como **único
+gatilho**. Sem ele:
+
+- **Todo atendimento de consumidor final é tratado como contato novo** → chamado no
+  **rodízio**. O agente não tenta adivinhar o vínculo cliente↔consultora — ele não tem dado
+  para saber.
+- O **reconhecimento de cliente pré-agente é da consultora**: quando ela pega o chamado e
+  abre o chat, o histórico do WhatsApp está ali; se for cliente dela, ela assume. Isso sempre
+  foi decisão do rodízio, não do agente.
+- A **memória do próprio agente** (Supabase) entra como sinal real quando o schema existir
+  (névoa do mapa) e o agente tiver histórico — aí "já foi atendido pelo agente antes" passa a
+  valer. Não cobre cliente pré-agente e não é deste addendum.
+
+A escala para a consultora dona furando o rodízio **permanece** para o caso do arquiteto
+identificado pelo diretório — mas esse caso já escala de qualquer forma pela regra do
+arquiteto, então na prática o rodízio de contato novo passa a ser o caminho único do
+consumidor final na fase 1.
+
+### 3. A pergunta do modo passa a ser deliberada
+
+O 010 tratava o modo como "pergunta natural encaixada". Ele é o campo que **decide se o agente
+continua ou escala**, então ganha tratamento à parte:
+
+- **Momento**: turno 1, sempre. O agente responde ao que o cliente trouxe **e** inclui a
+  pergunta do modo na mesma primeira resposta — não é pergunta solta (regra 2 de condução),
+  mas também não fica para depois. Pulada só quando o cliente já se classificou sozinho
+  (falou em "projeto", "meu cliente", mandou planilha, citou RT, ou bateu no diretório).
+- **Forma**: a pergunta **nomeia as duas categorias explicitamente** — do tipo "é para a sua
+  casa ou você é arquiteto/designer montando um projeto para um cliente?" —, em vez de
+  insinuar ("é para sua casa ou um projeto?"). As duas trilhas têm de aparecer nomeadas. A
+  redação exata fica no ticket [014](014-como-o-agente-soa.md).
+- **Quando fica sem resposta**: depende do que o cliente diz em vez de responder. Se ele segue
+  falando como consumidor final (a própria casa, um ambiente, um item), não é ambiguidade
+  real — o agente segue qualificando como consumidor final (o default da fase 1) e a
+  consultora corrige ao assumir se preciso. Se aparece qualquer sinal de projeto/profissional
+  (fala em "cliente", vários ambientes, contexto de obra), o agente **escala**. O agente tenta
+  a pergunta no máximo mais uma vez, encaixada.
+
+Isso substitui, na tabela de campos, a célula "Modo do atendimento → pergunta natural ('é para
+sua casa ou para um projeto?')".
+
+### Vocabulário
+
+A entrada **`Atendimento qualificado`** do [`CONTEXT.md`](../../CONTEXT.md) dizia "cliente
+conhecido → chamado para a consultora dona". Isso **sai para consumidor final**: contato novo
+→ rodízio é o caminho único. A escala para a consultora dona fica só para o arquiteto
+identificado (que já escala pela regra do arquiteto).

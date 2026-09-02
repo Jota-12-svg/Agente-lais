@@ -60,8 +60,9 @@ _Avoid_: triagem, pré-venda, filtro.
 Um **atendimento** com o suficiente para a consultora priorizar e assumir sem recomeçar: nome,
 o que a pessoa quer e para quando; orçamento e origem entram se vierem à tona, não travam.
 É o gatilho de **escalada** "por completude" — distinto dos gatilhos por evento (compra,
-irritação, planilha) do ticket 012. Contato novo → chamado no **rodízio**; cliente conhecido →
-chamado para a consultora dona. Ticket
+irritação, planilha) do ticket 012. Na fase 1, consumidor final → chamado no **rodízio**
+(contato novo é o caminho único: o agente não tem dado para reconhecer cliente antigo — ver
+addendum do 010); arquiteto identificado → escala pela regra do arquiteto. Ticket
 [010](wayfinder/tickets/010-o-que-e-um-lead-qualificado.md).
 _Avoid_: lead qualificado, lead quente, oportunidade.
 

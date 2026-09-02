@@ -153,6 +153,12 @@ prototipagem, `/prototype`. Em tickets de research, `/research` como subagente.
   **relance** na fila do 012 (telefone, nome, o que quer, para quando, orçamento, novo/cliente,
   horário, gatilho), nunca a conversa inteira (essa fica no próprio WhatsApp); o agente jamais
   escreve nas abas das consultoras. Vocabulário: `Atendimento qualificado` no `CONTEXT.md`.
+  **Addendum 2026-09-01** (grilling, após o 004): o lookup por telefone não alcança consumidor
+  final — vira match best-effort contra o diretório de arquitetos (sinal de classificação, não
+  "já é cliente"). "Cliente conhecido → escala para a dona" cai para consumidor final: fase 1
+  trata todo consumidor final como contato novo (rodízio); reconhecer cliente pré-agente é da
+  consultora. A pergunta do modo passa a ser deliberada — turno 1 sempre, as duas categorias
+  (casa própria / arquiteto) nomeadas explicitamente.
 - [Canal de notificação da fila de chamados](tickets/029-canal-de-notificacao-da-fila.md) —
   **e-mail via Apps Script, disparado por trigger de tempo (time-driven, até 1x/minuto)**, não
   pelas Notificações nativas do Sheets nem por `onEdit`/`onChange`: a documentação oficial do
