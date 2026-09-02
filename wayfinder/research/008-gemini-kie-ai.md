@@ -481,7 +481,7 @@ consumed in any rolling 60-minute window. Requests are paused once the cap is re
 um teto diário 00:00–24:00 UTC (fonte: painel descrito em https://kie.ai/gemini-3-pro).
 Útil como trava de segurança contra loop de custo — vale configurar.
 
-**20 req/10 s é folgado para o volume da Lais Casa.** Não é o gargalo.
+**20 req/10 s é folgado para o volume da Lais Aliski Casa.** Não é o gargalo.
 
 ### 5.2. Erros
 
@@ -712,7 +712,7 @@ Razões, em ordem de peso:
 
 - **LGPD.** O tier pago da Google declara por escrito que **não** usa os dados para treinar
   (https://ai.google.dev/gemini-api/docs/pricing). A kie.ai não declara nada equivalente e
-  não tem DPA público. Conversa de cliente da Lais Casa passa a trafegar por um
+  não tem DPA público. Conversa de cliente da Lais Aliski Casa passa a trafegar por um
   intermediário não contratado — isso é risco jurídico, não economia.
 - **Cache de contexto.** O agente vai reenviar prompt de sistema + tom das consultoras +
   catálogo a cada turno. Com cache, a Google cobra $0,05/1M em vez de $0,50/1M — 10×

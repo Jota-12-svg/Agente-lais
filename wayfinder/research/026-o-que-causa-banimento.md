@@ -233,7 +233,7 @@ sendo procurada por muita gente) não é sinal de risco — só volume **enviado
 `azeezeladl`](https://github.com/WhiskeySockets/Baileys/issues/2441#issuecomment)]**: enviar
 mensagem para um número que **não existe no WhatsApp** também consome o orçamento de reach-out e
 pode acionar `RESTRICT_ALL_COMPANIONS`/463. Mitigação sugerida no próprio comentário: sempre
-validar com `sock.onWhatsApp(jid)` antes de enviar. **Relevância direta para a Lais Casa:** um
+validar com `sock.onWhatsApp(jid)` antes de enviar. **Relevância direta para a Lais Aliski Casa:** um
 número de cliente digitado errado na qualificação, ou um contato que trocou de número, é o tipo de
 evento cotidiano de uma loja pequena — não é hipotético.
 
@@ -249,7 +249,7 @@ vale registrar caso o escopo mude.
 **[primária, documentação oficial de configuração do Baileys, via busca — não confirmado com
 citação textual exata nesta pesquisa]** A documentação recomenda fornecer um cache
 (`cachedGroupMetadata`) ao socket, porque requisições repetidas de metadado de grupo colaboram
-para limite de taxa. Relevância marginal para o agente da Lais Casa (não opera em grupo).
+para limite de taxa. Relevância marginal para o agente da Lais Aliski Casa (não opera em grupo).
 
 ### Loop de reconexão / instabilidade de infraestrutura
 
@@ -293,7 +293,7 @@ recorrente, não mecanismo confirmado.
 **[sem confirmação, pergunta em aberto]** Um usuário (`crsolver`) perguntou diretamente na issue
 #810 se o problema acontece "porque uma máquina está gerenciando várias contas" — a pergunta ficou
 sem resposta na thread. Não há dado desta pesquisa que confirme ou refute esse eixo especificamente
-para o caso de uma única conexão (que é o caso da Lais Casa).
+para o caso de uma única conexão (que é o caso da Lais Aliski Casa).
 
 ### Meta Verified reduzindo avisos
 
@@ -332,7 +332,7 @@ peças de evidência mais fortes, uma a favor e uma contra a leitura absoluta:
   problema, não a *elimina*, e a Meta muda o sistema de detecção ao longo do tempo.
 - Não há, nesta pesquisa nem na anterior, nenhuma fonte que confirme especificamente se conectar
   como dispositivo vinculado a uma conta **WhatsApp Business Premium, com anos de uso humano real,
-  já com múltiplos dispositivos ativos** (o cenário exato da Lais Casa, mapeado no research 024)
+  já com múltiplos dispositivos ativos** (o cenário exato da Lais Aliski Casa, mapeado no research 024)
   se comporta melhor que uma sessão isolada nova. A leitura mais honesta: os dois achados acima
   são sobre *idade da sessão do cliente não-oficial em si*, não sobre *idade da conta humana por
   trás dela* — são coisas relacionadas, mas não confirmadas como idênticas. É plausível, por
@@ -397,7 +397,7 @@ sem verificação técnica; **[comercial]** = fonte que vende algo relacionado a
    mecanismo, mas de baixo custo e alta repetição na comunidade.
 9. **Nunca processar mais de um atendimento por vez de forma que pareça simultaneidade
    sobre-humana (múltiplas respostas instantâneas em paralelo).** **[heurística de comunidade]** —
-   consistente com o modelo de negócio real da Lais Casa (`Atendimento` já é a unidade de trabalho
+   consistente com o modelo de negócio real da Lais Aliski Casa (`Atendimento` já é a unidade de trabalho
    no `CONTEXT.md`; a loja atende uma conversa de cada vez por natureza), então esta regra
    praticamente já nasce satisfeita pelo desenho do domínio — vale garantir que a implementação não
    introduza paralelismo artificial (ex.: fila de mensagens processada em lote).
@@ -437,7 +437,7 @@ sem verificação técnica; **[comercial]** = fonte que vende algo relacionado a
 4. **Não foi possível confirmar se conectar como dispositivo adicional numa conta com anos de
    histórico humano real dilui o risco da sessão nova do agente**, além do que já foi encontrado
    sobre idade da sessão isolada (ver seção específica acima) — esta é a lacuna mais relevante para
-   a decisão concreta da Lais Casa, e só se fecha testando.
+   a decisão concreta da Lais Aliski Casa, e só se fecha testando.
 5. **Nenhuma fonte consultada mede o efeito real de jitter, simulação de presença ou variação de
    texto separadamente do efeito de evitar contato frio** — é possível que essas práticas
    contribuam pouco isoladamente, e a pesquisa não tem como separar o efeito de cada uma.
@@ -475,7 +475,7 @@ consideraria administrável** — combinando as regras de alta confiança da se�
 3. Validação de número antes de qualquer envio.
 4. Monitoramento ativo de erro 463 e de desconexão forçada, com escalonamento humano imediato se
    aparecerem — não descoberto pela primeira vez em produção.
-5. Um atendimento por vez, sem paralelismo artificial — que o desenho do domínio da Lais Casa já
+5. Um atendimento por vez, sem paralelismo artificial — que o desenho do domínio da Lais Aliski Casa já
    favorece por natureza.
 6. Hospedagem estável, IP brasileiro, sem reconexões frequentes.
 7. Jitter de resposta e simulação de `composing` — baixo custo, heurística plausível, mesmo sem

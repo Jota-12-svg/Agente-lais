@@ -57,7 +57,7 @@ R$299/mês, Zenvia mais cara ainda).
    Coexistence. Custo: **zero de parceiro**, e a tarifa da própria Meta continua ~R$0 na fase 1
    (já estabelecido em research 005) porque o limite de mensagens não-tarifadas do plano
    verificado sobe de 250/dia (não verificado) para 2.000/dia após verificação de negócio —
-   folgado para o volume da Lais Casa.
+   folgado para o volume da Lais Aliski Casa.
 4. **Implicação operacional do número paralelo:** é um número WhatsApp **fisicamente distinto**
    do que as consultoras usam hoje. Não há mecanismo documentado de "mesclar" duas contas do
    WhatsApp em uma só — número é identidade permanente. Isso significa que a escalada do agente
@@ -253,7 +253,7 @@ Envolve: passar por App Review (que pede demonstração de uso — potencialment
 não é uma empresa de software), assumir sozinho tudo que hoje um BSP entrega pronto (endpoint de
 webhook, tratamento de `history`/`smb_app_state_sync`/`smb_message_echoes`, monitoramento de
 sessão do Embedded Signup), e aceitar risco de a Meta não aprovar ou, pior, aprovar e depois
-reavaliar o status. **Não recomendo este caminho para a Lais Casa** sem uma confirmação direta
+reavaliar o status. **Não recomendo este caminho para a Lais Aliski Casa** sem uma confirmação direta
 com o suporte de parceiros da Meta — o retorno (evitar uma mensalidade de R$60–300) não parece
 compensar o risco de ficar no meio de uma revisão de App Review sem suporte de ninguém.
 
@@ -262,7 +262,7 @@ compensar o risco de ficar no meio de uma revisão de App Review sem suporte de 
 **Não encontrei nenhum programa oficial da Meta de isenção de custo de onboarding para pequenas
 empresas**, nem em `developers.facebook.com` nem em buscas gerais. O que existe e já responde à
 mesma necessidade é estrutural, não um "programa": a Cloud API em si já não cobra nada além da
-tarifa por mensagem (que a fase 1 da Lais Casa paga ~R$0), e a verificação de negócio é grátis
+tarifa por mensagem (que a fase 1 da Lais Aliski Casa paga ~R$0), e a verificação de negócio é grátis
 para qualquer tamanho de empresa — não há um tier "pequena empresa" porque o tier padrão já é
 gratuito de plataforma. **Isso é uma lacuna genuína**: não é possível provar a ausência de um
 programa assim só com busca; é possível apenas dizer que nenhuma fonte encontrada o menciona.
@@ -357,7 +357,7 @@ nenhum BSP, e que nenhum dos dois caminhos investigados neste research elimina.
    360dialog/Zenvia/Blip tiveram no research 016. Precisaria de uma rodada de verificação
    própria antes de entrar em qualquer comparativo final.
 4. **Migração de um número Cloud-API-only para dentro de Coexistence depois.** Não documentado
-   por ninguém — Meta, 360dialog, ou qualquer parceiro pesquisado. Ponto crítico se a Lais Casa
+   por ninguém — Meta, 360dialog, ou qualquer parceiro pesquisado. Ponto crítico se a Lais Aliski Casa
    quiser começar pelo número paralelo (mais barato, mais simples) e mesclar os mundos depois.
 5. **Nenhum caso real relatado** (fórum, comunidade de desenvolvedores) de uma pequena empresa
    brasileira tendo virado seu próprio Tech Provider com sucesso, ou tendo sido barrada. A busca

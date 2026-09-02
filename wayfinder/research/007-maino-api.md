@@ -40,7 +40,7 @@ exatamente o que um cliente de decoração pergunta ("cabe na minha mesa?", "tem
 material?"). Material não tem campo próprio — pode estar em `descricao_ecommerce` ou em
 `propriedades`, a confirmar com dados reais.
 
-> ⚠️ **Os campos de estoque existem na API, mas não valem nada aqui.** A Lais Casa não faz
+> ⚠️ **Os campos de estoque existem na API, mas não valem nada aqui.** A Lais Aliski Casa não faz
 > controle de estoque — o estoque é o que está à vista na loja. Um `qtde` desatualizado ou
 > zerado é pior que campo ausente, porque *parece* confiável. **A regra do mapa continua
 > valendo integralmente: o agente não afirma disponibilidade**, mesmo com esse campo à mão.
@@ -102,7 +102,7 @@ Isso importa mais para a fase 2 do que para agora.
 Estes pontos exigem a chave de API em mãos e dados reais — não se resolvem por documentação:
 
 1. Se `descricao_ecommerce`, `imagens` e `propriedades` estão **preenchidos** no cadastro da
-   Lais Casa, ou se o cadastro tem só o mínimo fiscal. Um catálogo rico na API mas vazio na
+   Lais Aliski Casa, ou se o cadastro tem só o mínimo fiscal. Um catálogo rico na API mas vazio na
    prática não serve para nada.
 2. Se o filtro de destinatário aceita **CPF**, para conciliar venda a consumidor final.
 3. Quantos produtos existem no cadastro.

@@ -122,7 +122,7 @@ Google Workspace Updates blog, setembro de 2025]**
   `@gmail.com` não têm acesso**, tanto para configurar quanto (segundo relatos de usuário na
   comunidade oficial de suporte, **[secundária]**) mesmo como destinatário em alguns fluxos.
 
-**Consequência prática para a Lais Casa:** o recurso mais rico (restrição por aba, conteúdo
+**Consequência prática para a Lais Aliski Casa:** o recurso mais rico (restrição por aba, conteúdo
 detalhado) só existe se **quem é dona/editora da planilha compartilhada** tiver conta Google
 Workspace paga. O ticket [004](../tickets/004-acesso-a-planilha-e-ao-catalogo.md), ainda aberto,
 não confirmou em que tipo de conta a planilha vive — só se sabe que as consultoras individualmente
@@ -207,7 +207,7 @@ humano na UI, por outro Apps Script, ou pela Sheets API v4 do agente. Não há d
 | Tempo total de execução de triggers | 90 min/dia | 6 h/dia |
 | Nº de triggers por usuário/script | 20 | 20 |
 
-Para o volume da Lais Casa — uma fila de chamados escalados de uma loja de médio porte, quase
+Para o volume da Lais Aliski Casa — uma fila de chamados escalados de uma loja de médio porte, quase
 certamente na casa de poucas unidades por dia, não centenas — **essas quotas sobram com folga
 larga**, mesmo no plano de conta pessoal `@gmail.com` mais restrito (relevante, porque tanto as
 consultoras quanto, possivelmente, a conta dona da planilha usam Gmail comum, não Workspace, como

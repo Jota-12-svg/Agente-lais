@@ -53,7 +53,7 @@ async function start() {
     logger,
     // Nome que aparece na lista "Dispositivos vinculados" do WhatsApp — deixe
     // claro que é o dispositivo de teste, para não confundir com o agente real.
-    browser: ['Lais Casa - Teste 027', 'Chrome', '1.0.0'],
+    browser: ['Lais Aliski Casa - Teste 027', 'Chrome', '1.0.0'],
     printQRInTerminal: false,
   })
 

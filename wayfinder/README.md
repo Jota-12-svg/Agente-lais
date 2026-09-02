@@ -1,4 +1,4 @@
-# Tracker — Agente de WhatsApp da Lais Casa
+# Tracker — Agente de WhatsApp da Lais Aliski Casa
 
 Tracker local em markdown (nenhum tracker de issues foi configurado neste repositório).
 
@@ -59,7 +59,7 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 | 006 | [O que a integração com Google Calendar exige](tickets/006-integracao-com-google-calendar.md) | research | [research/006](research/006-google-calendar.md) |
 | 007 | [O Maino tem API? O que dá para ler de lá](tickets/007-maino-tem-api.md) | research | [research/007](research/007-maino-api.md) |
 | 008 | [Contrato real da API do Gemini via kie.ai](tickets/008-contrato-da-api-do-gemini.md) | research | [research/008](research/008-gemini-kie-ai.md) |
-| 009 | [Como funciona o atendimento da Lais Casa hoje, ponta a ponta](tickets/009-como-funciona-o-atendimento-hoje.md) | grilling | vocabulário em [`CONTEXT.md`](../CONTEXT.md); abriu 019, 020 e 021 |
+| 009 | [Como funciona o atendimento da Lais Aliski Casa hoje, ponta a ponta](tickets/009-como-funciona-o-atendimento-hoje.md) | grilling | vocabulário em [`CONTEXT.md`](../CONTEXT.md); abriu 019, 020 e 021 |
 | 010 | [O que é um lead qualificado e que dados o agente extrai](tickets/010-o-que-e-um-lead-qualificado.md) | grilling | agente não é formulário; campos núcleo + oportunistas, nada obrigatório; Supabase interno + relance na fila do 012; `Atendimento qualificado` no `CONTEXT.md` · **addendum 2026-09-01**: lookup por telefone só p/ diretório de arquitetos, pergunta do modo deliberada |
 | 017 | [Decidir o provedor de LLM e habilitar o billing](tickets/017-provedor-de-llm-e-billing.md) | task | chave do `.env` já no tier pago (`serviceTier: standard`); modelo `gemini-3.6-flash` (o `gemini-3-flash` do 008 sumiu), `thinking_level: "minimal"`; `flash-lite` como plano B; research 017 — desbloqueou 018 |
 | 002 | [Inventariar e limpar o projeto Supabase](tickets/002-limpar-o-projeto-supabase.md) | task | schema `app` e papéis do projeto anterior apagados; banco em estado virgem |

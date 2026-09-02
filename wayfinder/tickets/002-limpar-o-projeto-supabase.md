@@ -24,7 +24,7 @@ explícito**:
 
 Perguntas que o inventário precisa responder antes de qualquer `drop`:
 
-- Existe algum dado real de cliente da Lais Casa ali, ou é tudo de teste?
+- Existe algum dado real de cliente da Lais Aliski Casa ali, ou é tudo de teste?
 - Vale reaproveitar o projeto Supabase, ou é mais limpo criar um projeto novo e trocar as
   credenciais? (Projeto novo elimina resíduo invisível — papéis, extensões, configurações
   de auth — que um `drop schema` não pega.)
@@ -50,7 +50,7 @@ tabelas — claramente do projeto anterior (plataforma multi-loja):
 
 | Tabela | Linhas | Nota |
 |---|---|---|
-| `app.stores` | 3 | `Ótica Visão Clara`, `Ateliê Manola`, `Clínica Bem Estar` — nenhuma é a Lais Casa |
+| `app.stores` | 3 | `Ótica Visão Clara`, `Ateliê Manola`, `Clínica Bem Estar` — nenhuma é a Lais Aliski Casa |
 | `app.customers` | 4 | 3 com UUID determinístico de seed (`c0000000-…-0000000000{1,2,3}`), 1 com UUID aleatório criado em 2026-08-05, ligado à `Ateliê Manola` |
 | `app.conversations` | 2 | |
 | `app.messages` | 11 | |
@@ -60,11 +60,11 @@ tabelas — claramente do projeto anterior (plataforma multi-loja):
 
 `auth.users`: **0**. `storage.buckets` e `storage.objects`: **0**.
 
-**Resposta à primeira pergunta do ticket:** não há dado de cliente da Lais Casa ali — os 3
+**Resposta à primeira pergunta do ticket:** não há dado de cliente da Lais Aliski Casa ali — os 3
 schemas de loja e os 4 registros de cliente pertencem todos a negócios do projeto anterior
 (ótica, ateliê, clínica), nenhum é decoração/mobiliário. 3 dos 4 clientes têm UUID de seed
 (dado sintético, claramente de script de setup); o quarto (criado 3 dias depois, UUID
-aleatório) pode ser um teste manual do dono do projeto — mesmo assim, não é Lais Casa.
+aleatório) pode ser um teste manual do dono do projeto — mesmo assim, não é Lais Aliski Casa.
 
 ### Papéis de banco
 
@@ -104,7 +104,7 @@ qual for.
 2. **Remover os papéis `agent_runtime` e `platform_worker`** — a primeira migração deste
    projeto vai recriá-los do zero, então não há nada a preservar neles.
 3. Confirmar se o `app.customers` com UUID aleatório (criado em 2026-08-05) merece uma
-   olhada antes de apagar, ou se pode ir junto — não é dado da Lais Casa, mas pode ser um
+   olhada antes de apagar, ou se pode ir junto — não é dado da Lais Aliski Casa, mas pode ser um
    teste que o dono do projeto queira revisar primeiro.
 
 Sem esse aval, o ticket fica **aberto com o inventário registrado** — a segunda metade
@@ -151,7 +151,7 @@ perigosa do `.env` sem necessidade.
 
 **O que existia:** um schema próprio (`app`, 7 tabelas, 9 policies de RLS, 1 função, 53
 registros) e dois papéis de login (`agent_runtime`, `platform_worker`) — tudo do projeto
-anterior (lojas de ótica, ateliê e clínica; nenhuma é a Lais Casa). RLS estava ligado e
+anterior (lojas de ótica, ateliê e clínica; nenhuma é a Lais Aliski Casa). RLS estava ligado e
 forçado; não havia Edge Function, `pg_cron`, webhook nem segredo no Vault.
 
 **O que foi apagado:** `DROP SCHEMA app CASCADE` (tabelas, função, policies e os 53 registros

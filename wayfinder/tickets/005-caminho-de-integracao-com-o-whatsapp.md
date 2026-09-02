@@ -9,7 +9,7 @@ blocked-by: []
 
 ## Question
 
-A Lais Casa usa o **app do WhatsApp Business**, presente no celular de todas as
+A Lais Aliski Casa usa o **app do WhatsApp Business**, presente no celular de todas as
 consultoras. O agente precisa entrar nesse canal — e é aí que está o conflito: **um número
 não pode estar simultaneamente no app do WhatsApp Business e na Cloud API da Meta**.
 Migrar o número para a API tira o app das mãos das consultoras, junto com o histórico e as

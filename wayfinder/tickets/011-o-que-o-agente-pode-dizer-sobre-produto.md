@@ -9,7 +9,7 @@ blocked-by: ["009", "032"]  # ambos closed — ticket desbloqueado (ver ## Dire�
 
 ## Question
 
-A Lais Casa **não tem controle de estoque**: o que está à vista na loja é o estoque, e as
+A Lais Aliski Casa **não tem controle de estoque**: o que está à vista na loja é o estoque, e as
 consultoras conferem a olho. Isso cria o risco mais concreto do projeto — um agente
 respondendo "temos sim" sobre um item de R$ 30 mil que não existe, para um arquiteto que
 vai montar um projeto em cima disso.

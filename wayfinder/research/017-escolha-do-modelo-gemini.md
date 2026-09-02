@@ -266,7 +266,7 @@ Fonte: https://ai.google.dev/gemini-api/docs/rate-limits (consultada em 2026-09-
 - **Ordem de grandeza para o Tier 1 (fóruns oficiais, fonte secundária):** para
   `gemini-3.5-flash` no Tier 1, relatos citam **~1.000 RPM / ~1–2M TPM** e RPD alto.
   Fonte: https://discuss.ai.google.dev/t/rpm-tpm-rpd-and-quota-exceed/111179
-- **Isto não é gargalo para a Lais Casa.** 500 atendimentos/mês, ~10 turnos cada = ~5.000
+- **Isto não é gargalo para a Lais Aliski Casa.** 500 atendimentos/mês, ~10 turnos cada = ~5.000
   chamadas/mês ≈ **~7 chamadas/hora em média**, dezenas no pico. Qualquer tier pago cobre
   com folga de várias ordens de grandeza. O número real do projeto está no painel do AI
   Studio depois que o billing entra — **confirmar lá, não é decisão de arquitetura**.
@@ -440,7 +440,7 @@ de grandeza de rate limit):
 
 ## 11. Precificação no cenário real (~10 atendimentos/dia)
 
-> **Por que esta seção existe.** A dona da Lais Casa fixou o volume: **no máximo ~10
+> **Por que esta seção existe.** A dona da Lais Aliski Casa fixou o volume: **no máximo ~10
 > atendimentos/dia** (~200–300/mês), não os ~500/mês que o research 008 assumiu. E a Fase 1
 > é **só qualificação** — extrai nome / o que procura / prazo / consumidor-final-ou-arquiteto,
 > responde dúvida simples e **escala**. Não vende, não negocia. Logo: **conversa curta,

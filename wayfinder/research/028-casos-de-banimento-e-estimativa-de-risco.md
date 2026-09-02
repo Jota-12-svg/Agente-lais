@@ -1,6 +1,6 @@
 ---
 ticket: "016"
-title: Catálogo de casos reais de banimento e estimativa de risco para o cenário da Lais Casa
+title: Catálogo de casos reais de banimento e estimativa de risco para o cenário da Lais Aliski Casa
 tipo: research
 data: 2026-08-11
 ---
@@ -12,7 +12,7 @@ amplia o levantamento de casos já feito em
 [research 023](023-comunidade-whatsapp-ia-baixo-custo.md) (pergunta 2) e
 [research 026](026-o-que-causa-banimento.md) (achado do erro 463/tokens), com o objetivo
 específico de responder: **dado tudo que existe publicamente sobre casos reais, que faixa de
-risco — não que número inventado — o cenário da Lais Casa sustenta?**
+risco — não que número inventado — o cenário da Lais Aliski Casa sustenta?**
 
 > **Base desta investigação.** Toda linha da tabela abaixo cita a fonte direta. Onde a fonte é
 > relato de usuário em issue/discussion do GitHub, isso está marcado como **[relato direto]**;
@@ -66,7 +66,7 @@ arquitetura já decidida no ticket 016 — só o bastante para justificar o chec
 como obrigatório, não opcional, e o teste do ticket 027 como pré-requisito antes de produção.
 
 **Nenhuma fonte encontrada nesta pesquisa — incluindo o paper acadêmico — mede uma taxa de
-banimento para o cenário exato da Lais Casa** (dispositivo adicional numa conta Premium com anos
+banimento para o cenário exato da Lais Aliski Casa** (dispositivo adicional numa conta Premium com anos
 de histórico humano, uso reativo de atendimento de loja). Essa combinação específica não foi
 testada por ninguém publicamente. A única forma de fechar essa lacuna continua sendo o teste do
 ticket [027](../tickets/027-testar-self-hosted-no-numero-atual.md).
@@ -253,7 +253,7 @@ em vez de "baixo" ou "alto".
    não confiáveis em research 023) — e essa ausência, confirmada de novo depois de uma busca mais
    ampla, é ela mesma parte da resposta.
 2. **Nenhum caso testa "dispositivo adicional numa conta com múltiplos companions já ativos"** —
-   o arranjo exato da Lais Casa (research 024). Todos os casos catalogados são de sessão única
+   o arranjo exato da Lais Aliski Casa (research 024). Todos os casos catalogados são de sessão única
    nova, não de sessão nova somada a vários dispositivos humanos já conectados.
 3. **O paper acadêmico (NDSS 2026) é a fonte mais confiável encontrada, mas testa ação diferente**
    (consulta de contact-discovery em massa, não troca de mensagens 1:1) — não é seguro
@@ -273,7 +273,7 @@ em vez de "baixo" ou "alto".
 ## Recomendação (não-vinculante — a decisão é do dono do projeto)
 
 A leitura desta pesquisa, somando os ~40 casos catalogados (novos e antigos) ao que os research
-023 e 026 já haviam estabelecido: **a estimativa de risco para o cenário da Lais Casa é
+023 e 026 já haviam estabelecido: **a estimativa de risco para o cenário da Lais Aliski Casa é
 baixo-moderado, não baixo puro** — a pesquisa adicional puxou a leitura ligeiramente para cima em
 relação ao tom mais otimista do research 026, porque encontrou casos novos e concretos (Evolution
 API #1650 e #2497 acima de tudo) em que número antigo e ausência total de atividade não evitaram

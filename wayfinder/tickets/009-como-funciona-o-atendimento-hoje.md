@@ -1,6 +1,6 @@
 ---
 id: "009"
-title: Como funciona o atendimento da Lais Casa hoje, ponta a ponta
+title: Como funciona o atendimento da Lais Aliski Casa hoje, ponta a ponta
 labels: [wayfinder:grilling]
 status: closed
 assignee: sessão 2026-08-10 (grilling com o dono do projeto)
@@ -114,7 +114,7 @@ número já tem dona. Sem as duas, ele distribui errado.
   atribuir por tabela, contradizendo a decisão de não distribuir fora do expediente.
 
 **Consequência de desenho:** o agente precisa saber **o horário real de atendimento da loja**
-— que não está confirmado (o horário comercial no Brasil é 8h–18h, mas o da Lais Casa é
+— que não está confirmado (o horário comercial no Brasil é 8h–18h, mas o da Lais Aliski Casa é
 pergunta aberta) e nem se há atendimento no sábado. Está no roteiro do ticket
 [020](020-perguntas-para-as-consultoras.md), pergunta 20.
 
@@ -199,7 +199,7 @@ adivinham de fora.
 
 ### Transparência — o agente não finge ser gente, mas também não se anuncia robô
 
-- **O agente tem nome próprio e se apresenta como assistente da Lais Casa.** Não finge ser
+- **O agente tem nome próprio e se apresenta como assistente da Lais Aliski Casa.** Não finge ser
   pessoa e não abre a conversa anunciando que é um robô.
 - **Nunca assina como uma consultora.** Se o cliente acredita ter falado com a Fulana e a
   Fulana não faz ideia da conversa, a mentira não é do agente — é da loja.
@@ -361,4 +361,4 @@ Resolução que diz *"Um número compartilhado por 4 pessoas (3 consultoras + a 
   escalar direto), sabe que a Lais é a dona, mas continua **sem nomear consultora por conta
   própria** (decisão de transparência da Resolução e do 012 permanece).
 - Também confirmado nesta grelha: o **nome da loja é "Lais Aliski Casa"** (sem acento em
-  "Lais"), não "Lais Casa". `CONTEXT.md` atualizado ("A loja").
+  "Lais"), não só "Lais Casa" como o projeto vinha dizendo. `CONTEXT.md` atualizado ("A loja").

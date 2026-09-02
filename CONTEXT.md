@@ -1,4 +1,4 @@
-# Agente de Atendimento da Lais Casa
+# Agente de Atendimento da Lais Aliski Casa
 
 Glossário do domínio. É a linguagem única do projeto: o que estes termos significam aqui vale
 para tickets, conversas, código e schema de banco.
@@ -14,8 +14,8 @@ detalhe de implementação, no código.
 Confirmado com o dono do projeto em 2026-09-02 (grelha do ticket 014). É o contexto que o
 agente carrega sobre o negócio.
 
-- **Nome:** **Lais Aliski Casa** (sem acento em "Lais"). O projeto e vários documentos ainda
-  dizem "Lais Casa" por herança — o nome correto é este.
+- **Nome:** **Lais Aliski Casa** (sem acento em "Lais"). Alguns handovers antigos e o `.env`
+  ainda dizem só "Lais Casa" — o nome correto é este.
 - **Dona:** **Lais Aliski**. **Não faz atendimento** no WhatsApp — quem atende são as três
   consultoras. O agente sabe quem é a Lais (para responder "quem é a Lais?"), mas não é com
   ela que o cliente fala.

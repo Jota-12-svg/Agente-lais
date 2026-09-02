@@ -32,7 +32,7 @@ decisão já tomada em [research 005](005-integracao-whatsapp.md) (Coexistence �
    Customer Cloud (inbox dela); Blip Go é um produto fechado com IA e funil próprios da Blip —
    nos dois casos, "usar a API" significa "usar a plataforma deles". Isso pesa contra os dois
    no eixo 3, que é uma restrição dura do projeto (a loja não quer inbox alheio).
-4. **Custo mensal estimado para o volume da Lais Casa (fase 1, quase zero mensagem tarifada):**
+4. **Custo mensal estimado para o volume da Lais Aliski Casa (fase 1, quase zero mensagem tarifada):**
    360dialog ≈ **€49/mês** (~R$ 300, sem markup sobre a tarifa da Meta) é a mais barata e mais
    previsível. Take Blip (Blip Go) é **R$ 299/mês fixo**, também previsível, mas amarrada à
    plataforma. Zenvia é a mais cara e a menos previsível: mensalidade de R$ 0 a R$ 600 **mais**
@@ -57,7 +57,7 @@ final é do dono do projeto.
 
 ## Tabela comparativa
 
-| Parceiro | Suporta Coexistence? | Cloud API crua ou plataforma própria? | Custo mensal estimado (volume Lais Casa) | Suporte BR/PT | Fatura em BRL? |
+| Parceiro | Suporta Coexistence? | Cloud API crua ou plataforma própria? | Custo mensal estimado (volume Lais Aliski Casa) | Suporte BR/PT | Fatura em BRL? |
 |---|---|---|---|---|---|
 | **360dialog** | ✅ Sim, documentado ([docs.360dialog.com](https://docs.360dialog.com/partner/onboarding/whatsapp-coexistence)) | **Cloud API crua**, cadastro direto (Direct Signup), sem inbox obrigatório | **≈ €49/mês** (~R$ 300, estimativa), sem markup sobre a Meta | Empresa alemã; sem confirmação oficial de time em português — suporte 24/7 mas idioma não confirmado | **Não** — cobra em EUR/USD |
 | **Zenvia** | ✅ Sim, documentado ([support.zenvia.com](https://support.zenvia.com/kb/en/article/561777/whatsapp-coexistence-what-it-is-requirements-and-how-to-use-it-z)) | **Plataforma própria** (Customer Cloud) — Coexistence é recurso dela, não Cloud API isolada | R$ 0–600/mês + R$ 649 setup + ~R$ 0,30–0,55/mensagem (markup próprio) | Empresa brasileira, suporte em português confirmado | **Sim** (BRL nativo — [zenvia.com/precos](https://zenvia.com/precos/)) |
@@ -117,7 +117,7 @@ WhatsApp Business versão **2.24.17+**.
 
 ## Eixo 2 — Custo por cima da tarifa da Meta
 
-Base para o cálculo: a fase 1 da Lais Casa é reativa, dentro da janela de 24h, sem template —
+Base para o cálculo: a fase 1 da Lais Aliski Casa é reativa, dentro da janela de 24h, sem template —
 ou seja, **a tarifa da própria Meta é ~R$0** (confirmado em
 [research 005](005-integracao-whatsapp.md) contra a
 [doc oficial de preços da Meta](https://developers.facebook.com/docs/whatsapp/pricing)). Isso
@@ -129,7 +129,7 @@ quando a Meta não cobra nada**.
 [Tabela de preços](https://360dialog.com/pricing): plano **"WhatsApp API — Regular", €49/mês
 por número**, sem taxa de setup visível, com a frase explícita **"no markup on Meta fees"**.
 Existe também um plano "Premium" (€99/mês) e "High Throughput" (€249/mês), irrelevantes na
-escala da Lais Casa. A documentação de onboarding de Coexistence
+escala da Lais Aliski Casa. A documentação de onboarding de Coexistence
 ([link](https://docs.360dialog.com/partner/onboarding/whatsapp-coexistence/coexistence-onboarding))
 **não restringe Coexistence a um plano específico** — mas também não confirma que o plano
 Regular basta. **Isso precisa ser confirmado com a 360dialog antes de assinar.**
@@ -157,7 +157,7 @@ Meta oferece.
 grátis por mês, além disso R$ 0,60 por disparo adicional
 ([help.blip.ai](https://help.blip.ai/hc/en-us/articles/28047450049943-Blip-Go-WhatsApp-Business-API),
 confirmado também em [blip.ai/en/blip-go](https://www.blip.ai/en/blip-go/)). Como o fluxo da
-Lais Casa é majoritariamente reativo e não-template, a maior parte do tráfego cairia na faixa
+Lais Aliski Casa é majoritariamente reativo e não-template, a maior parte do tráfego cairia na faixa
 "grátis" do próprio plano. **Uma fonte secundária** (bossbot.uk) cita R$ 99/mês como preço —
 divergente do valor confirmado na doc oficial da Blip; tratei o valor de R$ 299 como o correto
 por vir do canal de ajuda oficial da empresa, e a divergência como possível desatualização do
@@ -198,11 +198,11 @@ Este é o eixo em que **360dialog se separa do resto**.
   um **construtor de chatbot visual** ("Blip Builder"), não uma API crua para quem quer
   escrever o próprio agente — achado a partir de várias páginas oficiais de ajuda da Blip
   (`docs.blip.ai`, `help.blip.ai`). Usar Take Blip para este projeto significaria o agente da
-  Lais Casa rodar **dentro** da infraestrutura de bot da Blip, não como um serviço externo
+  Lais Aliski Casa rodar **dentro** da infraestrutura de bot da Blip, não como um serviço externo
   falando com a Cloud API.
 - **Infobip:** não investigado a fundo neste research — sinalizado como lacuna.
 
-**Leitura direta para o projeto:** dado que o agente da Lais Casa **já está sendo construído
+**Leitura direta para o projeto:** dado que o agente da Lais Aliski Casa **já está sendo construído
 sob medida** (qualificação, integração com Mainô, planilha), forçar esse agente a viver dentro
 do Blip Go ou do Zenvia Customer Cloud significa reescrevê-lo para caber na plataforma do
 parceiro — o oposto do que o `CLAUDE.md` do projeto pede ("o processo da loja não se dobra ao
@@ -298,12 +298,12 @@ cobra — são duas faturas diferentes.
   fatura que é passthrough da tarifa da Meta deve seguir a localização da Meta para BRL
   (mesmo prazo de todo mundo), mas a parte da mensalidade da própria 360dialog continua em
   moeda estrangeira — o que implica cartão internacional ou conta em moeda estrangeira para a
-  Lais Casa, e exposição a câmbio sobre um valor pequeno (€49/mês).
+  Lais Aliski Casa, e exposição a câmbio sobre um valor pequeno (€49/mês).
 - Não encontrei página oficial da 360dialog anunciando qualquer plano de localizar a própria
   cobrança para BRL.
 
 **Leitura para o projeto:** o prazo de junho de 2027 da Meta não elimina nenhum candidato — ele
-é sobre a tarifa da Meta, que no caso da fase 1 já é ~R$0. O que pesa de fato é se a Lais Casa,
+é sobre a tarifa da Meta, que no caso da fase 1 já é ~R$0. O que pesa de fato é se a Lais Aliski Casa,
 uma loja pequena, quer lidar com fatura em euro todo mês por uma mensalidade de ~R$300, ou
 prefere pagar em reais a um fornecedor nacional mesmo que isso custe uma estrutura de preço
 menos limpa (Zenvia) ou uma plataforma fechada (Blip Go).
@@ -323,7 +323,7 @@ uma conta de teste.
    em lugar nenhum — nem Meta, nem 360dialog, nem Zenvia, nem Blip. É a lacuna mais importante
    deste research porque toca diretamente o eixo de portabilidade que motivou o ticket.
 4. **Histórico de conversas na migração entre Solution Partners.** A doc da Meta fala de
-   templates e quality rating, não de histórico — e o histórico é justamente o que a Lais Casa
+   templates e quality rating, não de histórico — e o histórico é justamente o que a Lais Aliski Casa
    mais valoriza preservar (relacionamento de consultora com cliente de até R$ 50 mil).
 5. **Processo de saída documentado para Zenvia e Take Blip.** Só achei documentação de entrada.
    Não é evidência de que a saída seja difícil, só que não foi encontrada — vale perguntar
@@ -358,7 +358,7 @@ suporte nativo em português (eixo 4) — os dois pontos em que **Zenvia** e **T
 frente por serem empresas brasileiras. Se suporte em português e fatura em reais pesarem mais
 para o dono do projeto do que manter o agente fora de uma plataforma de terceiro, **Take Blip
 (Blip Go)** é a alternativa mais defensável dos dois — R$ 299/mês fixo é previsível e mais
-barato que a estrutura da Zenvia —, mas isso significa aceitar que o agente da Lais Casa passa
+barato que a estrutura da Zenvia —, mas isso significa aceitar que o agente da Lais Aliski Casa passa
 a rodar dentro da infraestrutura de bot da Blip, não como serviço próprio.
 
 **Zenvia fica em último lugar nas três frentes que importam aqui**: exige plataforma própria

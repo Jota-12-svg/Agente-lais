@@ -56,7 +56,7 @@ mais barato encontrado).
    **[secundária, autodeclarado pela própria empresa]**. É, na prática, o "meio-termo" que o
    mercado brasileiro de pequenas empresas já escolheu — mas é tecnicamente o mesmo risco de
    Baileys cru, só terceirizado.
-4. **Para a Lais Casa especificamente**, o desenho de menor risco combina duas decisões já
+4. **Para a Lais Aliski Casa especificamente**, o desenho de menor risco combina duas decisões já
    apontadas no research 005 com o achado novo deste documento: **número separado das
    consultoras** + **Cloud API oficial self-service nesse número** (não Coexistence, não parceiro
    pago) — o que dá o mesmo custo de ~R$0/mês da fase 1 sem nenhum risco de banimento vindo da
@@ -92,7 +92,7 @@ Fontes de 2026 indicam que a Meta relaxou parte disso — é possível começar 
 da verificação completa, dentro de um nível "Limited Access" com teto de 250 destinatários únicos
 por janela de 24h e até 2 números **[secundária, não confirmada em doc oficial nesta pesquisa]**.
 
-**Custo real:** só a tarifa da Meta (na fase 1 da Lais Casa, ~R$0, conforme já estabelecido em
+**Custo real:** só a tarifa da Meta (na fase 1 da Lais Aliski Casa, ~R$0, conforme já estabelecido em
 research 005) + o trabalho de escrever o próprio webhook, sem inbox pronto. Nenhuma mensalidade de
 parceiro.
 
@@ -167,7 +167,7 @@ fontes mais neutras: issues dos próprios repositórios e relatos diretos de usu
 Existe, sim, diferença de risco entre volume alto/frio e volume baixo/reativo — os casos de
 banimento mais graves e mais numerosos nas issues pesquisadas são consistentemente de disparo em
 massa ou campanha de marketing, não de conversa 1:1. Mas **o achado do whatsmeow mostra que essa
-diferença reduz o risco, não o zera**. Um perfil como o da Lais Casa (uma conversa por vez, tom
+diferença reduz o risco, não o zera**. Um perfil como o da Lais Aliski Casa (uma conversa por vez, tom
 humano, sem broadcast) fica no extremo mais seguro da distribuição que a comunidade descreve, mas
 "mais seguro" aqui é uma leitura qualitativa de padrão recorrente em relatos, não uma garantia
 numérica — porque **nenhuma fonte, neutra ou não, publica uma taxa de banimento por volume com
@@ -240,7 +240,7 @@ responsabilidade de uso é do usuário final.
 
 ---
 
-## Pergunta 4 — Desenho de menor risco para a Lais Casa, se o caminho não-oficial for considerado
+## Pergunta 4 — Desenho de menor risco para a Lais Aliski Casa, se o caminho não-oficial for considerado
 
 **Primeiro, a alternativa que reduz o risco a zero sem abandonar a ideia de "número separado":**
 usar o caminho 1a (Cloud API oficial self-service) no número separado, em vez de uma biblioteca
@@ -261,7 +261,7 @@ entre as fontes consultadas:
   principal.
 - **Só reativo, nunca disparo.** O padrão mais consistente nas issues pesquisadas é que banimento
   grave está associado a mensagem iniciada pela empresa em volume, não a resposta a quem chamou
-  primeiro — que é exatamente o desenho da fase 1 da Lais Casa (o agente não faz reengajamento
+  primeiro — que é exatamente o desenho da fase 1 da Lais Aliski Casa (o agente não faz reengajamento
   nem marketing).
 - **Um atendimento por vez, ritmo humano.** Resposta instantânea e em intervalo fixo é um dos
   sinais comportamentais citados repetidamente como suspeito; variar o tempo de resposta e nunca
@@ -308,7 +308,7 @@ qualificação.
 3. **A relação entre Meta Verified e menos avisos de risco** (mencionada na issue do whatsmeow) é
    um único relato, não confirmado em nenhuma outra fonte consultada.
 4. **O alcance exato da proibição de chatbots de propósito geral de janeiro de 2026** sobre o
-   caso específico de um agente de qualificação como o da Lais Casa não foi verificado direto na
+   caso específico de um agente de qualificação como o da Lais Aliski Casa não foi verificado direto na
    política publicada pela Meta, só em coberturas de terceiros sobre ela.
 5. **Nenhuma fonte consultada compara diretamente o custo de engenharia** entre montar o webhook
    da Cloud API oficial do zero (caminho 1a) versus configurar uma biblioteca não-oficial —
@@ -335,13 +335,13 @@ Coexistence teria"**. O preço dessa escolha é o mesmo que o research 005 já h
 Plano B: o cliente muda de conversa no handoff para a consultora, e a loja perde a conveniência de
 Coexistence (histórico espelhado automaticamente, um único número visível ao cliente). Se esse
 preço for aceitável, o caminho não-oficial deixa de ser necessário — não porque o risco dele seja
-proibitivo (a leitura desta pesquisa é que, para o perfil de uso da Lais Casa, o risco é real mas
+proibitivo (a leitura desta pesquisa é que, para o perfil de uso da Lais Aliski Casa, o risco é real mas
 moderado, não catastrófico-garantido), mas porque existe uma alternativa oficial e gratuita que
 resolve o mesmo problema sem carregar risco nenhum.
 
 Se o dono do projeto preferir o caminho não-oficial mesmo assim — por velocidade de prototipagem,
 ou para não lidar com verificação de negócio da Meta agora — a leitura desta pesquisa é que isso é
 uma aposta administrável, não descuidada, **desde que** limitada a um número descartável, uso
-estritamente reativo e um atendimento por vez (que já é como a Lais Casa opera), e com expectativa
+estritamente reativo e um atendimento por vez (que já é como a Lais Aliski Casa opera), e com expectativa
 honesta de que o número pode um dia ser banido sem aviso — o que só é uma aposta segura se esse
 número nunca for o mesmo que aparece no cartão de visita da loja.

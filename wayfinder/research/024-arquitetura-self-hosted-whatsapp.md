@@ -78,7 +78,7 @@ numa conta WhatsApp Business Premium já com vários aparelhos ativos) e confirm
    mais forte que a documentação primária permite, mas continua sendo inferência.
 
 4. **Hospedagem (pergunta 4):** Baileys/Evolution API não precisam de navegador — processo Node.js
-   leve, RAM da ordem de dezenas de MB por conexão (uma única conexão, como é o caso da Lais Casa,
+   leve, RAM da ordem de dezenas de MB por conexão (uma única conexão, como é o caso da Lais Aliski Casa,
    roda folgada em qualquer VPS pequeno). WPPConnect/whatsapp-web.js precisam de um Chromium
    headless por sessão — 200-400 MB de RAM só para o navegador, por sessão. VPS barato no Brasil
    (Hostinger, com datacenter nacional) começa em torno de **R$28/mês com 4 GB de RAM**; opções
@@ -195,7 +195,7 @@ um modelo onde vincular um novo apagaria uma sessão existente.
 **Por essa leitura mecânica, Baileys/WPPConnect deveriam se comportar como qualquer outro
 dispositivo sendo adicionado: ocupam o próximo slot livre, sem afetar os demais — desde que haja
 slot livre.** Isso é inferência bem fundamentada em documentação primária, não um teste
-confirmado com essas bibliotecas especificamente contra a conta da Lais Casa.
+confirmado com essas bibliotecas especificamente contra a conta da Lais Aliski Casa.
 
 ### O evento que complica essa resposta agora: passkey/WebAuthn obrigatório para vincular
 
@@ -218,7 +218,7 @@ completa — trava em timeout.
   descreve o mesmo sintoma e acrescenta um dado importante: **"This appears to be a phased
   rollout — not all accounts are affected yet."** — ou seja, não é um interruptor global e
   simultâneo; contas diferentes podem estar em estágios diferentes do rollout, o que significa
-  que **não dá para saber se a conta da Lais Casa está ou não afetada sem tentar vincular de
+  que **não dá para saber se a conta da Lais Aliski Casa está ou não afetada sem tentar vincular de
   fato**.
 - A mesma issue e fontes convergentes (ver abaixo) indicam que o problema **afeta especificamente
   a vinculação de um dispositivo novo**, e que **sessões já vinculadas antes do rollout continuam
@@ -245,7 +245,7 @@ pergunta sobre slots de dispositivo. Isso só se resolve tentando.
 
 ### Um sinal relacionado, mas de um cenário diferente: parear contra um número já onboardado via Cloud API
 
-Encontrei uma issue relevante, ainda que de um cenário adjacente e não idêntico ao da Lais Casa:
+Encontrei uma issue relevante, ainda que de um cenário adjacente e não idêntico ao da Lais Aliski Casa:
 
 - **[primária, relato direto]**
   [tulir/whatsmeow#916 — "Could you give me a hand to configure correctly to use a connection
@@ -255,7 +255,7 @@ Encontrei uma issue relevante, ainda que de um cenário adjacente e não idênti
   device: invalid device signature in pair success message"** ao tentar ler um QR code de um
   telefone que já estava "usando a WhatsApp API".
 
-Isso não é o cenário da Lais Casa hoje (a loja **não** está em Coexistence nem em nenhuma API da
+Isso não é o cenário da Lais Aliski Casa hoje (a loja **não** está em Coexistence nem em nenhuma API da
 Meta — está no WhatsApp Business app comum, provavelmente Premium). Mas é um sinal de que **parear
 um cliente não-oficial contra um número que já foi onboardado pela Meta em algum modo oficial
 (Coexistence ou Cloud API) pode se comportar de forma diferente/falhar** de um jeito que não
@@ -393,7 +393,7 @@ cada um, mas não auditadas de forma independente]**
   **~12–15% ao custo real** — o que estreita bastante a vantagem de preço nominal desses
   provedores estrangeiros frente a um provedor nacional.
 
-**Para uma única conexão (o caso da Lais Casa), qualquer uma dessas opções tem recurso de sobra.**
+**Para uma única conexão (o caso da Lais Aliski Casa), qualquer uma dessas opções tem recurso de sobra.**
 A diferença de custo entre rodar Baileys puro (mais leve, cabe num plano bem básico, possivelmente
 abaixo dos R$28/mês citados) e rodar Evolution API completo (que soma Postgres + Redis ao
 processo do Baileys, então precisa de mais RAM) é real, mas pequena em termos absolutos — a
@@ -475,7 +475,7 @@ os termos de uso gratuito.
 | Comunidade/documentação em português | Nenhuma nativa (projeto internacional) | Grande, muito usado no Brasil | Grande, também muito usado no Brasil, origem brasileira |
 | Estrutura organizacional 2026 | Comunidade aberta, sem entidade comercial visível | Reestruturado sob "Evolution Foundation", com módulo de licenciamento (self-host segue grátis) | Time ativo, sem sinal de reestruturação comercial encontrado |
 
-**Para o caso da Lais Casa (um número, orçamento mínimo, agente já sendo construído sob medida,
+**Para o caso da Lais Aliski Casa (um número, orçamento mínimo, agente já sendo construído sob medida,
 prioridade em não cegar para mensagens de outro dispositivo):** Baileys puro, ou Evolution API por
 cima dele se o time preferir não escrever a camada de REST/webhook/persistência do zero, são as
 escolhas tecnicamente mais defensáveis. WPPConnect não tem nenhuma vantagem técnica clara sobre

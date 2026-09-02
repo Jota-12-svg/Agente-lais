@@ -31,7 +31,7 @@ Perguntas que o protótipo tem de responder:
 
 - Quão longa é uma mensagem do agente? As consultoras mandam textão ou várias mensagens
   curtas? (Isso é a diferença mais visível entre soar humano e soar bot.)
-- Emoji, áudio, gíria, formalidade — o que combina com a Lais Casa?
+- Emoji, áudio, gíria, formalidade — o que combina com a Lais Aliski Casa?
 - O agente se identifica como agente? Tem nome?
 - Com que velocidade responde? Instantâneo denuncia máquina.
 
@@ -342,8 +342,8 @@ Rodada de `/grilling` com o dono, depois de ele testar o ambiente ao vivo e nota
 "não tinha contexto" (não sabia nem os nomes das consultoras nem onde a loja fica). O que
 saiu — já aplicado no `prototipo-tom-014/system-prompt.md` e no `CONTEXT.md` ("A loja"):
 
-- **Nome da loja:** **Lais Aliski Casa** (sem acento em "Lais"). "Lais Casa" era apelido meu,
-  errado. Dona: **Lais Aliski**, que **não faz atendimento**.
+- **Nome da loja:** **Lais Aliski Casa** (sem acento em "Lais"). O antigo "Lais Casa" era
+  apelido meu, errado. Dona: **Lais Aliski**, que **não faz atendimento**.
 - **Time:** **3 consultoras** — Pamella, Gabriela (Gabi), Joslaine — rodízio puro, sem
   especialidade. Corrige o 009 (que dizia 4). A Manu **conhece** os nomes só para reconhecer
   "quero a Gabi" e escalar direto; **não recita a lista** nem nomeia consultora por conta
@@ -360,6 +360,6 @@ saiu — já aplicado no `prototipo-tom-014/system-prompt.md` e no `CONTEXT.md` 
   Fechamento de pedido → sempre consultora.
 - **Aberto:** ticket [033](033-laco-de-contexto-do-agente.md) — "laço de contexto" (o contexto
   do agente evoluindo com os atendimentos), bloqueado pelo 013.
-- **Pendente (mecânico):** trocar "Lais Casa" → "Lais Aliski Casa" em `CLAUDE.md`, `map.md`
-  (título) e nos tickets antigos. Não feito nesta sessão para não inchar o diff da branch;
-  o `CONTEXT.md` já é a fonte da verdade.
+- **Rename mecânico feito** (2026-09-02): "Lais Casa" → "Lais Aliski Casa" em todo o repo
+  (CLAUDE.md, map, README, tickets, research, prototipo, `.env.example`). Handovers antigos
+  (até 09-01) ficaram como estão — são registros datados.

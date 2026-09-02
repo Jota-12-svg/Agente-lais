@@ -241,7 +241,7 @@ conversas passadas). Não serve para o chat ao vivo (assíncrono).**
 
 **Uso no projeto:** classificar/anotar conversas passadas (venda, reunião,
 satisfação, fracasso — tickets 010/013) em lote noturno, a metade do preço. O
-volume da Lais Casa (~10 atendimentos/dia) cabe com folga absurda em qualquer tier.
+volume da Lais Aliski Casa (~10 atendimentos/dia) cabe com folga absurda em qualquer tier.
 
 ---
 
@@ -314,7 +314,7 @@ across **general agentic and everyday tasks**."*
 
 Ou seja: a Google posiciona o `lite` para **subagente / extração simples / parsing
 de documento sob restrição de custo e latência** — não como o modelo de
-julgamento. A tarefa da Lais Casa (decidir **quando escalar**, ler planilha
+julgamento. A tarefa da Lais Aliski Casa (decidir **quando escalar**, ler planilha
 fotografada sem trocar R$ 3.000 por R$ 30.000, entender áudio com sotaque) é
 exatamente o eixo onde o "simple data extraction" do `lite` é um aviso. Isso
 **reforça** a recomendação do research 017 §9: `lite` é plano B a validar com

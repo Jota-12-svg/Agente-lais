@@ -1,13 +1,13 @@
 ---
 labels: [wayfinder:map]
-title: Agente de WhatsApp da Lais Casa
+title: Agente de WhatsApp da Lais Aliski Casa
 ---
 
-# Agente de WhatsApp da Lais Casa
+# Agente de WhatsApp da Lais Aliski Casa
 
 ## Destination
 
-Um agente de WhatsApp **em produção** atendendo clientes reais da Lais Casa: recebe o
+Um agente de WhatsApp **em produção** atendendo clientes reais da Lais Aliski Casa: recebe o
 contato novo, faz a qualificação inicial (extrai os dados que a consultora precisa),
 responde dúvidas sobre o negócio e sobre produtos que ele conhece, e **escala para uma
 consultora** quando a conversa exige julgamento humano — tudo no tom que as consultoras já
@@ -34,8 +34,8 @@ anterior e foram **descartados por decisão do usuário**. Não são fonte, não
 precedente, não voltam pela porta dos fundos. Dados no Supabase do projeto anterior devem
 ser apagados.
 
-**O negócio.** **Lais Aliski Casa** (o projeto ainda diz "Lais Casa" por herança; nome
-correto confirmado 2026-09-02) — loja de decoração e mobiliário em Curitiba, no Batel.
+**O negócio.** **Lais Aliski Casa** (nome correto confirmado 2026-09-02; handovers antigos e
+`.env` ainda dizem só "Lais Casa") — loja de decoração e mobiliário em Curitiba, no Batel.
 Ticket alto (milhares a dezenas de milhares de reais). Dona: **Lais Aliski**, que **não faz
 atendimento**. Time: **três consultoras** (Pamella, Gabi, Joslaine), rodízio puro. Dois
 públicos: **consumidor final** e **arquiteto** (manda planilha com lista de itens). Sistemas
@@ -100,7 +100,7 @@ prototipagem, `/prototype`. Em tickets de research, `/research` como subagente.
   que anula o desconto dela. Modelo `gemini-3-flash`, sempre com raciocínio em `low`. Custo
   não é a variável decisiva — a diferença é de ~R$ 90/mês.
 
-- [Como funciona o atendimento da Lais Casa hoje, ponta a ponta](tickets/009-como-funciona-o-atendimento-hoje.md)
+- [Como funciona o atendimento da Lais Aliski Casa hoje, ponta a ponta](tickets/009-como-funciona-o-atendimento-hoje.md)
   — o fluxo real está descrito e o vocabulário do domínio virou [`CONTEXT.md`](../CONTEXT.md).
   Quatro pessoas num número compartilhado, **rodízio** para contato novo e cliente que volta
   furando a fila. Agente **24/7** com a loja em horário comercial, prometendo **a loja e nunca
@@ -111,7 +111,7 @@ prototipagem, `/prototype`. Em tickets de research, `/research` como subagente.
 - [Inventariar e limpar o projeto Supabase](tickets/002-limpar-o-projeto-supabase.md) —
   reaproveitado o projeto atual (`ewxmjbvaolfiafhghxbn`), em vez de criar um novo: o resíduo
   do projeto anterior era pequeno e nomeado (schema `app`, dois papéis de login). Nenhum dado
-  era da Lais Casa. `DROP SCHEMA app CASCADE` e os dois `DROP ROLE` confirmados — banco em
+  era da Lais Aliski Casa. `DROP SCHEMA app CASCADE` e os dois `DROP ROLE` confirmados — banco em
   estado virgem. Desbloqueou a rotação das credenciais (015).
 - [Escolher o parceiro Meta para o onboarding do WhatsApp](tickets/016-escolher-parceiro-meta.md)
   — **reverte a recomendação de Coexistence do ticket 005.** O parceiro mais barato viável

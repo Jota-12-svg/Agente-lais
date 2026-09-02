@@ -157,7 +157,7 @@ suportados. **Sem bloqueio de capacidade.** Cache: funciona na API mas sem preç
 **Caveat de qualidade DOCUMENTADO:** a Google posiciona o lite para *"subagent tasks and
 document parsing"*, *"simple data extraction"*, *"where latency and API cost are the primary
 constraints"* — **não** como modelo de julgamento. O `gemini-3.6-flash` é *"general agentic
-and everyday tasks"*. A tarefa da Lais Casa (decidir **quando escalar**, ler planilha
+and everyday tasks"*. A tarefa da Lais Aliski Casa (decidir **quando escalar**, ler planilha
 fotografada sem trocar R$ 3.000 por R$ 30.000, entender áudio com sotaque) é exatamente onde
 "simple data extraction" é um aviso.
 

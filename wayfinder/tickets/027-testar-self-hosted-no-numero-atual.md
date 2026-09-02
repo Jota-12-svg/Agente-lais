@@ -48,7 +48,7 @@ abaixo só se respondem tentando, não lendo mais documentação.
 
 ### Como testar sem arriscar o número da loja
 
-**Não usar o número real da Lais Casa nesta primeira rodada.** Montar um cenário equivalente
+**Não usar o número real da Lais Aliski Casa nesta primeira rodada.** Montar um cenário equivalente
 com um número de teste (chip novo, barato):
 
 1. Registrar o número de teste no WhatsApp Business comum, com um aparelho real.
