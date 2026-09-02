@@ -22,7 +22,13 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 | 021 | [Instagram como porta de entrada para o WhatsApp](tickets/021-instagram-porta-de-entrada.md) | task |
 | 027 | [Testar a conexão self-hosted como dispositivo adicional, antes de tocar no número da loja](tickets/027-testar-self-hosted-no-numero-atual.md) | task |
 | 032 | [Obter o catálogo do Mainô e exemplos de planilha de arquiteto](tickets/032-catalogo-do-maino-e-planilha-de-arquiteto.md) | task |
+| 038 | [Estratégia de rollout do agente — piloto, horário, fallback, canal de erro](tickets/038-estrategia-de-rollout.md) | grilling · **in-progress** |
 
+> **038 aberto** (2026-09-02): grilling da **estratégia de rollout** — a névoa que faltava
+> para destravar o **034**. Decide forma do piloto, horário do agente, gate de entrada,
+> fallback, canal de aviso de erro, critério de saída e expansão. Não depende de runtime nem
+> de credencial; não colide com as sessões paralelas do 014/037.
+>
 > **033 fechado** (2026-09-02, grilling): a **forma** do manual está decidida — um documento,
 > duas partes (A "o que o agente faz" / B "no dia a dia"), Google Doc, tom concreto com prints
 > do 014, quatro pedidos à consultora + seção do freio de mão. A **redação** é o ticket

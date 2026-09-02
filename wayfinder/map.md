@@ -299,6 +299,8 @@ Névoa em escopo, ainda sem nitidez para virar ticket:
   o agente falha. Bloqueia a redação do manual das consultoras
   ([034](tickets/034-redigir-o-manual-do-agente.md)): define o canal de aviso de erro, o
   momento de entrega de cada parte e o piloto que dispara a checagem de manutenção.
+  **Virou o ticket [038](tickets/038-estrategia-de-rollout.md)** (grilling, aberto
+  2026-09-02) — quando fechar, some desta lista.
 - **Migração da planilha compartilhada.** Se os clientes saem da planilha para o Supabase,
   ou se os dois coexistem.
 
