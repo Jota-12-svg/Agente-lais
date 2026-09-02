@@ -58,3 +58,6 @@ npm-debug.log*
 .idea/
 tmp/
 .cache/
+
+# Config local do Claude Code (settings, worktrees, permissões da máquina)
+.claude/

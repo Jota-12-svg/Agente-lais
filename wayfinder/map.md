@@ -201,6 +201,20 @@ prototipagem, `/prototype`. Em tickets de research, `/research` como subagente.
   [`017-escolha-do-modelo-gemini.md`](research/017-escolha-do-modelo-gemini.md) (seções 1–10:
   escolha; 11: custeio no volume real). Desbloqueou o 018.
 
+- [Validar empiricamente o contrato do LLM](tickets/018-validar-contrato-do-llm.md)
+  — **as duas consequências arquiteturais fecharam a favor do caminho simples.** (1)
+  *Function calling* funciona em HTTP cru: ciclo de três `POST`, com uma regra dura — o
+  `thoughtSignature` de cada part `functionCall` tem de voltar verbatim no histórico ou é
+  **HTTP 400** (parts de texto não exigem). (2) Áudio **OGG/Opus do WhatsApp entra inline
+  sem transcodificar** — o runtime **não precisa de ffmpeg/binário nativo** por causa de
+  áudio, some a restrição que a Névoa registrava. Também confirmado por chamada real:
+  `systemInstruction`, saída estruturada (`responseSchema`), HEIC do iPhone, caching
+  explícito (mínimo **1024** tokens, não 4096), `generateContent` síncrono. Campo de
+  raciocínio é `generationConfig.thinkingConfig.thinkingLevel`; `minimal` custa 0 tokens de
+  pensamento vs ~540 e 3× a latência no `low` — `.env` corrigido de `low` para `minimal`.
+  `gemini-3.5-flash-lite` tem contrato idêntico. Fica pendente (não era escopo): teste de
+  qualidade `3.6-flash × flash-lite` com conversas reais.
+
 ## Not yet specified
 
 Névoa em escopo, ainda sem nitidez para virar ticket:
@@ -214,10 +228,11 @@ Névoa em escopo, ainda sem nitidez para virar ticket:
   do agente (todo atendimento, inclusive os perdidos); falta o esquema em si e como o catálogo
   é representado.
 - **Stack e hospedagem do runtime.** Onde o agente roda, como recebe webhook, como
-  sobrevive a reinício no meio de uma conversa. Já se sabe uma restrição: se o áudio OGG/Opus
-  do WhatsApp precisar de transcodificação, o ambiente terá de suportar binário nativo
-  (ffmpeg) — o que elimina boa parte das opções serverless. Depende de
-  [Validar empiricamente o contrato do LLM](tickets/018-validar-contrato-do-llm.md).
+  sobrevive a reinício no meio de uma conversa. O ticket 018 **removeu** a restrição de
+  ffmpeg: o áudio OGG/Opus do WhatsApp entra inline no Gemini sem transcodificar, então
+  serverless volta a ser opção pelo lado do áudio. O que resta pesar aqui é o self-hosted do
+  WhatsApp (016/027 — Baileys/Evolution precisa de processo longo, não casa com serverless
+  puro) e a persistência de conversa entre reinícios.
 - **Fluxo do arquiteto.** O agente recebe uma planilha com dezenas de itens — o que ele faz
   com ela é um segundo fluxo inteiro, não uma variação do primeiro. Só ganha nitidez depois
   de ver planilhas reais — ticket [032](tickets/032-catalogo-do-maino-e-planilha-de-arquiteto.md).

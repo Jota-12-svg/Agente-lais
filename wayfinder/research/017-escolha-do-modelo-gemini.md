@@ -399,6 +399,18 @@ protótipo/fallback com dado sintético.
 
 ## 10. Lacunas — o que só teste com a chave e com dado real fecha
 
+> **Atualização 2026-09-02 — o [ticket 018](../tickets/018-validar-contrato-do-llm.md) fechou
+> a maior parte desta lista por chamada real.** Resultados (detalhe e comandos no 018):
+> item 1 (áudio OGG/Opus inline) **confirmado, sem transcodificar**; item 2 (sobretaxa de
+> áudio) — a contagem de tokens não mostra pedágio, falta só o faturamento fechado;
+> item 3 **corrigido: o mínimo de cache é 1024 tokens, não 4096** (`min_total_token_count=1024`
+> para 3.6/3.7/lite); item 4 (qualidade × dado real) **segue aberto** — precisa de conversas
+> reais; item 5 (RPM/TPM) segue no painel; item 6 (preço 2027) segue.
+> Outras divergências doc × real medidas no 018: áudio é **25 tok/s** (não 32); o campo é
+> `generationConfig.thinkingConfig.thinkingLevel` (não `thinking_level` solto); o teto de
+> 20 MB inline não bateu (~108 MB passaram).
+
+
 1. **Áudio OGG/Opus de WhatsApp de verdade** em base64 inline — a doc diz que aceita;
    confirmar com um `.ogg` real e conferir tokens/segundo no faturamento.
 2. **Sobretaxa de áudio no 3.6/3.7 Flash** — a tabela não lista `(audio)` à parte; confirmar
