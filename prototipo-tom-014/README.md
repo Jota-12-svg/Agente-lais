@@ -22,8 +22,10 @@ Se preferir não passar o `--env-file`, só `node run.mjs` também funciona — 
 
 Depois abra **http://localhost:4014** no navegador.
 
-- Modelo e nível de _thinking_ vêm do `.env` (`LLM_MODEL`, `LLM_THINKING_LEVEL`); o padrão é
-  `gemini-3.6-flash` / `minimal`.
+- **Modelo padrão do protótipo: `gemini-3.5-flash-lite`** (teste de tom + custo). O
+  `gemini-3.6-flash` do `.env` é o default de *produção* (ticket 017) — aqui é desacoplado.
+  Trocar: seletor de modelo no chat, ou `PROTOTIPO_MODEL=gemini-3.6-flash` no ambiente.
+- _thinking_ vem do `.env` (`LLM_THINKING_LEVEL`), padrão `minimal`.
 - Porta: `4014` (mude com `PROTOTIPO_PORT=xxxx` se precisar).
 
 ## Como testar

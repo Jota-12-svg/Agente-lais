@@ -57,7 +57,10 @@ function loadCreds() {
 }
 
 const creds = loadCreds();
-const MODEL = (creds && creds.model) || 'gemini-3.6-flash';
+// Default do protótipo: gemini-3.5-flash-lite (teste de tom + custo). O LLM_MODEL do .env
+// (gemini-3.6-flash, decisão do ticket 017) é o default de PRODUÇÃO — aqui é desacoplado.
+// Trocar: PROTOTIPO_MODEL no ambiente, ou o seletor de modelo no chat.
+const MODEL = process.env.PROTOTIPO_MODEL || 'gemini-3.5-flash-lite';
 const THINKING = (creds && creds.thinking) || 'minimal';
 const SYSTEM_PROMPT = readFileSync(join(HERE, 'system-prompt.md'), 'utf8');
 const INDEX_HTML = readFileSync(join(HERE, 'public', 'index.html'), 'utf8');
@@ -68,10 +71,10 @@ if (!creds) {
   console.log('     Rode:  node --env-file="C:\\Agente Lais\\.env" run.mjs');
   console.log('     ou crie  prototipo-tom-014/.env.local  com  GEMINI_API_KEY=...');
 } else {
-  console.log(`  modelo:   ${MODEL}   (troca no chat: 3.6-flash / 3.5-flash-lite / 3.7-flash)`);
+  console.log(`  modelo:   ${MODEL}   (troca no chat; produção = ${creds.model || 'gemini-3.6-flash'})`);
   console.log(`  thinking: ${THINKING}`);
   console.log(`  chave:    …${creds.key.slice(-4)}  (de ${creds.from})`);
-  const pr = rateFor('gemini-3.6-flash');
+  const pr = rateFor(MODEL);
   console.log(`  preço:    $${pr.input}/1M in · $${pr.output}/1M out · calibração ×${CALIBRATION}  (ajuste: COST_CALIBRATION no .env)`);
 }
 console.log(`  abra:     http://localhost:${PORT}`);
