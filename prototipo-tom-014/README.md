@@ -109,6 +109,12 @@ O seletor **modelo** na barra do chat troca entre `gemini-3.6-flash` (produção
 `gemini-3.5-flash-lite` (~4× mais barato — plano B do research 017 §9) e `gemini-3.7-flash`.
 Serve para ver, na mesma conversa, se o `lite` mantém o tom por uma fração do custo.
 
+### Como economizar de verdade
+
+Ver **[`CUSTOS.md`](CUSTOS.md)** — por que salvar contexto no banco não baixa o custo (o
+modelo é sem estado), e os levers que baixam: cache de prefixo (~10× na parte fixa), debounce
+de mensagens, resumo em vez de histórico cru, `flash-lite`, Batch para o laço de aprendizado.
+
 `pricing.mjs` é reaproveitável para a interface de LLM de produção.
 
 ## Anotações para a próxima sessão
