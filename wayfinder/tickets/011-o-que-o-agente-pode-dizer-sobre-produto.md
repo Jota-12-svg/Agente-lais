@@ -4,7 +4,7 @@ title: O que o agente pode afirmar sobre produto e disponibilidade
 labels: [wayfinder:grilling]
 status: open
 assignee:
-blocked-by: ["009", "004"]
+blocked-by: ["009", "032"]
 ---
 
 ## Question
@@ -32,3 +32,24 @@ A decidir, com franqueza sobre o limite:
 
 **Resolvido quando** houver uma regra clara do que o agente afirma, do que ele nunca afirma
 e de como ele formula a resposta quando não pode afirmar.
+
+---
+
+## Respostas — ticket 020 (2026-08-11, resposta 1 de 4)
+
+- **"Vocês têm esse vaso?"** — resposta padrão antes de conferir: *"Bom dia, vou verificar se
+  eu tenho essa peça e logo te retorno."* É a formulação de ouro que o ticket 020 já apontava:
+  não afirma, não nega, e mantém o cliente no gancho. Copiar quase literalmente para o agente,
+  em vez de inventar frase nova.
+- **Já prometeu e não tinha:** "Raramente" — o erro existe, mas a prática de "vou verificar" já
+  contém bem o risco.
+- **O que responde de cabeça, sem levantar:** **"Nenhuma dessas informações"** — nem preço, nem
+  medida, nem material/acabamento, nem prazo, nem disponibilidade. Achado forte, se confirmado
+  nas outras respostas: não há base humana para o agente "herdar" essas respostas rápidas — o
+  que ele afirmar sobre produto tem de vir do catálogo do Maino ([007](007-maino-tem-api.md)),
+  não de imitar uma resposta de cabeça que a própria consultora não dá.
+- **Foto de produto visto em outro lugar:** "Às vezes" — não é raro, não é constante.
+
+**Falta:** confirmar se a resposta 5 (nada de cabeça) se repete nas outras três pessoas — uma
+consultora não é a amostra toda, e isso muda o quanto o agente pode se apoiar no catálogo do
+Maino sozinho.

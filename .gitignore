@@ -17,6 +17,16 @@ service-account*.json
 /dados/
 /conversas/
 *.export.txt
+/Respostas consultoras/
+
+# Planilhas e dumps de dados em qualquer lugar do repo — a carteira de clientes,
+# mailing, exportação do Maino. Se precisar versionar um exemplo, anonimize e
+# tire a extensão de planilha.
+*.xlsx
+*.xls
+*.xlsm
+*.csv
+*.ods
 
 
 # =============================================================================
@@ -31,6 +41,13 @@ coverage/
 
 
 # =============================================================================
+# SESSÃO WHATSAPP (ticket 027) — chaves de pareamento do dispositivo, tão
+# sensível quanto uma credencial. Nunca versionar.
+# =============================================================================
+/whatsapp-self-hosted-test/auth/
+
+
+# =============================================================================
 # Ambiente local
 # =============================================================================
 .DS_Store
@@ -41,3 +58,6 @@ npm-debug.log*
 .idea/
 tmp/
 .cache/
+
+# Config local do Claude Code (settings, worktrees, permissões da máquina)
+.claude/
