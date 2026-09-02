@@ -79,7 +79,7 @@
       <button class="primary" onclick={assume} disabled={busy}>Assumir</button>
     {:else}
       <button class="ghost" onclick={reopen} disabled={busy}>Devolver à fila</button>
-      <button class="primary" onclick={() => (closing = true)} disabled={busy}>Fechar</button>
+      <button class="primary" onclick={() => (closing = true)} disabled={busy}>Finalizar chamado</button>
     {/if}
   </div>
 </div>

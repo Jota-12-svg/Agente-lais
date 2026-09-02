@@ -13,7 +13,7 @@ VITE_DEMO=1 npm run dev        # http://localhost:5173
 
 Dados fictícios em memória (`src/lib/demo.js`), nada é salvo. O login é um clique
 (sem Google de verdade). Serve para visualizar e navegar o fluxo: fila → assumir →
-fechar.
+finalizar chamado.
 
 ## Rodar contra o Supabase de verdade
 
@@ -45,6 +45,6 @@ configuradas no painel da Pages — ver o wizard do ticket 037.
 - **Entrar com o Google.** Quem não está na `advisor_allowlist` vê "sem acesso".
 - **Ver a fila** — só `pending` + `assumed`, mais antigo no topo, atualiza sozinha (Realtime).
 - **Assumir** — carimba quem pegou e a hora. Trava suave: qualquer uma pode devolver à fila.
-- **Fechar** — `business_outcome` + `advisor_verdict` + nota. Sai da fila.
+- **Finalizar chamado** — `business_outcome` + `advisor_verdict` + nota. Sai da fila.
 
 Fora do v1: corrigir dado que o agente extraiu, ver a conversa, visão de admin.

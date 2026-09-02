@@ -29,7 +29,7 @@
       })
       .eq('id', handoff.id);
     if (e) {
-      error = 'Não deu para fechar. Tente de novo.';
+      error = 'Não deu para finalizar. Tente de novo.';
       busy = false;
       return;
     }
@@ -47,8 +47,8 @@
 <svelte:window onkeydown={onKey} />
 
 <div class="overlay" onclick={onOverlay} role="presentation">
-  <div class="sheet" role="dialog" tabindex="-1" aria-modal="true" aria-label="Fechar chamado">
-    <h2>Fechar — {handoff.contact_name || handoff.contact_phone}</h2>
+  <div class="sheet" role="dialog" tabindex="-1" aria-modal="true" aria-label="Finalizar chamado">
+    <h2>Finalizar chamado — {handoff.contact_name || handoff.contact_phone}</h2>
 
     {#if error}<div class="err" style="margin-top:12px;">{error}</div>{/if}
 
@@ -79,7 +79,7 @@
 
     <div class="actions" style="margin-top:20px;">
       <button class="ghost" onclick={onCancel} disabled={busy}>Cancelar</button>
-      <button class="primary" onclick={submit} disabled={busy}>{busy ? 'Salvando…' : 'Fechar chamado'}</button>
+      <button class="primary" onclick={submit} disabled={busy}>{busy ? 'Salvando…' : 'Finalizar chamado'}</button>
     </div>
   </div>
 </div>

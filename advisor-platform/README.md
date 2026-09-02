@@ -24,7 +24,7 @@ advisor-platform/
 | Peça | Faz | Depende de |
 |---|---|---|
 | `supabase/migrations` | cria a tabela `handoffs`, os 5 enums, a `advisor_allowlist`, o índice da fila e as políticas RLS | nada — aplica no Supabase já |
-| `web/` | login Google, guarda de allow-list, fila ao vivo (Realtime), assumir, fechar | migração aplicada + provider Google no Supabase Auth |
+| `web/` | login Google, guarda de allow-list, fila ao vivo (Realtime), assumir, finalizar chamado | migração aplicada + provider Google no Supabase Auth |
 | `supabase/functions/notify-handoff` | ao entrar um chamado, manda e-mail para as 4 | Database Webhook configurado + chave do Resend |
 
 ## Rodar local
