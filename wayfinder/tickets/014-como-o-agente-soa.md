@@ -76,15 +76,20 @@ Node sem dependências que põe o dono conversando com a "Manu" de verdade, via
 `prototipo-tom-014/system-prompt.md` — as regras da tabela acima destiladas em instruções.
 Rodar: `node --env-file="C:\Agente Lais\.env" run.mjs` → `http://localhost:4014`. Descartável;
 o que sair do teste (tom aprovado, ajustes, respostas às perguntas abertas) volta para cá.
-Traz **tracking de custo** por chamada (`pricing.mjs`): barra no chat, painel `/custos`,
-`node custos.mjs`, log `custos.jsonl`; seletor de modelo (3.6-flash × 3.5-flash-lite) para
-comparar tom e custo. É estimativa — fatura real no painel do AI Studio.
-**Achado de custo (02/09):** a promo de 2026 do `gemini-3.6-flash` ($0,75/$3,75) **não estava
-valendo nesta conta** — o billing real roda no preço cheio ($1,50/$7,50). Medido: **~R$ 0,018
-por resposta** (sem cache de prefixo) → ~R$ 0,10–0,15 por atendimento → **~R$ 22–30/mês** a
-10/dia, na faixa do research 017 §11.4. `gemini-3.5-flash-lite` sai ~4× mais barato
-(~R$ 0,004/resposta). `pricing.mjs` tem knob `COST_CALIBRATION` no `.env` para ajustar ao
-billing observado.
+Barra do chat: seletor de modelo (default `gemini-3.5-flash-lite`), toggle **fora do horário**,
+toggle **cache de prefixo**. **Tracking de custo** por chamada (`pricing.mjs`): linha cinza sob
+cada resposta, barra acumulada, `/custos`, `node custos.mjs`, `node calibrar.mjs` (calibra
+contra o billing), log `custos.jsonl`.
+
+**Achados de custo (02/09, medidos):**
+- Promo de 2026 do `gemini-3.6-flash` ($0,75/$3,75) **não vale nesta conta** — billing real =
+  preço cheio ($1,50/$7,50). `pricing.mjs` calibrado; knob `COST_CALIBRATION` no `.env`.
+- ~80% do custo é o `system-prompt.md` (~1.676 tok) reenviado a cada chamada.
+- **Cache de prefixo implementado e medido:** `gemini-3.6-flash` sem cache R$ 0,017 → com
+  cache **R$ 0,005 (–73%)**; hit constante com histórico crescente. `flash-lite`: cache
+  funciona mas sem desconto de preço.
+- Levers validados por 2 subagentes + verificação própria → `prototipo-tom-014/CUSTOS.md`
+  (veredito: cache + debounce = fazer cedo; modelo barato e resumo de histórico = prematuro).
 Nota para o 018: o campo que passou o `thinking_level` foi
 `generationConfig.thinkingConfig.thinkingLevel` (testado nesta máquina, resposta com
 `serviceTier: "standard"`).

@@ -111,11 +111,22 @@ O seletor **modelo** na barra do chat troca entre `gemini-3.6-flash` (produção
 `gemini-3.5-flash-lite` (~4× mais barato — plano B do research 017 §9) e `gemini-3.7-flash`.
 Serve para ver, na mesma conversa, se o `lite` mantém o tom por uma fração do custo.
 
+### Cache de prefixo (implementado)
+
+A chave **"cache de prefixo"** na barra do chat (ligada por padrão) usa um objeto
+`cachedContents` da Google com o **system prompt estático** — o resto (data/hora, estado da
+loja) vai em `contents`, nunca no prefixo. Medido: `gemini-3.6-flash`, mensagem de
+qualificação — **sem cache R$ 0,017, com cache R$ 0,005 (–73%)**. A linha cinza mostra
+`cache 1675` quando há hit. No `gemini-3.5-flash-lite` o cache funciona mas **sem desconto de
+preço** (a tabela da Google diz "Not available"). Estado dos caches: `/cache`. Os objetos são
+apagados no Ctrl+C e varridos no boot (marcados com displayName `prototipo-tom-014`).
+
 ### Como economizar de verdade
 
 Ver **[`CUSTOS.md`](CUSTOS.md)** — por que salvar contexto no banco não baixa o custo (o
-modelo é sem estado), e os levers que baixam: cache de prefixo (~10× na parte fixa), debounce
-de mensagens, resumo em vez de histórico cru, `flash-lite`, Batch para o laço de aprendizado.
+modelo é sem estado), e os levers que baixam: cache de prefixo (feito), debounce de mensagens,
+resumo em vez de histórico cru, `flash-lite`, Batch para o laço de aprendizado. Backing
+detalhado da validação contra a doc: [`CUSTOS-api-referencia.md`](CUSTOS-api-referencia.md).
 
 `pricing.mjs` é reaproveitável para a interface de LLM de produção.
 

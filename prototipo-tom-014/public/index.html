@@ -231,6 +231,7 @@
 
   <div class="toolbar">
     <label><input type="checkbox" id="fora"> fora do horário</label>
+    <label title="usa cachedContents com o system prompt estático"><input type="checkbox" id="cache" checked> cache de prefixo</label>
     <label>modelo
       <select id="model">
         <option value="gemini-3.5-flash-lite">3.5-flash-lite</option>
@@ -265,6 +266,7 @@
   const input = document.getElementById('input');
   const sendbtn = document.getElementById('sendbtn');
   const foraChk = document.getElementById('fora');
+  const cacheChk = document.getElementById('cache');
   const sub = document.getElementById('sub');
 
   let history = [];   // [{role:'client'|'agent', text}]
@@ -337,7 +339,7 @@
       const r = await fetch('/chat', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ history, foraDoExpediente: foraChk.checked, conversationId, model: modelSel.value }),
+        body: JSON.stringify({ history, foraDoExpediente: foraChk.checked, conversationId, model: modelSel.value, cache: cacheChk.checked }),
       });
       const data = await r.json();
       typing.remove();
@@ -362,13 +364,18 @@
         const u = data.usage || {};
         const cost = data.cost || {};
         if (cost.brl != null) convBrl += cost.brl;
+        const cachedTok = u.cachedContentTokenCount || 0;
         metaLine(
           `${data.ms}ms · ${data.model}` +
           (u.promptTokenCount != null ? ` · in ${u.promptTokenCount} / out ${u.candidatesTokenCount ?? '?'}` : '') +
+          (cachedTok ? ` · cache ${cachedTok}` : '') +
           (u.thoughtsTokenCount ? ` / think ${u.thoughtsTokenCount}` : '') +
           (cost.usd != null ? ` · ~${'$' + cost.usd.toFixed(5)} · ~${brl(cost.brl)}` : '') +
           (data.finishReason && data.finishReason !== 'STOP' ? ` · ${data.finishReason}` : '')
         );
+        if (data.cache && data.cache.pedido && !data.cache.usado) {
+          metaLine('⚠ cache pedido mas não usado: ' + (data.cache.erro || 'motivo desconhecido'));
+        }
         updateCostbar(data.session, cost.rate);
       }
     } catch (err) {

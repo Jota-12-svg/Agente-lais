@@ -13,6 +13,7 @@ import { readFileSync, existsSync, appendFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { costOfCall, rateFor, fmtUsd, fmtBrl, USD_BRL, CALIBRATION } from './pricing.mjs';
+import * as cache from './cache.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const PORT = Number(process.env.PROTOTIPO_PORT) || 4014;
@@ -78,7 +79,8 @@ if (!creds) {
   console.log(`  preço:    $${pr.input}/1M in · $${pr.output}/1M out · calibração ×${CALIBRATION}  (ajuste: COST_CALIBRATION no .env)`);
 }
 console.log(`  abra:     http://localhost:${PORT}`);
-console.log(`  custos:   http://localhost:${PORT}/custos   (log: custos.jsonl)\n`);
+console.log(`  custos:   http://localhost:${PORT}/custos    ·    cache: http://localhost:${PORT}/cache`);
+console.log(`  cache de prefixo: liga/desliga na barra do chat (cria um cachedContents com o system prompt)\n`);
 
 // A doc oficial (research 017) diz que os modelos 3.x usam `thinking_level` em
 // `generationConfig`, mas não fixa se é `generationConfig.thinkingLevel` ou
@@ -94,51 +96,97 @@ function bodyVariants(base) {
 
 const MODELOS_OK = ['gemini-3.6-flash', 'gemini-3.5-flash-lite', 'gemini-3.7-flash', 'gemini-3.5-flash'];
 
-async function askManu(history, foraDoExpediente, modelOverride) {
+async function askManu(history, foraDoExpediente, modelOverride, usarCache) {
   if (!creds) throw new Error('Sem GEMINI_API_KEY — veja o console.');
   const modelo = MODELOS_OK.includes(modelOverride) ? modelOverride : MODEL;
   const agora = new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
   const contexto = [
-    '\n\n---\n## Contexto agora (não é mensagem do cliente)',
+    '## Contexto agora (não é mensagem do cliente)',
     `- Data e hora: ${agora} (horário de Brasília).`,
     '- Horário de atendimento da loja: segunda a sexta 9h–18h, sábado 9h–13h.',
     `- Situação: ${foraDoExpediente ? 'FORA do horário de atendimento — qualifique, mas não prometa que alguém responde agora; diga quando o atendimento volta.' : 'DENTRO do horário de atendimento.'}`,
   ].join('\n');
 
-  const base = {
-    systemInstruction: { parts: [{ text: SYSTEM_PROMPT + contexto }] },
-    contents: history.map((m) => ({
-      role: m.role === 'agent' ? 'model' : 'user',
-      parts: [{ text: m.text }],
-    })),
+  const turnosCliente = history.map((m) => ({
+    role: m.role === 'agent' ? 'model' : 'user',
+    parts: [{ text: m.text }],
+  }));
+
+  // Resolve o cache de prefixo, se pedido. O prefixo cacheado é SÓ o system prompt estático;
+  // o `contexto` dinâmico entra como primeiro turno de `contents` (não pode ir junto do
+  // cachedContent — a API rejeita systemInstruction com cachedContent).
+  let cacheName = null;
+  let cacheInfo = { pedido: !!usarCache, usado: false, erro: null };
+  if (usarCache) {
+    try {
+      cacheName = await cache.getPrefixCache(modelo, creds.key, SYSTEM_PROMPT);
+      cacheInfo.usado = true;
+    } catch (e) {
+      cacheInfo.erro = e.message;
+      console.warn('  cache de prefixo falhou, caindo pra inline:', e.message);
+    }
+  }
+
+  const inlineBase = () => ({
+    systemInstruction: { parts: [{ text: SYSTEM_PROMPT + '\n\n---\n' + contexto }] },
+    contents: turnosCliente,
     generationConfig: { temperature: 0.75, maxOutputTokens: 800 },
-  };
+  });
+  const cachedBase = (name) => ({
+    cachedContent: name,
+    contents: [
+      { role: 'user', parts: [{ text: contexto }] },
+      { role: 'model', parts: [{ text: 'Entendido, vou seguir as instruções.' }] },
+      ...turnosCliente,
+    ],
+    generationConfig: { temperature: 0.75, maxOutputTokens: 800 },
+  });
 
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelo}:generateContent`;
-  let lastErr;
-  for (const variant of bodyVariants(base)) {
-    const r = await fetch(url, {
-      method: 'POST',
-      headers: { 'content-type': 'application/json', 'x-goog-api-key': creds.key },
-      body: JSON.stringify(variant.body),
-    });
-    const data = await r.json().catch(() => ({}));
-    if (r.ok) {
-      const cand = data.candidates?.[0];
-      const text = (cand?.content?.parts || []).map((p) => p.text).filter(Boolean).join('').trim();
-      return {
-        text: text || '(o modelo não devolveu texto — ' + (cand?.finishReason || 'sem finishReason') + ')',
-        thinkingField: variant.label,
-        model: data.modelVersion || modelo,
-        usage: data.usageMetadata || null,
-        finishReason: cand?.finishReason || null,
-      };
+
+  // Tenta um corpo pelas 3 variantes de thinking_level. Devolve {ok, data, label} ou {ok:false, err}.
+  async function attempt(base) {
+    let err;
+    for (const variant of bodyVariants(base)) {
+      const r = await fetch(url, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', 'x-goog-api-key': creds.key },
+        body: JSON.stringify(variant.body),
+      });
+      const data = await r.json().catch(() => ({}));
+      if (r.ok) return { ok: true, data, label: variant.label };
+      err = { status: r.status, error: data.error?.message || data };
+      console.warn(`  variante "${variant.label}" → ${r.status}: ${err.error}`);
+      if (r.status !== 400) break;
     }
-    lastErr = { status: r.status, error: data.error?.message || data };
-    console.warn(`  variante "${variant.label}" → ${r.status}: ${lastErr.error}`);
-    if (r.status !== 400) break; // 401/403/429/5xx não melhoram trocando o campo
+    return { ok: false, err };
   }
-  throw new Error(typeof lastErr?.error === 'string' ? lastErr.error : JSON.stringify(lastErr));
+
+  let res = await attempt(cacheName ? cachedBase(cacheName) : inlineBase());
+
+  // cache sumiu entre a checagem e o uso (TTL) → invalida e refaz inline
+  if (!res.ok && cacheName && /cachedcontent|not found|permission_denied/i.test(String(res.err?.error))) {
+    cache.invalidate(modelo);
+    cacheName = null;
+    cacheInfo = { pedido: true, usado: false, erro: 'cache havia expirado; refeito inline' };
+    res = await attempt(inlineBase());
+  }
+
+  if (!res.ok) {
+    const e = res.err?.error;
+    throw new Error(typeof e === 'string' ? e : JSON.stringify(res.err));
+  }
+
+  const cand = res.data.candidates?.[0];
+  const text = (cand?.content?.parts || []).map((p) => p.text).filter(Boolean).join('').trim();
+  return {
+    text: text || '(o modelo não devolveu texto — ' + (cand?.finishReason || 'sem finishReason') + ')',
+    thinkingField: res.label,
+    model: res.data.modelVersion || modelo,
+    usage: res.data.usageMetadata || null,
+    finishReason: cand?.finishReason || null,
+    cache: cacheInfo,
+  };
 }
 
 const send = (res, code, type, body) => {
@@ -244,9 +292,12 @@ Em produção isso é <b>cacheado</b> (10× mais barato na parte fixa) — ver r
 <p class="aviso">${r.aviso}</p>
 <p class="aviso"><b>Calibrar:</b> converse um pouco, anote o total daqui, compare com o delta do painel de
 billing (tem ~10 min de atraso). Se divergir, ponha <code>COST_CALIBRATION=&lt;fator&gt;</code> no
-<code>.env</code> (ex.: se o billing subiu o dobro, <code>COST_CALIBRATION=2</code>) e reinicie.
-Este protótipo <b>não usa cache de prefixo</b> — em produção o system prompt cacheado derruba a
-entrada; ver research 017 §11.4.</p>
+<code>.env</code> (ex.: se o billing subiu o dobro, <code>COST_CALIBRATION=2</code>) e reinicie.</p>
+<p class="aviso"><b>Cache de prefixo:</b> a chave "cache de prefixo" na barra do chat liga/desliga o
+<code>cachedContents</code> (só o system prompt estático; data/hora vai em <code>contents</code>).
+Ligado, a linha cinza mostra <code>cache N</code> e o token cacheado é cobrado a $${r.precoAtual.cacheHit}/1M
+em vez de $${r.precoAtual.input}/1M. No <code>gemini-3.5-flash-lite</code> o cache funciona mas
+<b>sem desconto</b> (ver CUSTOS.md). Cache atual: <a href="/cache">/cache</a>.</p>
 <p style="font-size:.8rem"><a href="/">← voltar ao chat</a> · <a href="/custos.json">JSON</a> · terminal: <code>node custos.mjs</code></p>`;
 }
 
@@ -261,12 +312,15 @@ createServer(async (req, res) => {
     if (req.method === 'GET' && req.url === '/health') {
       return send(res, 200, 'application/json', JSON.stringify({ ok: !!creds, model: MODEL, thinking: THINKING, modelos: MODELOS_OK, calibracao: CALIBRATION }));
     }
+    if (req.method === 'GET' && req.url === '/cache') {
+      return send(res, 200, 'application/json', JSON.stringify({ ttlSec: 1800, ativos: cache.status() }, null, 2));
+    }
     if (req.method === 'POST' && req.url === '/chat') {
       let raw = '';
       for await (const chunk of req) raw += chunk;
-      const { history = [], foraDoExpediente = false, conversationId = 'sem-id', model } = JSON.parse(raw || '{}');
+      const { history = [], foraDoExpediente = false, conversationId = 'sem-id', model, cache: usarCache = false } = JSON.parse(raw || '{}');
       const t0 = Date.now();
-      const out = await askManu(history, foraDoExpediente, model);
+      const out = await askManu(history, foraDoExpediente, model, usarCache);
       out.ms = Date.now() - t0;
 
       // --- tracking de custo ---
@@ -276,6 +330,7 @@ createServer(async (req, res) => {
         conversationId,
         model: out.model,
         thinkingField: out.thinkingField,
+        cache: out.cache?.usado || false,
         rate: c.rate,
         tokens: c.tokens,
         usd: Number(c.usd.toFixed(8)),
@@ -305,3 +360,18 @@ createServer(async (req, res) => {
     return send(res, 500, 'application/json', JSON.stringify({ error: err.message }));
   }
 }).listen(PORT);
+
+// Limpa objetos de cache órfãos de execuções anteriores (marcados com nosso displayName).
+if (creds) cache.cleanup(creds.key).catch(() => {});
+
+// Ao encerrar limpo (Ctrl+C), apaga os caches que este processo criou.
+let encerrando = false;
+for (const sig of ['SIGINT', 'SIGTERM']) {
+  process.on(sig, async () => {
+    if (encerrando) process.exit(0);
+    encerrando = true;
+    console.log('\n  encerrando — limpando caches…');
+    if (creds) await cache.cleanup(creds.key).catch(() => {});
+    process.exit(0);
+  });
+}

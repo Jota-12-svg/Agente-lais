@@ -53,7 +53,10 @@ A mensagem de texto do cliente é ~30 tokens. **O que pesa é o "manual" que via
 - Preço do hit no `gemini-3.6-flash`: **$0,075/1M** (promo) / **$0,15/1M** (cheio) vs $0,75 / $1,50 de entrada normal → **10×**. Armazenamento $0,50/1M/hora (promo) / $1,00 (cheio) — desprezível (~R$ 3–10/mês pra um prefixo quente o dia todo).
 - **`gemini-3.5-flash-lite`: o cache FUNCIONA na API** (testado: cria, devolve `cachedContentTokenCount`), **mas a página de preços diz `Context caching: Not available`**. Leitura provável: sem desconto (token cacheado cobrado como entrada normal). **Não conte com economia de cache no plano B** até a fatura confirmar. `pricing.mjs` agora estima o cache do lite sem desconto.
 
-**Efeito:** os ~80% da conta viram ~8%. Conversa de 4 turnos: ~R$ 0,07 → **~R$ 0,03**.
+**Efeito:** os ~80% da conta viram ~8%. **Medido no protótipo (`cache de prefixo` na barra):**
+`gemini-3.6-flash`, mensagem de qualificação — **sem cache R$ 0,0172, com cache R$ 0,0046
+(–73%)**. Com 5 turnos de histórico o `cachedContentTokenCount` fica **constante** (1.675) — o
+hit no prefixo aguenta a conversa crescer.
 
 **A disciplina que tem de nascer com o runtime — prefixo estável × contexto dinâmico:**
 o protótipo (`run.mjs`) cola um bloco `## Contexto agora` (data/hora, dentro/fora do
@@ -263,12 +266,13 @@ sempre que o uso permitir"). Jobs Batch têm retenção própria do lado da Goog
 
 ## Lacunas — só teste com a chave / dado real fecha
 
-1. **Cache do `flash-lite` tem desconto?** API cria e dá hit; preço diz "Not available".
-   Rodar um job e olhar a fatura: cobra o token cacheado a quanto?
-2. **Piso real de tokens do cache.** Doc diz 4.096; a API aceitou 1.675. Testar um prompt
-   menor e ler o número no erro.
-3. **Hit de prefixo com histórico crescente.** 5 turnos referenciando o mesmo `cachedContent`,
-   confirmar `cachedContentTokenCount` ~constante em todos.
+1. **Cache do `flash-lite` tem desconto?** API cria e dá hit (testado); preço diz "Not
+   available". Rodar um job e olhar a fatura: cobra o token cacheado a quanto? (`pricing.mjs`
+   assume = entrada, sem desconto.)
+2. **Piso real de tokens do cache.** Doc diz 4.096; a API aceitou 1.675 (testado). Testar um
+   prompt menor e ler o número exato no erro.
+3. ~~Hit de prefixo com histórico crescente.~~ **CONFIRMADO** — 5 turnos referenciando o mesmo
+   `cachedContent`, `cachedContentTokenCount` constante em 1.675. (Implementado no protótipo.)
 4. **`thoughtsTokenCount` com `minimal`** ao longo de ~20 chamadas reais de qualificação — 0
    sempre, ou às vezes dispara?
 5. **Preço real desta conta** — a promo de 2026 não está sendo aplicada (billing = preço
