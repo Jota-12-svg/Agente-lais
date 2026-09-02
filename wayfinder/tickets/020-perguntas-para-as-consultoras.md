@@ -178,6 +178,13 @@ Google Play), ou apareceu em algum momento a palavra "Premium" nas configuraçõ
 *(Pergunto porque o app grátis limita a 4 dispositivos conectados ao celular principal, e a
 loja usa mais que isso — quero confirmar se é uma assinatura paga que libera mais vagas.)*
 
+**34. Durante o expediente, quando chega um e-mail no seu celular, você percebe na hora (som,
+vibração, aviso na tela), ou só quando abre o e-mail de propósito?**
+( ) Percebo na hora, sempre ( ) Às vezes ( ) Só quando abro o app de e-mail
+*E qual e-mail você olha no trabalho — o mesmo `@gmail.com` do formulário, ou outro?*
+*(Pergunto porque o aviso de "tem cliente esperando" vai chegar por e-mail — preciso saber se
+isso te alcança durante o atendimento.)*
+
 ---
 
 ## Rastreamento interno
@@ -200,6 +207,7 @@ Não vai no roteiro. Serve para saber o que priorizar e para onde a resposta vol
 | 29, 30, 31 | [009](009-como-funciona-o-atendimento-hoje.md) · [012](012-quando-e-como-o-agente-escala.md) | **Alimentam o classificador arquiteto × consumidor final**, que é o gatilho de escalada mais importante da fase 1. A **29 é a mais valiosa do roteiro inteiro**: a consultora faz essa leitura há anos e tem sinais que não se adivinham de fora. A 30 mostra onde a classificação erra na prática, e a 31 confirma (ou derruba) a modelagem de que o modo é da **conversa**, não do contato. |
 | 32 | [013](013-sinal-de-sucesso-do-aprendizado.md) | O mapa dizia que o desenho do laço de aprendizado "só fica nítido depois de existir um sinal de sucesso definido e de eu ver conversas reais" (`Not yet specified`). A 32 é a fonte mais barata dessas conversas: **curada pela consultora**, não bruta como a exportação completa do [003](003-exportacao-das-conversas-das-consultoras.md) — ela já sabe, sem precisar ler tudo de novo, qual atendimento vale a pena olhar. Não substitui o 003 (que cobre volume e o resto do roteiro); adianta exemplo de sucesso antes dele estar pronto. |
 | 33 | [027](027-testar-self-hosted-no-numero-atual.md) | Decide quantos slots de dispositivo vinculado sobram de verdade no número da loja para o agente entrar (research [022](../research/022-alternativas-onboarding-sem-parceiro-pago.md) já suspeitava de WhatsApp Business Premium, sem confirmar). |
+| 34 | [035](035-plataforma-central-das-consultoras.md) · [037](037-construir-plataforma-consultoras-v1.md) | O 035 fechou a notificação da fila **só por e-mail**. Isso só funciona se o celular delas **avisa** quando chega e-mail no expediente — lacuna registrada desde o research 029, nunca confirmada. Se a resposta for "só quando abro o app", o 037 precisa subir para SMS (adição de ~15 linhas na Edge Function) antes do rollout. |
 
 ### ⚠️ Manuseio da nota fiscal (pergunta 25)
 

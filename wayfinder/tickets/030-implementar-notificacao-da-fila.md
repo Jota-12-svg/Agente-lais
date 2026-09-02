@@ -2,17 +2,25 @@
 id: "030"
 title: Implementar o script de notificação da fila (Apps Script)
 labels: [wayfinder:task]
-status: open
+status: closed
 assignee:
 blocked-by: ["035"]
 ---
 
-> **Suspenso em 2026-09-02 — ver [035](035-plataforma-central-das-consultoras.md).** O dono
-> decidiu tirar a fila da planilha compartilhada e pô-la numa plataforma própria sobre o
-> Supabase. Um Apps Script vinculado ao Google Sheet, varrendo a aba de fila, **deixa de
-> fazer sentido**. Este ticket fica bloqueado pelo 035: ao fechar o 035, ou é reescrito para
-> o canal de aviso escolhido (Telegram / e-mail / web push) ou é fechado como substituído.
-> O que segue abaixo descreve o desenho antigo (planilha) e está mantido só como histórico.
+> **Fechado em 2026-09-02 como substituído — ver [035](035-plataforma-central-das-consultoras.md).**
+> A fila saiu da planilha compartilhada e vive numa plataforma sobre o Supabase. Um Apps
+> Script vinculado ao Google Sheet, varrendo a aba de fila, deixou de existir como caminho.
+> A notificação agora é **Database Webhook do Supabase no `INSERT` → Edge Function → e-mail
+> via Resend**, e virou parte do ticket de build [037](037-construir-plataforma-consultoras-v1.md).
+> O que segue abaixo é o desenho antigo (planilha), mantido só como histórico.
+
+## Resolução
+
+**Substituído pelo [037](037-construir-plataforma-consultoras-v1.md), §3.** Nada a construir
+aqui: o mecanismo (Apps Script + trigger de tempo varrendo a planilha) foi todo consequência
+de a fila viver numa planilha e de a Sheets API não disparar `onEdit`/`onChange` — os dois
+motivos sumiram com a decisão do 035. O disparo por Database Webhook do Supabase não tem
+nenhum desses problemas.
 
 ## Question
 

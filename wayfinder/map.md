@@ -166,14 +166,14 @@ prototipagem, `/prototype`. Em tickets de research, `/research` como subagente.
   API v4) não dispara esses eventos, e nada garante que as Notificações nativas se comportem
   diferente. O time-driven trigger contorna o problema por completo, lendo o estado da planilha
   a cada execução — custo zero dentro das quotas oficiais, latência de até 1 minuto. SMS, apps de
-  terceiro (Zapier/Make) e sinal físico na loja descartados por escrito. A fila em si já vive num
-  lugar único e compartilhado — a aba do ticket 012 — independente do canal escolhido; o que falta
-  confirmar é se o celular de cada consultora **avisa** quando chega e-mail (não só se elas checam
-  a caixa), ver [020](tickets/020-perguntas-para-as-consultoras.md). Abriu o
-  [030](tickets/030-implementar-notificacao-da-fila.md) (construir o script) e o
+  terceiro (Zapier/Make) e sinal físico na loja descartados por escrito. **Atualização 2026-09-02
+  (035):** o **enunciado** vale — avisar sem WhatsApp ativo, e a lacuna "o celular avisa quando
+  chega e-mail?" continua de pé —, mas a **conclusão cai**: a fila saiu da planilha, então Apps
+  Script varrendo Sheet não se aplica; a notificação passa a ser Database Webhook do Supabase no
+  `INSERT` → Edge Function → e-mail. Abriu o
   [031](tickets/031-implementar-escrita-do-chamado-na-fila.md) (a metade do lado do agente —
-  escrever o chamado na fila —, que o ticket 012 já tinha decidido mas nenhum ticket ainda
-  implementava).
+  escrever o chamado na fila) e o [030](tickets/030-implementar-notificacao-da-fila.md) (fechado
+  em 2026-09-02, absorvido pelo 037).
 
 - [Inspecionar a planilha de carteira/mailing de clientes](tickets/004-acesso-a-planilha-e-ao-catalogo.md)
   — **o ticket 004 foi dividido**: a planilha foi inspecionada e fechou aqui; catálogo do Mainô
@@ -229,6 +229,22 @@ prototipagem, `/prototype`. Em tickets de research, `/research` como subagente.
   [035](tickets/035-plataforma-central-das-consultoras.md). Fechado numa branch paralela e
   integrado à trunk na reconciliação de 2026-09-02.
 
+- [Plataforma central das consultoras — substrato da fila e desfecho](tickets/035-plataforma-central-das-consultoras.md)
+  — **uma tela web única sobre o Supabase** onde a consultora vê a fila de chamados do agente,
+  **assume**, **fecha** e registra `business_outcome` + `advisor_verdict` (o veredito do 013).
+  Vite + framework leve, mobile-first, **sem backend de aplicação** (fala direto com o Supabase
+  via RLS); login **Google** com allow-list de 4 e-mails; Realtime para a fila ao vivo.
+  Notificação **só por e-mail** (Database Webhook no `INSERT` → Edge Function → Resend) — SMS
+  fica como adição futura; risco de proeminência do e-mail registrado, pergunta 34 no 020.
+  Sinal secundário: o agente marca a conversa como **não lida** no WhatsApp ao escalar (a
+  validar no 027). Esquema da tabela `handoffs` fixado (fila ≠ memória do agente); chamado
+  fechado **some da fila**, fica arquivado. Dado de cliente protegido por RLS; purga fica para
+  a decisão de LGPD. **Construção espera o runtime do agente.** Fecha o 029 na conclusão,
+  fecha o [030](tickets/030-implementar-notificacao-da-fila.md) (absorvido), reenquadra o
+  [031](tickets/031-implementar-escrita-do-chamado-na-fila.md) (alvo → Supabase), abre o
+  [037](tickets/037-construir-plataforma-consultoras-v1.md) (build). `CONTEXT.md` ganhou
+  `Chamado` e `Plataforma das consultoras`.
+
 ## Not yet specified
 
 Névoa em escopo, ainda sem nitidez para virar ticket:
@@ -241,8 +257,10 @@ Névoa em escopo, ainda sem nitidez para virar ticket:
   de a superfície do 035 existir para o `advisor_verdict` acumular.
 - **Modelo de dados no Supabase.** Esquema de clientes, conversas, produtos e aprendizado. O
   ticket 010 já fixou os campos que a qualificação extrai e que o Supabase é a memória interna
-  do agente (todo atendimento, inclusive os perdidos); falta o esquema em si e como o catálogo
-  é representado.
+  do agente (todo atendimento, inclusive os perdidos); o ticket **035 fixou a tabela
+  `handoffs`** (a fila de chamados escalados que as consultoras enxergam — distinta da memória
+  do agente, ligada a ela por `engagement_id`). Falta o esquema da memória (`engagements`),
+  como o catálogo é representado, e a relação entre os dois.
 - **Stack e hospedagem do runtime.** Onde o agente roda, como recebe webhook, como
   sobrevive a reinício no meio de uma conversa. O ticket 018 **removeu** a restrição de
   ffmpeg: o áudio OGG/Opus do WhatsApp entra inline no Gemini sem transcodificar, então
@@ -254,13 +272,15 @@ Névoa em escopo, ainda sem nitidez para virar ticket:
 - **Fluxo do arquiteto.** O agente recebe uma planilha com dezenas de itens — o que ele faz
   com ela é um segundo fluxo inteiro, não uma variação do primeiro. Só ganha nitidez depois
   de ver planilhas reais — ticket [032](tickets/032-catalogo-do-maino-e-planilha-de-arquiteto.md).
-- **Superfície para as consultoras.** Como elas veem, corrigem e assumem uma conversa do
-  agente; como marcam que uma venda aconteceu — e como registram o `advisor_verdict` do
-  ticket 013. **Parcialmente endereçada pelo ticket
-  [035](tickets/035-plataforma-central-das-consultoras.md)** (2026-09-02): o dono decidiu
-  substituir a fila-na-planilha por uma plataforma própria sobre o Supabase — v1 cobre ver a
-  fila, assumir e marcar desfecho (incluindo o `advisor_verdict`). Ver/corrigir a conversa
-  dentro da plataforma continua na névoa. Reenquadra os tickets 029/030/031.
+- **Superfície para as consultoras.** **Fatia v1 fechada pelo ticket
+  [035](tickets/035-plataforma-central-das-consultoras.md)** (2026-09-02): plataforma web
+  única sobre o Supabase — ver a fila de chamados, assumir, fechar, registrar
+  `business_outcome` + `advisor_verdict`. Login Google, notificação por e-mail, esquema
+  `handoffs` definido. Construção é o ticket
+  [037](tickets/037-construir-plataforma-consultoras-v1.md), que espera o runtime do agente.
+  **Continua na névoa:** ver e **corrigir a conversa** do agente dentro da plataforma, e o
+  fluxo de "assumir uma conversa em andamento" (retomar o controle no meio). Reenquadrou
+  029/030/031.
 - **LGPD.** Consentimento, retenção e o que pode ser guardado de conversa de cliente.
 - **Estratégia de rollout.** Piloto com uma consultora, horário limitado, fallback quando
   o agente falha.

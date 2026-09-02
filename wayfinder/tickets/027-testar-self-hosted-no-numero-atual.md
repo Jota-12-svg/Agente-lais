@@ -45,6 +45,15 @@ abaixo só se respondem tentando, não lendo mais documentação.
    enviada**, só ao ler o QR code e vincular. Monitorar também esse instante — "conectou sem
    erro" não é a mesma coisa que "seguro" — e manter o mesmo cuidado se algum dia vincular no
    número real da loja.
+6. **Marcar uma conversa como "não lida" (`chatModify({ markRead: false }, jid)`) sincroniza
+   para os outros companions?** Pedido do ticket
+   [035](035-plataforma-central-das-consultoras.md) (§5): ao escalar, o agente marcaria o
+   chat como não lido para a consultora bater o olho. Verificar (a) se o Baileys aplica o
+   *app-state* sem erro, (b) se o estado "não lida" chega aos aparelhos vinculados (celular,
+   WhatsApp Web, e o app de Windows — ver ressalva do 019), e (c) se marcar lido/não-lido
+   conta como atividade que soma risco de banimento (não deveria — é *app-state* passivo, não
+   mensageria — mas confirmar nos logs, como no item 4). Sinal secundário: se não funcionar
+   confiável, o 035 já trata como não-autoritativo.
 
 ### Como testar sem arriscar o número da loja
 
@@ -70,6 +79,8 @@ reverter (desconectar o Baileys) se algo parecer errado.
   cobrança de app recorrente associada?). Isso decide quantos slots de dispositivo sobram de
   verdade para o agente entrar.
 
-**Resolvido quando** os cinco pontos acima estiverem testados e registrados com o resultado
+**Resolvido quando** os seis pontos acima estiverem testados e registrados com o resultado
 real (não inferido), e houver uma recomendação clara de ir ou não para o número de produção da
-loja — e, se for, com que ajuste no desenho do agente (checklist do research 026).
+loja — e, se for, com que ajuste no desenho do agente (checklist do research 026). O item 6
+(marca de não-lida) não bloqueia a recomendação de ir/não-ir — se não funcionar, o 035 já o
+trata como opcional.

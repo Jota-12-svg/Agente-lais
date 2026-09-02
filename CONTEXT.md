@@ -73,6 +73,14 @@ consultora por definição do negócio, não por falha. O valor do agente está 
 já deixou pronto quando ela chega.
 _Avoid_: escalonamento, transferência, encaminhamento, handover.
 
+**Chamado** (`handoff`, registro):
+O registro de uma **escalada** na fila da **plataforma das consultoras** — uma linha da tabela
+`handoffs`. Carrega só o relance para a consultora priorizar e assumir (telefone, nome, o que
+a pessoa quer, para quando, orçamento, novo/cliente, gatilho), nunca a conversa inteira (essa
+fica no WhatsApp). Ao ser **fechado** por uma consultora, sai da fila e fica arquivado com o
+desfecho. Ticket [035](wayfinder/tickets/035-plataforma-central-das-consultoras.md).
+_Avoid_: ticket, ocorrência, tarefa, card.
+
 **Rodízio** (`rotation`):
 Regra de distribuição de contato novo entre as consultoras: cada nova pessoa vai para a
 próxima da fila. Cliente que volta **fura o rodízio** e vai para a consultora dona dele.
@@ -140,6 +148,16 @@ de contato (ver ticket [004](wayfinder/tickets/004-acesso-a-planilha-e-ao-catalo
 cópia local de trabalho é `dados/CARTEIRA+MAILLING.xlsx`; o acesso à planilha viva vem no
 setup do agente na loja.
 _Avoid_: base, CRM, cadastro.
+
+**Plataforma das consultoras** (`advisor_platform`):
+A tela web única, sobre o Supabase, onde a consultora vê a fila de **chamados** do agente,
+**assume** um chamado, **fecha** e registra o desfecho (`business_outcome`) e o veredito sobre
+o atendimento do agente (`advisor_verdict`). Não é a **planilha compartilhada** (que continua
+sendo diretório de arquitetos / carteira) nem a memória interna do agente. Login por conta
+Google; aviso de chamado novo por e-mail. Ticket
+[035](wayfinder/tickets/035-plataforma-central-das-consultoras.md); construção no
+[037](wayfinder/tickets/037-construir-plataforma-consultoras-v1.md).
+_Avoid_: painel, dashboard, CRM, sistema.
 
 ### Ainda sem definição
 
