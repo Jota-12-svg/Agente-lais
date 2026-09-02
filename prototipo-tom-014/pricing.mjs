@@ -20,11 +20,15 @@ export const USD_BRL = Number(process.env.USD_BRL) || 5.5; // aproximação
 export const CALIBRATION = Number(process.env.COST_CALIBRATION) || 1;
 
 // Preço CHEIO (sem promo) — calibrado ao billing real desta conta.
+// cacheHit: preço do token cacheado (prefixo). No 3.6-flash é ~1/10 da entrada.
+// No 3.5-flash-lite a página de preços diz "Context caching: Not available" — o cache
+// FUNCIONA na API (testado 02/09: cria e devolve cachedContentTokenCount) mas provavelmente
+// NÃO tem desconto. Aqui = mesmo preço da entrada, até a fatura confirmar. Ver CUSTOS.md.
 const TABLE = {
   'gemini-3.6-flash':       { input: 1.50, output: 7.50, cacheHit: 0.15 },
   'gemini-3.7-flash':       { input: 1.50, output: 7.50, cacheHit: 0.15 },
   'gemini-3.5-flash':       { input: 1.50, output: 9.00, cacheHit: 0.15 },
-  'gemini-3.5-flash-lite':  { input: 0.30, output: 2.50, cacheHit: 0.03 }, // sem promo, não muda
+  'gemini-3.5-flash-lite':  { input: 0.30, output: 2.50, cacheHit: 0.30 }, // sem desconto de cache (ver acima)
   'gemini-3-flash-preview': { input: 0.50, output: 3.00, cacheHit: 0.05 }, // simplificado (áudio tem sobretaxa)
 };
 
