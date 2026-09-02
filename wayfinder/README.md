@@ -24,25 +24,28 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 | 027 | [Testar a conexão self-hosted como dispositivo adicional, antes de tocar no número da loja](tickets/027-testar-self-hosted-no-numero-atual.md) | task |
 | 030 | [Implementar o script de notificação da fila (Apps Script)](tickets/030-implementar-notificacao-da-fila.md) | task |
 | 031 | [Implementar a escrita do chamado do agente na aba de fila (Sheets API)](tickets/031-implementar-escrita-do-chamado-na-fila.md) | task |
-| 032 | [Obter o catálogo do Mainô e exemplos de planilha de arquiteto](tickets/032-catalogo-do-maino-e-planilha-de-arquiteto.md) | task |
+| 011 | [O que o agente pode afirmar sobre produto e disponibilidade](tickets/011-o-que-o-agente-pode-dizer-sobre-produto.md) | grilling |
 
-> **004 foi dividido** (2026-08-30): a planilha de clientes foi inspecionada e o 004 fechou; o
-> catálogo do Mainô e as planilhas de arquiteto foram para o **032**, que segue aberto e ainda
-> bloqueia **011**.
->
 > **030 e 031** saíram de Bloqueados com o fechamento do 004, mas ainda dependem de **acesso de
 > edição à planilha viva do Google** — pendência dentro do escopo deles, não um bloqueio de
 > ticket.
 >
-> **014 saiu da fronteira** (2026-09-02): reivindicado, protótipo v1 escrito (sete transcrições
-> + especificação de tom em `tickets/014-como-o-agente-soa.md`). `in-progress` — fecha quando
-> o dono do projeto reagir às transcrições e às 8 perguntas abertas.
+> **014 saiu da fronteira** (2026-09-02): reivindicado, protótipo escrito + ambiente de teste
+> ao vivo em `prototipo-tom-014/`. `in-progress`.
+>
+> **032 fechou** (2026-09-02, grelha do 014): o Mainô não tem catálogo mantido; a referência
+> de produto do agente é o site + categorias no contexto. Isso **desbloqueou o 011**, que
+> ganhou uma `## Direção` mas segue `open` para a resolução formal. As planilhas de arquiteto
+> voltaram para a névoa "Fluxo do arquiteto".
+>
+> **033 aberto** (2026-09-02, grelha do 014): "laço de contexto" — o contexto do agente
+> evoluindo com os atendimentos, distinto do sinal de sucesso/fracasso. Bloqueado pelo **013**.
 
 ## Bloqueados
 
 | # | Ticket | Tipo | Espera |
 |---|---|---|---|
-| 011 | [O que o agente pode afirmar sobre produto e disponibilidade](tickets/011-o-que-o-agente-pode-dizer-sobre-produto.md) | grilling | 032 |
+| 033 | [Laço de contexto — o contexto do agente evoluindo com os atendimentos](tickets/033-laco-de-contexto-do-agente.md) | grilling | 013 |
 | 019 | [De quais dispositivos a consultora pode responder sem cegar o agente](tickets/019-companion-windows-ponto-cego.md) | task | **em pausa** — premissa (Coexistence) não é mais o caminho; ver 016 |
 
 ## Fechados
@@ -63,3 +66,4 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 | 016 | [Escolher o parceiro Meta para o onboarding do WhatsApp](tickets/016-escolher-parceiro-meta.md) | research | seis researches (016/022/023/024/025/026); decisão: self-hosted no número atual, sem parceiro — abriu 027 |
 | 012 | [Quando e como o agente escala para uma consultora](tickets/012-quando-e-como-o-agente-escala.md) | grilling | roteamento por fila (não atribuição), gatilhos, transparência, freio de mão adiado para 027 — abriu 029; janela de retomada depende do 013 |
 | 029 | [Canal de notificação da fila de chamados](tickets/029-canal-de-notificacao-da-fila.md) | research | [research/029](research/029-canal-notificacao-fila.md); e-mail via Apps Script com time-driven trigger, contornando a limitação de `onEdit`/`onChange` não disparar para gravação via API |
+| 032 | [Obter o catálogo do Mainô e exemplos de planilha de arquiteto](tickets/032-catalogo-do-maino-e-planilha-de-arquiteto.md) | task | Mainô não tem catálogo mantido; referência de produto = site + categorias no `CONTEXT.md`; planilhas de arquiteto → névoa "Fluxo do arquiteto"; **desbloqueou 011** |

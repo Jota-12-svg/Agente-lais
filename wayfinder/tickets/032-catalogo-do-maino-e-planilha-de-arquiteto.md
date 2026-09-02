@@ -2,8 +2,8 @@
 id: "032"
 title: Obter o catálogo de produtos do Mainô e exemplos de planilha de arquiteto
 labels: [wayfinder:task]
-status: open
-assignee:
+status: closed
+assignee: sessão 2026-09-02 (grelha do ticket 014)
 blocked-by: []
 ---
 
@@ -39,3 +39,29 @@ planilha de arquiteto) seguem as regras de `/dados/` — só o padrão sobe para
   conhecimento de produto do agente, o que depende de ver o catálogo do Mainô.
 - Névoa **"Fluxo do arquiteto"** no [`map.md`](../map.md) — o segundo fluxo só ganha nitidez
   depois de ver planilhas reais.
+
+---
+
+## Resolução
+
+Fechado na grelha do ticket [014](014-como-o-agente-soa.md) com o dono do projeto, 2026-09-02.
+**As duas metades caíram por motivos diferentes:**
+
+**1. Catálogo do Mainô — não existe.** O dono confirmou: o Mainô **não tem catálogo de
+produtos mantido**. O `GET /produtos` do research [007](007-maino-tem-api.md) existe como
+endpoint, mas a loja usa o Mainô só para cotação e nota — não cadastra os produtos lá. Puxar
+uma amostra traria pouco ou nada. **O conhecimento de produto do agente passa a vir de outra
+fonte:** o **site** da loja (<https://www.laisaliskicasa.com.br/>) como referência de estilo e
+catálogo parcial, mais as **categorias e o posicionamento** escritos no contexto do agente
+(ver `CONTEXT.md` → "A loja"). O agente **não consulta o site em runtime** na fase 1 — ele
+conhece as categorias, compartilha o link quando o cliente quer explorar, e **escala qualquer
+pergunta específica de produto** para a consultora. Isso é o escopo do
+[011](011-o-que-o-agente-pode-dizer-sobre-produto.md), agora desbloqueado.
+
+**2. Planilhas de arquiteto — adiadas.** Continuam sem material, mas **não bloqueiam nada na
+fase 1**: o agente escala arquiteto na hora, sem interpretar planilha (tickets 009/010). O
+pedido de 2–3 exemplos reais volta para a névoa **"Fluxo do arquiteto"** do
+[`map.md`](../map.md), a ser puxado quando esse segundo fluxo (fase 2) for desenhado.
+
+**Consequência:** [011](011-o-que-o-agente-pode-dizer-sobre-produto.md) sai de Bloqueados.
+`CONTEXT.md` atualizado (entradas "A loja" e "Catálogo").

@@ -9,14 +9,39 @@ código, conforme o `CLAUDE.md`. O termo em português é o que se usa ao falar 
 Este arquivo é **só glossário**. Decisão de arquitetura mora nos tickets em `wayfinder/`;
 detalhe de implementação, no código.
 
+## A loja (fatos, não termos)
+
+Confirmado com o dono do projeto em 2026-09-02 (grelha do ticket 014). É o contexto que o
+agente carrega sobre o negócio.
+
+- **Nome:** **Lais Aliski Casa** (sem acento em "Lais"). O projeto e vários documentos ainda
+  dizem "Lais Casa" por herança — o nome correto é este.
+- **Dona:** **Lais Aliski**. **Não faz atendimento** no WhatsApp — quem atende são as três
+  consultoras. O agente sabe quem é a Lais (para responder "quem é a Lais?"), mas não é com
+  ela que o cliente fala.
+- **Time de atendimento:** **três consultoras** — Pamella, Gabriela (apelido **Gabi**),
+  Joslaine —, em **rodízio** puro, sem especialidade. (Corrige o ticket 009, que dizia
+  "quatro pessoas": a dona está fora do atendimento.)
+- **Loja física:** Curitiba, bairro **Batel** — R. Francisco Rocha, 707, CEP 80420-130.
+  Horário: seg–sex 9h–18h, sábado 9h–13h, domingo fechado.
+- **O que vende:** decoração (vasos, cachepôs, esculturas, quadros, livros decorativos,
+  caixas e potes, centros de mesa, cestos, aromas) **e mobiliário**. Alto padrão, curadoria,
+  estilo clássico/sofisticado. Ticket alto (milhares a dezenas de milhares de reais).
+- **Site:** <https://www.laisaliskicasa.com.br/> — é e-commerce, mas **não é fonte de
+  disponibilidade** (ver **Disponibilidade**; as consultoras conferem tudo à mão). Serve como
+  referência de estilo e catálogo parcial, e como link para o cliente "dar uma olhada".
+- **Instagram:** <https://www.instagram.com/laisaliskicasa/> — mesmo uso: link para o cliente
+  explorar, não fonte que o agente consulta em runtime na fase 1.
+
 ## Language
 
 ### Pessoas
 
 **Consultora** (`advisor`):
-Pessoa da Lais Casa que atende clientes. Quatro no total; **três fazem o atendimento no
-WhatsApp** e têm aba na planilha compartilhada (PAMELLA, GABRIELA, JOSLAINE). O feminino é
-proposital: são todas mulheres.
+Pessoa da Lais Aliski Casa que atende clientes pelo WhatsApp. **Três**, em rodízio puro, sem
+especialidade: **Pamella, Gabriela (Gabi), Joslaine** — cada uma com aba na planilha
+compartilhada. O feminino é proposital: são todas mulheres. A **dona (Lais Aliski) não é
+consultora** e não faz atendimento (ver **A loja**).
 _Avoid_: vendedora, atendente, operador.
 
 **Contato** (`contact`):
@@ -96,14 +121,18 @@ _Avoid_: comissão, bonificação.
 
 **Disponibilidade** (`availability`):
 Se um produto está na loja agora. **Não existe em sistema algum** — a informação só passa a
-existir quando uma consultora anda pela loja e olha. Por isso **o agente nunca afirma
-disponibilidade**, em nenhuma fase.
+existir quando uma consultora anda pela loja e olha. O site é e-commerce, mas **não conta como
+sistema de estoque**: as consultoras conferem tudo à mão mesmo assim (confirmado 2026-09-02).
+Por isso **o agente nunca afirma disponibilidade**, em nenhuma fase.
 _Avoid_: estoque, saldo, quantidade.
 
 **Catálogo** (`catalog`):
-O conjunto de produtos que o agente conhece — preço, dimensão, material, imagem, descrição.
-Vem do Mainô. **Catálogo não é disponibilidade:** estar no catálogo não significa estar na
-loja.
+O conjunto de produtos que o agente conhece. **O Mainô não tem catálogo mantido** (o
+`GET /produtos` do research 007 existe como endpoint, mas a loja não o popula — confirmado
+2026-09-02, ticket 032). Na fase 1 o "catálogo" do agente é: as **categorias e o
+posicionamento** da loja no contexto (ver **A loja**) + o **site** como referência de estilo,
+que ele compartilha com o cliente mas não consulta em runtime. Produto específico → escala.
+**Catálogo não é disponibilidade.**
 _Avoid_: mix, portfólio, linha.
 
 ### Origem e registro

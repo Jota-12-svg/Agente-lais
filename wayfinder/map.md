@@ -34,12 +34,15 @@ anterior e foram **descartados por decisão do usuário**. Não são fonte, não
 precedente, não voltam pela porta dos fundos. Dados no Supabase do projeto anterior devem
 ser apagados.
 
-**O negócio.** Lais Casa — loja de decoração e mobiliário (vasos, bandejas, taças,
-móveis). Ticket de R$ 2.000 a R$ 50.000. Dois públicos distintos: **consumidor final** e
-**arquiteto**, que manda uma planilha com uma lista de itens desejados. Três sistemas em
-uso: **WhatsApp Business** (no celular de todas as consultoras), **Maino** (cotação e nota
-fiscal) e uma **planilha compartilhada** (uma aba por consultora com os clientes dela,
-mais uma aba de datas importantes tipo aniversários).
+**O negócio.** **Lais Aliski Casa** (o projeto ainda diz "Lais Casa" por herança; nome
+correto confirmado 2026-09-02) — loja de decoração e mobiliário em Curitiba, no Batel.
+Ticket alto (milhares a dezenas de milhares de reais). Dona: **Lais Aliski**, que **não faz
+atendimento**. Time: **três consultoras** (Pamella, Gabi, Joslaine), rodízio puro. Dois
+públicos: **consumidor final** e **arquiteto** (manda planilha com lista de itens). Sistemas
+em uso: **WhatsApp Business**, **Maino** (só cotação e nota — **não tem catálogo de produtos
+mantido**, ver ticket 032) e uma **planilha compartilhada**. A loja tem **site**
+(<https://www.laisaliskicasa.com.br/>, e-commerce, mas não é fonte de estoque) e Instagram.
+Vocabulário e fatos da loja: [`CONTEXT.md`](../CONTEXT.md) → "A loja".
 
 **Restrições duras**, a respeitar em toda decisão:
 
@@ -201,6 +204,17 @@ prototipagem, `/prototype`. Em tickets de research, `/research` como subagente.
   [`017-escolha-do-modelo-gemini.md`](research/017-escolha-do-modelo-gemini.md) (seções 1–10:
   escolha; 11: custeio no volume real). Desbloqueou o 018.
 
+- [Obter o catálogo do Mainô e exemplos de planilha de arquiteto](tickets/032-catalogo-do-maino-e-planilha-de-arquiteto.md)
+  — **o Mainô não tem catálogo mantido** (o `GET /produtos` do research 007 existe, mas a loja
+  não cadastra produtos lá — só usa o Mainô para cotação e nota). O conhecimento de produto do
+  agente passa a vir das **categorias + posicionamento** no `CONTEXT.md` ("A loja") + o **site**
+  (<https://www.laisaliskicasa.com.br/>) como referência que ele compartilha mas não consulta
+  em runtime. **Desbloqueou o 011.** As planilhas de arquiteto continuam sem material e voltam
+  para a névoa "Fluxo do arquiteto" — não bloqueiam a fase 1 (arquiteto escala na hora).
+  Também nesta grelha (do 014): nome da loja corrigido para **Lais Aliski Casa**, time = **3
+  consultoras** (a dona não atende — corrige o 009), site e Instagram no `CONTEXT.md`. Abriu o
+  [033](tickets/033-laco-de-contexto-do-agente.md).
+
 ## Not yet specified
 
 Névoa em escopo, ainda sem nitidez para virar ticket:
@@ -208,7 +222,10 @@ Névoa em escopo, ainda sem nitidez para virar ticket:
 - **Desenho do mecanismo de aprendizado.** Que forma exatamente a "base de treinamento"
   toma — prompt que evolui, recuperação de casos parecidos, memória por cliente,
   fine-tune? Só fica nítido depois de existir um sinal de sucesso definido e de eu ver
-  conversas reais.
+  conversas reais. Parte disto já virou ticket: o
+  [033](tickets/033-laco-de-contexto-do-agente.md) trata do **laço de contexto** (o que
+  recorre nas conversas vira contexto aprovado do agente), distinto do sinal de
+  sucesso/fracasso do [013](tickets/013-sinal-de-sucesso-do-aprendizado.md).
 - **Modelo de dados no Supabase.** Esquema de clientes, conversas, produtos e aprendizado. O
   ticket 010 já fixou os campos que a qualificação extrai e que o Supabase é a memória interna
   do agente (todo atendimento, inclusive os perdidos); falta o esquema em si e como o catálogo
@@ -220,7 +237,9 @@ Névoa em escopo, ainda sem nitidez para virar ticket:
   [Validar empiricamente o contrato do LLM](tickets/018-validar-contrato-do-llm.md).
 - **Fluxo do arquiteto.** O agente recebe uma planilha com dezenas de itens — o que ele faz
   com ela é um segundo fluxo inteiro, não uma variação do primeiro. Só ganha nitidez depois
-  de ver planilhas reais — ticket [032](tickets/032-catalogo-do-maino-e-planilha-de-arquiteto.md).
+  de ver planilhas reais — pedido que estava no [032](tickets/032-catalogo-do-maino-e-planilha-de-arquiteto.md)
+  (fechado) e volta para cá: **conseguir 2–3 planilhas de arquiteto reais** quando este fluxo
+  (fase 2) for desenhado. Não bloqueia a fase 1 — arquiteto escala na hora.
 - **Superfície para as consultoras.** Como elas veem, corrigem e assumem uma conversa do
   agente; como marcam que uma venda aconteceu.
 - **LGPD.** Consentimento, retenção e o que pode ser guardado de conversa de cliente.

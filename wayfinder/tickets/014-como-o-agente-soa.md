@@ -333,3 +333,33 @@ topar.*
    sem se apresentar de novo?
 8. **Fidelidade.** São transcrições v1 sem conversa real (003). Quando/se elas aparecerem,
    reler tudo contra elas.
+
+---
+
+## Grelha de contexto — 2026-09-02
+
+Rodada de `/grilling` com o dono, depois de ele testar o ambiente ao vivo e notar que a Manu
+"não tinha contexto" (não sabia nem os nomes das consultoras nem onde a loja fica). O que
+saiu — já aplicado no `prototipo-tom-014/system-prompt.md` e no `CONTEXT.md` ("A loja"):
+
+- **Nome da loja:** **Lais Aliski Casa** (sem acento em "Lais"). "Lais Casa" era apelido meu,
+  errado. Dona: **Lais Aliski**, que **não faz atendimento**.
+- **Time:** **3 consultoras** — Pamella, Gabriela (Gabi), Joslaine — rodízio puro, sem
+  especialidade. Corrige o 009 (que dizia 4). A Manu **conhece** os nomes só para reconhecer
+  "quero a Gabi" e escalar direto; **não recita a lista** nem nomeia consultora por conta
+  própria (009/012 de pé).
+- **Local:** Curitiba, Batel, R. Francisco Rocha 707. A Manu dá endereço + convida pra loja +
+  horário.
+- **Produto:** a Manu sabe **categorias** (vasos, esculturas, quadros, cestos, aromas,
+  mobiliário…) e **posicionamento** (alto padrão, curadoria, clássico) — não fala preço,
+  medida nem disponibilidade. **Mainô não tem catálogo** → ticket 032 fechado, 011
+  desbloqueado. O **site** e o **Instagram** entram no `CONTEXT.md`; a Manu **manda o link**
+  quando o cliente quer explorar, **não navega** o site, e escala pergunta específica.
+- **Regra nova:** a Manu **nunca diz "não sei"** → "vou verificar com a consultora e te
+  retorno". Estoque continua não existindo (o site ser e-commerce não muda isso).
+  Fechamento de pedido → sempre consultora.
+- **Aberto:** ticket [033](033-laco-de-contexto-do-agente.md) — "laço de contexto" (o contexto
+  do agente evoluindo com os atendimentos), bloqueado pelo 013.
+- **Pendente (mecânico):** trocar "Lais Casa" → "Lais Aliski Casa" em `CLAUDE.md`, `map.md`
+  (título) e nos tickets antigos. Não feito nesta sessão para não inchar o diff da branch;
+  o `CONTEXT.md` já é a fonte da verdade.

@@ -4,7 +4,7 @@ title: O que o agente pode afirmar sobre produto e disponibilidade
 labels: [wayfinder:grilling]
 status: open
 assignee:
-blocked-by: ["009", "032"]
+blocked-by: ["009", "032"]  # ambos closed — ticket desbloqueado (ver ## Direção)
 ---
 
 ## Question
@@ -53,3 +53,38 @@ e de como ele formula a resposta quando não pode afirmar.
 **Falta:** confirmar se a resposta 5 (nada de cabeça) se repete nas outras três pessoas — uma
 consultora não é a amostra toda, e isso muda o quanto o agente pode se apoiar no catálogo do
 Maino sozinho.
+
+---
+
+## Direção — desbloqueado (2026-09-02)
+
+O ticket [032](032-catalogo-do-maino-e-planilha-de-arquiteto.md) fechou: **o Mainô não tem
+catálogo mantido.** Isso derruba a premissa "o conhecimento de produto vem do Mainô" e
+resolve metade deste ticket por eliminação. O que ficou decidido na grelha do
+[014](014-como-o-agente-soa.md) com o dono, e que este ticket só precisa formalizar:
+
+- **De onde vem o conhecimento de produto:** as **categorias** e o **posicionamento** da loja,
+  escritos no contexto do agente (`CONTEXT.md` → "A loja"), + o **site**
+  (<https://www.laisaliskicasa.com.br/>) como referência. O agente **não consulta o site em
+  runtime** na fase 1.
+- **O que o agente afirma:** que a loja trabalha com tal categoria ("temos bastante coisa de
+  vaso e escultura", "trabalhamos com mobiliário sim"), o estilo da loja, e o link do site/IG
+  para o cliente explorar. Nada além disso.
+- **O que o agente nunca afirma:** preço, medida, material, acabamento, prazo,
+  disponibilidade — nem "de cabeça" (a resposta 5 do 020 confirma que nem as consultoras
+  dão isso sem levantar). Fórmula de ouro do 020 para disponibilidade: *"vou verificar se
+  temos essa peça e já te retorno"*.
+- **O agente nunca diz "não sei":** pergunta que ele não pode responder → *"vou verificar
+  isso com a consultora e te retorno"* + escala. Nunca "não tenho essa informação".
+- **Foto de produto de outro lugar:** o agente **não tenta reconhecer** — registra ("cliente
+  mandou foto de uma luminária de arco preta") e escala. Custo de errar > valor de acertar na
+  fase 1.
+- **Fechamento de pedido / compra:** sempre da consultora.
+
+**Ainda aberto para uma grelha curta** (não bloqueante): como o erro é contido quando o
+agente afirma algo — a consultora revê antes do cliente, ou o agente fala direto? Depende do
+desenho da escalada (012, fechado) e do runtime (névoa). Pode ser resolvido junto com o
+desenho do runtime.
+
+`status` segue `open` — a resolução formal (a regra escrita, "resolvido quando") ainda pode
+ser puxada, mas o ticket **não bloqueia mais nada**.

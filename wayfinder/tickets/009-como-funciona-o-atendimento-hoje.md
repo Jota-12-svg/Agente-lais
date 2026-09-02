@@ -345,3 +345,20 @@ resposta em quatro (3 consultoras + a dona da loja) — tratar como amostra.
 
 **Falta:** as outras três respostas, para saber se a proporção 8/10 e "já conhecemos a pessoa"
 se repetem ou são particulares desta consultora.
+
+---
+
+## Addendum — 2026-09-02 · o time de atendimento são três, não quatro
+
+Grelha do ticket [014](014-como-o-agente-soa.md) com o dono. Esta seção **corrige** a linha da
+Resolução que diz *"Um número compartilhado por 4 pessoas (3 consultoras + a dona)"*.
+
+- **A dona (Lais Aliski) não faz atendimento no WhatsApp.** O time é **três consultoras** —
+  Pamella, Gabriela (apelido Gabi), Joslaine —, em rodízio puro, sem especialidade.
+- O 004 já tinha registrado "a 4ª consultora não atende" (não há 4ª consultora); este addendum
+  fecha a conta: a 4ª pessoa era a dona, e ela também está fora do atendimento.
+- **Consequência para o agente:** ele conhece os três nomes (para reconhecer "quero a Gabi" e
+  escalar direto), sabe que a Lais é a dona, mas continua **sem nomear consultora por conta
+  própria** (decisão de transparência da Resolução e do 012 permanece).
+- Também confirmado nesta grelha: o **nome da loja é "Lais Aliski Casa"** (sem acento em
+  "Lais"), não "Lais Casa". `CONTEXT.md` atualizado ("A loja").
