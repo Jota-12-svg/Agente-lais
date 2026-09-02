@@ -25,7 +25,12 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 | 030 | [Implementar o script de notificação da fila (Apps Script)](tickets/030-implementar-notificacao-da-fila.md) | task |
 | 031 | [Implementar a escrita do chamado do agente na aba de fila (Sheets API)](tickets/031-implementar-escrita-do-chamado-na-fila.md) | task |
 | 032 | [Obter o catálogo do Mainô e exemplos de planilha de arquiteto](tickets/032-catalogo-do-maino-e-planilha-de-arquiteto.md) | task |
+| 033 | [Manual do agente para as consultoras — que forma toma e o que cobre](tickets/033-manual-do-agente-para-as-consultoras.md) | grilling |
 
+> **033** entra desbloqueado, mas com resolução em dois momentos: o grilling (forma, público,
+> estrutura, o que se pede às consultoras) roda agora; a redação do manual vira o ticket **034**,
+> bloqueado por 011, 013, 014 e por uma decisão de estratégia de rollout.
+>
 > **004 foi dividido** (2026-08-30): a planilha de clientes foi inspecionada e o 004 fechou; o
 > catálogo do Mainô e as planilhas de arquiteto foram para o **032**, que segue aberto e ainda
 > bloqueia **011**.
