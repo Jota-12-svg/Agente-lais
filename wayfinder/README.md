@@ -24,10 +24,14 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 | 032 | [Obter o catálogo do Mainô e exemplos de planilha de arquiteto](tickets/032-catalogo-do-maino-e-planilha-de-arquiteto.md) | task |
 | 038 | [Estratégia de rollout do agente — piloto, horário, fallback, canal de erro](tickets/038-estrategia-de-rollout.md) | grilling · **in-progress** |
 
-> **038 aberto** (2026-09-02): grilling da **estratégia de rollout** — a névoa que faltava
-> para destravar o **034**. Decide forma do piloto, horário do agente, gate de entrada,
-> fallback, canal de aviso de erro, critério de saída e expansão. Não depende de runtime nem
-> de credencial; não colide com as sessões paralelas do 014/037.
+> **038 — grilling feito, ticket ainda aberto** (2026-09-02): a **estratégia de rollout** foi
+> grelhada por inteiro com o dono (3 rodadas) e as decisões estão no ticket sob
+> `## Decisões do grilling`. Piloto = agente 24/7 + as três consultoras desde o dia 1 (sem
+> madrinha, sem horário restrito — **reverte o "piloto com uma consultora" da névoa**),
+> 4 semanas + checagem; canal de erro = "reportar problema" na plataforma (037); fallback via
+> watchdog→dono e freio de mão. **Segue `in-progress` por decisão do dono** — falta amarrar o
+> watchdog/SMS (← runtime), o incremento no 037 e a confirmação do gate (← 027/011/014).
+> **Não propagado ao map/036/037/034 até fechar.**
 >
 > **033 fechado** (2026-09-02, grilling): a **forma** do manual está decidida — um documento,
 > duas partes (A "o que o agente faz" / B "no dia a dia"), Google Doc, tom concreto com prints
