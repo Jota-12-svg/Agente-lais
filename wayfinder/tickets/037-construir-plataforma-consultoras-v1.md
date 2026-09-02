@@ -85,7 +85,9 @@ chegar — tudo testado de ponta a ponta.
 | `supabase/migrations/*_handoffs.sql` | tabela `handoffs` com o esquema do 035 §6 na íntegra, 5 enums, `advisor_allowlist`, índice da fila (`status`,`created_at`), publicação Realtime. Coluna extra `notified_at` (idempotência). |
 | `supabase/migrations/*_rls.sql` | RLS: `is_allowed_advisor()`; advisors da allow-list **leem e atualizam** `handoffs`; **sem** política de `INSERT` nem `DELETE` para o navegador; allow-list legível por qualquer autenticado. |
 | `supabase/seed.sql` | 4 e-mails placeholder + 4 chamados fictícios — exercita a tela sem o agente. |
-| `web/` | SPA Vite + **Svelte 5**. Uma tela. Login Google → guarda de allow-list → fila ao vivo (Realtime), ordenada por espera → **Assumir** (trava suave, "FULANA pegou às HHhMM", qualquer uma devolve à fila) → **Fechar** (`business_outcome` + `advisor_verdict` + nota; some da fila). PT-BR, mobile-first, alvos de toque grandes. `npm run build` passa. |
+| `web/` | SPA Vite + **Svelte 5**. Uma tela. Login Google → guarda de allow-list → fila ao vivo (Realtime), ordenada por espera → **Assumir** (trava suave, "FULANA pegou às HHhMM", qualquer uma devolve à fila) → **Finalizar chamado** (`business_outcome` + `advisor_verdict` + nota; some da fila). PT-BR, mobile-first, alvos de toque grandes. `npm run build` passa. |
+| `web/src/lib/KillSwitch.svelte` | **Protótipo visual do freio de mão global** ([036](036-freio-de-mao-global.md)), a pedido do dono. Barra "Agente no ar / desligado" + botão "Desligar o agente" com confirmação + banner quando desligado + "Religar". **Não funcional** — guarda estado em `localStorage`, não fala com Supabase nem com o runtime. Só posiciona o controle; o mecanismo real é do 036. |
+| `web/src/lib/demo.js` | modo `VITE_DEMO=1` — roda a tela sem Supabase, com dados fictícios em memória, para visualizar o fluxo. |
 | `supabase/functions/notify-handoff/` | Edge Function (Deno). Database Webhook no `INSERT` → e-mail via **Resend** para os 4, com o relance + link. Idempotência pelo header `Idempotency-Key` do Resend (**não** usa service role key). |
 | `deploy-wizard.sh` | wizard bash de 10 estágios que o dono roda: `supabase link` + `db push`, allow-list real, Resend, Cloudflare Pages, OAuth do Google, provider no Supabase, deploy da função, Database Webhook, teste de ponta a ponta. |
 
@@ -93,7 +95,7 @@ chegar — tudo testado de ponta a ponta.
 
 1. Rodar `advisor-platform/deploy-wizard.sh`.
 2. E-mails reais das 4 (hoje placeholder) + resposta da pergunta 34 do 020.
-3. Teste de ponta a ponta: logar, ver chamado, assumir, fechar, e-mail chega.
+3. Teste de ponta a ponta: logar, ver chamado, assumir, finalizar, e-mail chega.
 
 **Decisão que ficou pendente para o dono** — o 035 §6 e o
 [031](031-implementar-escrita-do-chamado-na-fila.md) dizem "INSERT via *service role*",

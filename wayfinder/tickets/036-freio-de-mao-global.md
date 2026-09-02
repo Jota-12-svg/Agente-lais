@@ -57,3 +57,17 @@ ticket 012. Aqui é o botão único que derruba o agente inteiro.
 
 **Resolvido quando** existir um jeito comprovado de desligar o agente inteiro — testado,
 com quem tem acesso documentado e o caminho de religar claro.
+
+---
+
+## Nota — protótipo visual na plataforma (2026-09-02, ticket 037)
+
+A pedido do dono, o [037](037-construir-plataforma-consultoras-v1.md) já embutiu o **controle
+na tela** — `advisor-platform/web/src/lib/KillSwitch.svelte`: barra de status "Agente no ar /
+desligado" + botão "Desligar o agente" com confirmação + banner vermelho quando desligado +
+"Religar o agente".
+
+**É só visual.** Guarda o estado em `localStorage`, não fala com o Supabase nem com o
+runtime. Serve para posicionar o controle e mostrar como ele avisa. **Não muda nada deste
+ticket** — o mecanismo real (flag lida pelo runtime a cada mensagem, quem aciona, tratamento
+das conversas do apagão) continua a decidir aqui, e depende da stack do agente.

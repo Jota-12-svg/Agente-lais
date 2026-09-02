@@ -46,5 +46,9 @@ configuradas no painel da Pages — ver o wizard do ticket 037.
 - **Ver a fila** — só `pending` + `assumed`, mais antigo no topo, atualiza sozinha (Realtime).
 - **Assumir** — carimba quem pegou e a hora. Trava suave: qualquer uma pode devolver à fila.
 - **Finalizar chamado** — `business_outcome` + `advisor_verdict` + nota. Sai da fila.
+- **Freio de mão** (`KillSwitch.svelte`) — barra "Agente no ar / desligado" + botão de
+  desligar/religar. **Protótipo visual do [ticket 036](../../wayfinder/tickets/036-freio-de-mao-global.md)**:
+  guarda o estado em `localStorage`, não desliga o agente de verdade. O mecanismo real é do 036.
 
 Fora do v1: corrigir dado que o agente extraiu, ver a conversa, visão de admin.
+Ligar o freio de mão ao runtime é o ticket 036.

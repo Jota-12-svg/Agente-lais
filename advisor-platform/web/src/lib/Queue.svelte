@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
   import { supabase } from './supabase.js';
   import HandoffCard from './HandoffCard.svelte';
+  import KillSwitch from './KillSwitch.svelte';
 
   let { advisorName, email, onSignOut } = $props();
 
@@ -64,6 +65,8 @@
     </button>
   </div>
 </div>
+
+<KillSwitch />
 
 {#if error}<div class="err">{error}</div>{/if}
 
