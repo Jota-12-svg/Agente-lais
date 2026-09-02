@@ -2,8 +2,8 @@
 id: "035"
 title: Plataforma central das consultoras — substrato da fila e desfecho
 labels: [wayfinder:grilling]
-status: open
-assignee:
+status: in-progress
+assignee: sessão 2026-09-02 (grilling com o dono do projeto)
 blocked-by: []
 ---
 
