@@ -41,12 +41,25 @@ Você é o **cliente**. Digite e mande. Sugestões de roteiro (batem com os 7 ce
 6. "isso é um robô?" — ela confirma na hora.
 7. "já mandei mensagem 3 vezes e ninguém responde, quero falar com uma PESSOA" — irritação = escala.
 
-Marque **"fora do horário de atendimento"** na barra de cima para testar o caminho de
-madrugada (ela promete a loja, não a pessoa).
+Marque **"fora do horário"** na barra de cima para testar o caminho de madrugada (ela
+promete a loja, não a pessoa).
 
-Clique em **"ver instruções da Manu"** para ler o system prompt. Ajuste o `system-prompt.md`,
-salve, clique em **"Reiniciar conversa"** e prove de novo — o servidor relê o arquivo a cada
-mensagem.
+### Imagem e áudio
+
+- **📎** anexa um arquivo de imagem (`image/*`) ou áudio (`audio/*`) — máx ~15 MB, pode
+  anexar mais de um. Aparece um chip acima da caixa de texto; o **✕** remove.
+- **🎤** grava uma nota de voz pelo microfone (clique para começar, clique de novo para
+  parar). Pede permissão do navegador.
+- Você pode mandar mídia com ou sem texto junto.
+- A mídia vai pra Gemini como `inlineData` e conta na `in` da linha cinza (imagem
+  ~260–2.300 tokens, áudio ~960/30s). A linha mostra `📎N` quando o turno levou anexo.
+- Roteiros de mídia (cenário 6 do `014-prototipo-tom.html`): foto de um produto (ela **não**
+  identifica, descreve e escala), foto de um ambiente (ela usa pra entender o pedido), print
+  de uma lista de itens (= arquiteto, escala), nota de voz (ela devolve o entendimento por
+  escrito).
+
+Clique em **"instruções"** para ler o system prompt. Ajuste o `system-prompt.md`, **reinicie
+o servidor** (Ctrl+C e rode de novo — ele lê o arquivo no boot), e prove de novo.
 
 ## O que a linha cinza embaixo de cada resposta quer dizer
 

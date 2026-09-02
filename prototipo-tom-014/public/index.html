@@ -217,6 +217,47 @@
   }
   @media (prefers-color-scheme: dark) { form button { color: #10160f; } }
   form button:disabled { opacity: .5; cursor: default; }
+
+  .iconbtn {
+    background: var(--panel) !important;
+    color: var(--ink-soft) !important;
+    border: 1px solid var(--hairline) !important;
+    font-size: 1.15rem;
+  }
+  .iconbtn.recording {
+    background: var(--danger) !important;
+    color: #fff !important;
+    border-color: var(--danger) !important;
+    animation: pulse 1s ease-in-out infinite;
+  }
+  @keyframes pulse { 50% { opacity: .55; } }
+  @media (prefers-reduced-motion: reduce) { .iconbtn.recording { animation: none; } }
+
+  .attach-tray {
+    display: flex; flex-wrap: wrap; gap: 0.4rem;
+    padding: 0.5rem 0.7rem 0;
+    background: var(--sunk);
+    flex: none;
+  }
+  .chip {
+    display: flex; align-items: center; gap: 0.4rem;
+    background: var(--panel);
+    border: 1px solid var(--hairline);
+    border-radius: 8px;
+    padding: 0.25rem 0.4rem;
+    font-size: 0.78rem;
+    max-width: 200px;
+  }
+  .chip img { width: 32px; height: 32px; object-fit: cover; border-radius: 4px; flex: none; }
+  .chip span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .chip button {
+    flex: none; width: 18px; height: 18px; border-radius: 50%;
+    border: none; background: var(--hairline); color: var(--ink);
+    font-size: 0.7rem; line-height: 1; cursor: pointer; padding: 0;
+  }
+
+  .msg img { max-width: 220px; border-radius: 8px; display: block; margin-bottom: 0.3rem; }
+  .msg audio { max-width: 240px; display: block; margin-bottom: 0.3rem; }
 </style>
 </head>
 <body>
@@ -225,7 +266,7 @@
     <div class="avatar">M</div>
     <div class="who">
       <h1>Manu</h1>
-      <p id="sub">assistente da Laís Casa · protótipo</p>
+      <p id="sub">assistente da Lais Aliski Casa · protótipo</p>
     </div>
   </header>
 
@@ -251,10 +292,14 @@
   </div>
 
   <div class="stream" id="stream">
-    <p class="hint">Você é o <b>cliente</b>. Mande a primeira mensagem como se estivesse chamando o WhatsApp da loja — um “oi”, uma dúvida, uma foto descrita em texto. A Manu responde de verdade.</p>
+    <p class="hint">Você é o <b>cliente</b>. Mande a primeira mensagem como se estivesse chamando o WhatsApp da loja — texto, uma <b>imagem</b> (📎: foto de um produto, de um ambiente, um print de lista) ou um <b>áudio</b> gravado (🎤). A Manu responde de verdade.</p>
   </div>
 
+  <div class="attach-tray" id="tray" hidden></div>
   <form id="form">
+    <input type="file" id="file" accept="image/*,audio/*" hidden multiple>
+    <button type="button" id="attachbtn" class="iconbtn" title="anexar imagem ou áudio" aria-label="Anexar">📎</button>
+    <button type="button" id="recbtn" class="iconbtn" title="gravar áudio" aria-label="Gravar áudio">🎤</button>
     <textarea id="input" rows="1" placeholder="Escreva como cliente…" autocomplete="off"></textarea>
     <button id="sendbtn" type="submit" aria-label="Enviar">➤</button>
   </form>
@@ -268,8 +313,13 @@
   const foraChk = document.getElementById('fora');
   const cacheChk = document.getElementById('cache');
   const sub = document.getElementById('sub');
+  const fileInput = document.getElementById('file');
+  const attachBtn = document.getElementById('attachbtn');
+  const recBtn = document.getElementById('recbtn');
+  const tray = document.getElementById('tray');
 
-  let history = [];   // [{role:'client'|'agent', text}]
+  let pending = [];  // anexos aguardando envio: [{mimeType, data(base64), name}]
+  let history = [];   // [{role:'client'|'agent', text, attachments?}]
   let busy = false;
   let conversationId = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()));
   let convBrl = 0;
@@ -291,7 +341,7 @@
 
   fetch('/health').then(r => r.json()).then(h => {
     sub.textContent = h.ok
-      ? `assistente da Laís Casa · thinking ${h.thinking}` + (h.calibracao && h.calibracao !== 1 ? ` · custo ×${h.calibracao}` : '')
+      ? `assistente da Lais Aliski Casa · thinking ${h.thinking}` + (h.calibracao && h.calibracao !== 1 ? ` · custo ×${h.calibracao}` : '')
       : 'SEM CHAVE — veja o console do servidor';
     if (h.model && modelSel.querySelector(`option[value="${h.model}"]`)) modelSel.value = h.model;
   }).catch(() => {});
@@ -301,11 +351,28 @@
     if (h) h.remove();
   }
 
-  function bubble(role, text) {
+  function bubble(role, text, attachments) {
     clearHint();
     const el = document.createElement('div');
     el.className = 'msg ' + role;
-    el.textContent = text;
+    for (const a of attachments || []) {
+      if (a.mimeType && a.mimeType.startsWith('image/')) {
+        const img = document.createElement('img');
+        img.src = 'data:' + a.mimeType + ';base64,' + a.data;
+        img.alt = a.name || 'imagem';
+        el.appendChild(img);
+      } else if (a.mimeType && a.mimeType.startsWith('audio/')) {
+        const au = document.createElement('audio');
+        au.controls = true;
+        au.src = 'data:' + a.mimeType + ';base64,' + a.data;
+        el.appendChild(au);
+      }
+    }
+    if (text) {
+      const t = document.createElement('div');
+      t.textContent = text;
+      el.appendChild(t);
+    }
     stream.appendChild(el);
     stream.scrollTop = stream.scrollHeight;
     return el;
@@ -321,13 +388,14 @@
 
   async function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
-  async function send(text) {
-    if (busy || !text.trim()) return;
+  async function send(text, attachments) {
+    attachments = attachments || [];
+    if (busy || (!text.trim() && !attachments.length)) return;
     busy = true;
     sendbtn.disabled = true;
 
-    bubble('client', text);
-    history.push({ role: 'client', text });
+    bubble('client', text, attachments);
+    history.push({ role: 'client', text, attachments });
 
     const typing = document.createElement('div');
     typing.className = 'typing';
@@ -367,6 +435,7 @@
         const cachedTok = u.cachedContentTokenCount || 0;
         metaLine(
           `${data.ms}ms · ${data.model}` +
+          (attachments.length ? ` · 📎${attachments.length}` : '') +
           (u.promptTokenCount != null ? ` · in ${u.promptTokenCount} / out ${u.candidatesTokenCount ?? '?'}` : '') +
           (cachedTok ? ` · cache ${cachedTok}` : '') +
           (u.thoughtsTokenCount ? ` / think ${u.thoughtsTokenCount}` : '') +
@@ -391,9 +460,104 @@
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     const t = input.value;
+    const atts = pending;
     input.value = '';
     input.style.height = 'auto';
-    send(t);
+    pending = [];
+    renderTray();
+    send(t, atts);
+  });
+
+  // ---- anexos (imagem / áudio) ----
+  function renderTray() {
+    tray.innerHTML = '';
+    tray.hidden = pending.length === 0;
+    pending.forEach((a, i) => {
+      const chip = document.createElement('div');
+      chip.className = 'chip';
+      if (a.mimeType.startsWith('image/')) {
+        const img = document.createElement('img');
+        img.src = 'data:' + a.mimeType + ';base64,' + a.data;
+        chip.appendChild(img);
+      } else {
+        const ic = document.createElement('span');
+        ic.textContent = '🎙️';
+        chip.appendChild(ic);
+      }
+      const nm = document.createElement('span');
+      nm.textContent = a.name || a.mimeType;
+      chip.appendChild(nm);
+      const x = document.createElement('button');
+      x.type = 'button';
+      x.textContent = '✕';
+      x.addEventListener('click', () => { pending.splice(i, 1); renderTray(); });
+      chip.appendChild(x);
+      tray.appendChild(chip);
+    });
+  }
+
+  function fileToB64(file) {
+    return new Promise((resolve, reject) => {
+      const fr = new FileReader();
+      fr.onload = () => resolve(String(fr.result).split(',')[1]);
+      fr.onerror = reject;
+      fr.readAsDataURL(file);
+    });
+  }
+
+  async function addFile(file) {
+    if (file.size > 15 * 1024 * 1024) { alert('arquivo grande demais (máx ~15 MB): ' + file.name); return; }
+    let mime = file.type;
+    if (!mime) {
+      if (/\.(jpe?g)$/i.test(file.name)) mime = 'image/jpeg';
+      else if (/\.png$/i.test(file.name)) mime = 'image/png';
+      else if (/\.webp$/i.test(file.name)) mime = 'image/webp';
+      else if (/\.(heic|heif)$/i.test(file.name)) mime = 'image/heic';
+      else if (/\.(m4a|mp4)$/i.test(file.name)) mime = 'audio/mp4';
+      else if (/\.mp3$/i.test(file.name)) mime = 'audio/mpeg';
+      else if (/\.ogg$/i.test(file.name)) mime = 'audio/ogg';
+      else if (/\.wav$/i.test(file.name)) mime = 'audio/wav';
+    }
+    if (!mime || !/^(image|audio)\//.test(mime)) { alert('só imagem ou áudio: ' + file.name); return; }
+    const data = await fileToB64(file);
+    pending.push({ mimeType: mime, data, name: file.name });
+    renderTray();
+  }
+
+  attachBtn.addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', async () => {
+    for (const f of Array.from(fileInput.files)) await addFile(f);
+    fileInput.value = '';
+  });
+
+  // ---- gravação de áudio (nota de voz) ----
+  let recorder = null, recChunks = [];
+  recBtn.addEventListener('click', async () => {
+    if (recorder && recorder.state === 'recording') { recorder.stop(); return; }
+    try {
+      const mic = await navigator.mediaDevices.getUserMedia({ audio: true });
+      recorder = new MediaRecorder(mic);
+      recChunks = [];
+      recorder.ondataavailable = (e) => { if (e.data.size) recChunks.push(e.data); };
+      recorder.onstop = () => {
+        mic.getTracks().forEach(t => t.stop());
+        recBtn.classList.remove('recording');
+        recBtn.textContent = '🎤';
+        const type = (recorder.mimeType || 'audio/webm').split(';')[0];
+        const blob = new Blob(recChunks, { type });
+        const fr = new FileReader();
+        fr.onload = () => {
+          pending.push({ mimeType: type, data: String(fr.result).split(',')[1], name: 'gravação' });
+          renderTray();
+        };
+        fr.readAsDataURL(blob);
+      };
+      recorder.start();
+      recBtn.classList.add('recording');
+      recBtn.textContent = '⏹';
+    } catch (err) {
+      alert('não consegui acessar o microfone: ' + err.message);
+    }
   });
 
   input.addEventListener('keydown', (e) => {
@@ -409,10 +573,12 @@
 
   document.getElementById('reset').addEventListener('click', () => {
     history = [];
+    pending = [];
+    renderTray();
     conversationId = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()));
     convBrl = 0;
     updateCostbar();
-    stream.innerHTML = '<p class="hint">Conversa reiniciada. Mande a primeira mensagem como cliente.</p>';
+    stream.innerHTML = '<p class="hint">Conversa reiniciada. Mande a primeira mensagem como cliente — texto, imagem (📎) ou áudio gravado (🎤).</p>';
     input.focus();
   });
 

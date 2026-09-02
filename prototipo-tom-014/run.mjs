@@ -107,10 +107,17 @@ async function askManu(history, foraDoExpediente, modelOverride, usarCache) {
     `- Situação: ${foraDoExpediente ? 'FORA do horário de atendimento — qualifique, mas não prometa que alguém responde agora; diga quando o atendimento volta.' : 'DENTRO do horário de atendimento.'}`,
   ].join('\n');
 
-  const turnosCliente = history.map((m) => ({
-    role: m.role === 'agent' ? 'model' : 'user',
-    parts: [{ text: m.text }],
-  }));
+  // Um turno pode carregar mídia (imagem/áudio) em `attachments: [{mimeType, data(base64)}]`.
+  // A mídia entra como `inlineData` em `parts`, junto do texto.
+  const turnosCliente = history.map((m) => {
+    const parts = [];
+    if (m.text && m.text.trim()) parts.push({ text: m.text });
+    for (const a of m.attachments || []) {
+      if (a && a.mimeType && a.data) parts.push({ inlineData: { mimeType: a.mimeType, data: a.data } });
+    }
+    if (parts.length === 0) parts.push({ text: '(mensagem vazia)' });
+    return { role: m.role === 'agent' ? 'model' : 'user', parts };
+  });
 
   // Resolve o cache de prefixo, se pedido. O prefixo cacheado é SÓ o system prompt estático;
   // o `contexto` dinâmico entra como primeiro turno de `contents` (não pode ir junto do
@@ -319,6 +326,13 @@ createServer(async (req, res) => {
       let raw = '';
       for await (const chunk of req) raw += chunk;
       const { history = [], foraDoExpediente = false, conversationId = 'sem-id', model, cache: usarCache = false } = JSON.parse(raw || '{}');
+
+      // guarda de tamanho: o limite de request inline da Gemini é 20 MB (prompt + mídias).
+      const mediaBytes = history.reduce((n, m) => n + (m.attachments || []).reduce((k, a) => k + (a?.data?.length || 0) * 0.75, 0), 0);
+      if (mediaBytes > 18 * 1024 * 1024) {
+        return send(res, 200, 'application/json', JSON.stringify({ error: 'mídia grande demais para uma chamada (limite ~18 MB somando os anexos). Reinicie a conversa ou use um arquivo menor.' }));
+      }
+
       const t0 = Date.now();
       const out = await askManu(history, foraDoExpediente, model, usarCache);
       out.ms = Date.now() - t0;
@@ -331,6 +345,7 @@ createServer(async (req, res) => {
         model: out.model,
         thinkingField: out.thinkingField,
         cache: out.cache?.usado || false,
+        media: history.some((m) => (m.attachments || []).length),
         rate: c.rate,
         tokens: c.tokens,
         usd: Number(c.usd.toFixed(8)),
