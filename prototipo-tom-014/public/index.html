@@ -96,6 +96,7 @@
     flex-wrap: wrap;
   }
   .toolbar label { display: flex; align-items: center; gap: 0.35rem; cursor: pointer; color: var(--ink-soft); }
+  .toolbar select { font: inherit; font-size: 0.74rem; background: var(--panel); color: var(--ink); border: 1px solid var(--hairline); border-radius: 5px; padding: 0.1rem 0.2rem; }
   .toolbar button {
     margin-left: auto;
     font: inherit;
@@ -229,15 +230,23 @@
   </header>
 
   <div class="toolbar">
-    <label><input type="checkbox" id="fora"> fora do horário de atendimento</label>
+    <label><input type="checkbox" id="fora"> fora do horário</label>
+    <label>modelo
+      <select id="model">
+        <option value="gemini-3.6-flash">3.6-flash</option>
+        <option value="gemini-3.5-flash-lite">3.5-flash-lite</option>
+        <option value="gemini-3.7-flash">3.7-flash</option>
+      </select>
+    </label>
     <a href="/system-prompt" target="_blank" rel="noopener">instruções</a>
     <a href="/custos" target="_blank" rel="noopener">custos</a>
-    <button id="reset" type="button">Reiniciar conversa</button>
+    <button id="reset" type="button">Reiniciar</button>
   </div>
   <div class="costbar" id="costbar" hidden>
-    <span id="cost-session">R$ 0,00</span> nesta sessão ·
-    <span id="cost-conv">R$ 0,00</span> nesta conversa ·
-    <span id="cost-calls">0</span> respostas
+    <span id="cost-session">R$ 0,00</span> sessão ·
+    <span id="cost-conv">R$ 0,00</span> conversa ·
+    <span id="cost-calls">0</span> resp. ·
+    <span id="cost-rate" title="preço usado na estimativa">—</span>
   </div>
 
   <div class="stream" id="stream">
@@ -264,20 +273,25 @@
   let convBrl = 0;
 
   const costbar = document.getElementById('costbar');
+  const modelSel = document.getElementById('model');
   const brl = (n) => 'R$ ' + n.toFixed(n < 0.1 ? 4 : 2).replace('.', ',');
-  function updateCostbar(session) {
+  function updateCostbar(session, rate) {
     costbar.hidden = false;
     if (session) {
       document.getElementById('cost-session').textContent = brl(session.brl);
       document.getElementById('cost-calls').textContent = session.calls;
+    }
+    if (rate) {
+      document.getElementById('cost-rate').textContent = `$${rate.input}/$${rate.output} por 1M`;
     }
     document.getElementById('cost-conv').textContent = brl(convBrl);
   }
 
   fetch('/health').then(r => r.json()).then(h => {
     sub.textContent = h.ok
-      ? `assistente da Laís Casa · ${h.model} · thinking ${h.thinking}`
+      ? `assistente da Laís Casa · thinking ${h.thinking}` + (h.calibracao && h.calibracao !== 1 ? ` · custo ×${h.calibracao}` : '')
       : 'SEM CHAVE — veja o console do servidor';
+    if (h.model && modelSel.querySelector(`option[value="${h.model}"]`)) modelSel.value = h.model;
   }).catch(() => {});
 
   function clearHint() {
@@ -323,7 +337,7 @@
       const r = await fetch('/chat', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ history, foraDoExpediente: foraChk.checked, conversationId }),
+        body: JSON.stringify({ history, foraDoExpediente: foraChk.checked, conversationId, model: modelSel.value }),
       });
       const data = await r.json();
       typing.remove();
@@ -352,10 +366,10 @@
           `${data.ms}ms · ${data.model}` +
           (u.promptTokenCount != null ? ` · in ${u.promptTokenCount} / out ${u.candidatesTokenCount ?? '?'}` : '') +
           (u.thoughtsTokenCount ? ` / think ${u.thoughtsTokenCount}` : '') +
-          (cost.usd != null ? ` · ${'$' + cost.usd.toFixed(5)} · ${brl(cost.brl)}` : '') +
+          (cost.usd != null ? ` · ~${'$' + cost.usd.toFixed(5)} · ~${brl(cost.brl)}` : '') +
           (data.finishReason && data.finishReason !== 'STOP' ? ` · ${data.finishReason}` : '')
         );
-        updateCostbar(data.session);
+        updateCostbar(data.session, cost.rate);
       }
     } catch (err) {
       typing.remove();

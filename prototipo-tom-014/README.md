@@ -48,30 +48,50 @@ mensagem.
 
 ## O que a linha cinza embaixo de cada resposta quer dizer
 
-`612ms · gemini-3.6-flash · in 1768 / out 52 · $0.00149 · R$ 0,0082`
+`612ms · gemini-3.6-flash · in 1768 / out 52 · ~$0.00304 · ~R$ 0,017`
 
 - **tempo** da chamada · **modelo** que respondeu · **tokens** entrada / saída (/ pensamento)
-- **custo estimado** da chamada, em US$ e R$
+- **custo estimado** da chamada, em US$ e R$ (o `~` lembra que é estimativa — ver calibração)
 
 ## Tracking de custo
 
-Toda chamada à API é estimada e registrada. Fontes de preço: research 017 §11.1
-(`pricing.mjs`). Três formas de olhar:
+Toda chamada é estimada (a partir dos tokens **reais** que a API devolve) e registrada:
 
 | Onde | O quê |
 |---|---|
-| **barra no topo do chat** | acumulado da sessão do servidor + desta conversa + nº de respostas |
-| **`http://localhost:4014/custos`** | painel: total, média por conversa / por mensagem, por modelo, projeção mensal |
+| **barra no topo do chat** | acumulado da sessão + desta conversa + nº de respostas + preço usado |
+| **linha cinza sob cada resposta** | `~$0.0032 · ~R$ 0,018` da chamada |
+| **`http://localhost:4014/custos`** | painel: total, médias, por modelo, projeção mensal, como calibrar |
 | **`node custos.mjs`** | o mesmo resumo no terminal |
-| **`custos.jsonl`** | log linha a linha (uma por chamada) — fora do git, some no `.gitignore` |
+| **`custos.jsonl`** | log linha a linha — fora do git |
 
-**É estimativa** — token count × preço de tabela × câmbio ~R$ 5,50/US$. O número da **fatura
-real** está no painel do [Google AI Studio](https://aistudio.google.com/). A projeção mensal
-do painel fica *abaixo* do research 017 §11.4 (~R$ 28/mês típico) de propósito: o protótipo
-não usa cache de prefixo nem tool calls, que pesam em produção.
+### Preço e calibração — importante
 
-`pricing.mjs` é reaproveitável: quando o runtime de produção existir, a mesma lógica de custo
-por chamada entra na interface fina de LLM.
+A doc da Google lista um preço **promocional** de 2026 para o `gemini-3.6-flash`
+($0,75 in / $3,75 out). **Essa promo não estava valendo nesta conta** em 02/09/2026: o
+billing real subiu ~2× mais rápido que a estimativa promocional. Por isso o `pricing.mjs`
+usa o **preço cheio** ($1,50 in / $7,50 out), que bateu com o billing.
+
+Para deixar exato na sua conta: converse um pouco, veja o total em `/custos`, compare com o
+delta do painel do [Google AI Studio](https://aistudio.google.com/) (tem ~10 min de atraso) e,
+se divergir, ajuste no `.env`:
+
+```
+COST_CALIBRATION=0.5      # se a promo valer pra você (metade do preço cheio)
+# ou, granular:
+GEMINI_PRICE_IN=0.75
+GEMINI_PRICE_OUT=3.75
+```
+
+Continua sendo **estimativa** — o número que conta é o do painel do AI Studio.
+
+### Comparar modelos
+
+O seletor **modelo** na barra do chat troca entre `gemini-3.6-flash` (produção),
+`gemini-3.5-flash-lite` (~4× mais barato — plano B do research 017 §9) e `gemini-3.7-flash`.
+Serve para ver, na mesma conversa, se o `lite` mantém o tom por uma fração do custo.
+
+`pricing.mjs` é reaproveitável para a interface de LLM de produção.
 
 ## Anotações para a próxima sessão
 

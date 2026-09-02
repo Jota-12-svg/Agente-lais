@@ -12,7 +12,7 @@ import { createServer } from 'node:http';
 import { readFileSync, existsSync, appendFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import { costOfCall, fmtUsd, fmtBrl, USD_BRL } from './pricing.mjs';
+import { costOfCall, rateFor, fmtUsd, fmtBrl, USD_BRL, CALIBRATION } from './pricing.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const PORT = Number(process.env.PROTOTIPO_PORT) || 4014;
@@ -67,9 +67,11 @@ if (!creds) {
   console.log('     Rode:  node --env-file="C:\\Agente Lais\\.env" run.mjs');
   console.log('     ou crie  prototipo-tom-014/.env.local  com  GEMINI_API_KEY=...');
 } else {
-  console.log(`  modelo:   ${MODEL}`);
+  console.log(`  modelo:   ${MODEL}   (troca no chat: 3.6-flash / 3.5-flash-lite / 3.7-flash)`);
   console.log(`  thinking: ${THINKING}`);
   console.log(`  chave:    …${creds.key.slice(-4)}  (de ${creds.from})`);
+  const pr = rateFor('gemini-3.6-flash');
+  console.log(`  preço:    $${pr.input}/1M in · $${pr.output}/1M out · calibração ×${CALIBRATION}  (ajuste: COST_CALIBRATION no .env)`);
 }
 console.log(`  abra:     http://localhost:${PORT}`);
 console.log(`  custos:   http://localhost:${PORT}/custos   (log: custos.jsonl)\n`);
@@ -86,8 +88,11 @@ function bodyVariants(base) {
   ];
 }
 
-async function askManu(history, foraDoExpediente) {
+const MODELOS_OK = ['gemini-3.6-flash', 'gemini-3.5-flash-lite', 'gemini-3.7-flash', 'gemini-3.5-flash'];
+
+async function askManu(history, foraDoExpediente, modelOverride) {
   if (!creds) throw new Error('Sem GEMINI_API_KEY — veja o console.');
+  const modelo = MODELOS_OK.includes(modelOverride) ? modelOverride : MODEL;
   const agora = new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
   const contexto = [
     '\n\n---\n## Contexto agora (não é mensagem do cliente)',
@@ -105,7 +110,7 @@ async function askManu(history, foraDoExpediente) {
     generationConfig: { temperature: 0.75, maxOutputTokens: 800 },
   };
 
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelo}:generateContent`;
   let lastErr;
   for (const variant of bodyVariants(base)) {
     const r = await fetch(url, {
@@ -120,7 +125,7 @@ async function askManu(history, foraDoExpediente) {
       return {
         text: text || '(o modelo não devolveu texto — ' + (cand?.finishReason || 'sem finishReason') + ')',
         thinkingField: variant.label,
-        model: data.modelVersion || MODEL,
+        model: data.modelVersion || modelo,
         usage: data.usageMetadata || null,
         finishReason: cand?.finishReason || null,
       };
@@ -165,10 +170,11 @@ function custosResumo() {
   const conversas = Object.values(porConversa);
   const mediaPorConversa = conversas.length ? total.brl / conversas.length : 0;
   const mediaPorChamada = rows.length ? total.brl / rows.length : 0;
-  // projeção grosseira: ~5 mensagens do cliente por atendimento (fase 1 termina em escala),
-  // ~10 atendimentos/dia (dado da dona), ~22 dias úteis. Sem cache de prefixo nem tool calls
-  // — por isso fica ABAIXO do research 017 §11.4 (~R$ 28/mês típico), que assume os dois.
-  const projMensalBrl = mediaPorChamada * 5 * 10 * 22;
+  // projeção grosseira: ~8 mensagens do cliente por atendimento de qualificação,
+  // ~10 atendimentos/dia (dado da dona), ~26 dias (seg–sáb). O protótipo NÃO usa cache de
+  // prefixo — em produção o system prompt cacheado derruba a parte de entrada. Ver
+  // research 017 §11.4 (~R$ 28/mês típico COM cache).
+  const projMensalBrl = mediaPorChamada * 8 * 10 * 26;
   return {
     arquivo: 'custos.jsonl',
     de: rows[0]?.ts || null,
@@ -181,7 +187,9 @@ function custosResumo() {
     projecaoMensalBrl: projMensalBrl,
     sessaoAtual: session,
     cambioUsdBrl: USD_BRL,
-    aviso: 'Estimativa (tokens × preço de tabela × câmbio ~R$5,50). Fatura real: painel do Google AI Studio.',
+    calibracao: CALIBRATION,
+    precoAtual: rateFor('gemini-3.6-flash'),
+    aviso: 'Estimativa: tokens (reais, da API) × preço de tabela × câmbio. O preço está calibrado ao billing CHEIO ($1,50 in / $7,50 out) — a promo de 2026 não bateu com o billing real desta conta em 02/09. Ajuste com GEMINI_PRICE_IN / GEMINI_PRICE_OUT ou COST_CALIBRATION no .env. Fatura de verdade: painel do Google AI Studio.',
   };
 }
 
@@ -222,11 +230,13 @@ function custosPage() {
   ${linhasModelo || '<tr><td colspan="4">sem dados ainda</td></tr>'}
 </table>
 <p><b>Tokens somados:</b> entrada ${r.total.tokIn.toLocaleString('pt-BR')} · saída ${r.total.tokOut.toLocaleString('pt-BR')} · pensamento ${r.total.tokThoughts.toLocaleString('pt-BR')}</p>
-<p class="aviso">${r.aviso}<br>
-A projeção fica <b>abaixo</b> do research 017 §11.4 (~R$ 28/mês típico) porque o protótipo não
-tem cache de prefixo (system prompt ~1,8k tokens, reenviado inteiro) nem tool calls. Em
-produção esses dois pesam. Para o número da fatura de verdade, o painel do
-<a href="https://aistudio.google.com/">Google AI Studio</a>.</p>
+<p><b>Preço usado:</b> $${r.precoAtual.input}/1M entrada · $${r.precoAtual.output}/1M saída · calibração ×${r.calibracao}</p>
+<p class="aviso">${r.aviso}</p>
+<p class="aviso"><b>Calibrar:</b> converse um pouco, anote o total daqui, compare com o delta do painel de
+billing (tem ~10 min de atraso). Se divergir, ponha <code>COST_CALIBRATION=&lt;fator&gt;</code> no
+<code>.env</code> (ex.: se o billing subiu o dobro, <code>COST_CALIBRATION=2</code>) e reinicie.
+Este protótipo <b>não usa cache de prefixo</b> — em produção o system prompt cacheado derruba a
+entrada; ver research 017 §11.4.</p>
 <p style="font-size:.8rem"><a href="/">← voltar ao chat</a> · <a href="/custos.json">JSON</a> · terminal: <code>node custos.mjs</code></p>`;
 }
 
@@ -239,14 +249,14 @@ createServer(async (req, res) => {
       return send(res, 200, 'text/plain; charset=utf-8', SYSTEM_PROMPT);
     }
     if (req.method === 'GET' && req.url === '/health') {
-      return send(res, 200, 'application/json', JSON.stringify({ ok: !!creds, model: MODEL, thinking: THINKING }));
+      return send(res, 200, 'application/json', JSON.stringify({ ok: !!creds, model: MODEL, thinking: THINKING, modelos: MODELOS_OK, calibracao: CALIBRATION }));
     }
     if (req.method === 'POST' && req.url === '/chat') {
       let raw = '';
       for await (const chunk of req) raw += chunk;
-      const { history = [], foraDoExpediente = false, conversationId = 'sem-id' } = JSON.parse(raw || '{}');
+      const { history = [], foraDoExpediente = false, conversationId = 'sem-id', model } = JSON.parse(raw || '{}');
       const t0 = Date.now();
-      const out = await askManu(history, foraDoExpediente);
+      const out = await askManu(history, foraDoExpediente, model);
       out.ms = Date.now() - t0;
 
       // --- tracking de custo ---
@@ -256,7 +266,7 @@ createServer(async (req, res) => {
         conversationId,
         model: out.model,
         thinkingField: out.thinkingField,
-        period: c.rate.period,
+        rate: c.rate,
         tokens: c.tokens,
         usd: Number(c.usd.toFixed(8)),
         brl: Number(c.brl.toFixed(6)),
@@ -267,7 +277,7 @@ createServer(async (req, res) => {
       session.calls++;
       session.usd += c.usd;
       session.brl += c.brl;
-      out.cost = { usd: c.usd, brl: c.brl, period: c.rate.period };
+      out.cost = { usd: c.usd, brl: c.brl, rate: c.rate };
       out.session = { calls: session.calls, usd: session.usd, brl: session.brl };
 
       return send(res, 200, 'application/json', JSON.stringify(out));

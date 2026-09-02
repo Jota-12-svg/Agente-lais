@@ -4,7 +4,7 @@
 import { readFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import { fmtUsd, fmtBrl, USD_BRL } from './pricing.mjs';
+import { fmtUsd, fmtBrl, USD_BRL, CALIBRATION, rateFor } from './pricing.mjs';
 
 const LOG = join(dirname(fileURLToPath(import.meta.url)), 'custos.jsonl');
 
@@ -30,7 +30,8 @@ for (const r of rows) {
 const conversas = Object.values(porConversa);
 const mediaChamada = t.brl / rows.length;
 const mediaConversa = t.brl / conversas.length;
-const projMes = mediaChamada * 5 * 10 * 22; // 5 msg/atendimento × 10/dia × 22 dias úteis
+const projMes = mediaChamada * 8 * 10 * 26; // 8 msg/atendimento × 10/dia × 26 dias (seg–sáb)
+const pr = rateFor('gemini-3.6-flash');
 
 const p = (s) => console.log('  ' + s);
 console.log('\n  CUSTOS — protótipo de tom da Manu   (câmbio ~R$ ' + USD_BRL + '/US$)');
@@ -47,7 +48,11 @@ for (const [m, v] of Object.entries(porModelo)) p(`  ${m.padEnd(24)} ${String(v.
 p('');
 p(`tokens:  entrada ${t.in.toLocaleString('pt-BR')}   saída ${t.out.toLocaleString('pt-BR')}   pensamento ${t.think.toLocaleString('pt-BR')}`);
 p('');
-p(`projeção grosseira: ~${fmtBrl(projMes)}/mês  (5 msg/atendimento × 10/dia × 22 dias)`);
-p('  fica ABAIXO do research 017 §11.4 (~R$ 28/mês típico) — o protótipo não tem');
-p('  cache de prefixo nem tool calls, que pesam em produção. Fatura real: AI Studio.');
+p(`preço usado:  $${pr.input}/1M entrada · $${pr.output}/1M saída · calibração ×${CALIBRATION}`);
+p(`projeção grosseira:  ~${fmtBrl(projMes)}/mês  (8 msg/atendimento × 10/dia × 26 dias)`);
+p('  SEM cache de prefixo (o protótipo reenvia o system prompt inteiro a cada turno).');
+p('  Em produção o prompt cacheado derruba a entrada — ver research 017 §11.4 (~R$ 28/mês).');
+p('');
+p('Calibração: compare o TOTAL acima com o delta do painel de billing do Google AI Studio');
+p('(tem ~10 min de atraso). Se divergir, ajuste COST_CALIBRATION no .env e rode de novo.');
 console.log('');
