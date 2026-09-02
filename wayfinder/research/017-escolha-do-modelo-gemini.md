@@ -435,3 +435,175 @@ de grandeza de rate limit):
 - https://discuss.ai.google.dev/t/gemini-2-5-flash-deprecated-without-warning-earlier-than-shutdown-date/174217
 - https://discuss.ai.google.dev/t/gemini-2-5-pro-returns-no-longer-available-to-new-users-contradicts-official-deprecation-date-oct-16-2026/176380
 - https://discuss.ai.google.dev/t/rpm-tpm-rpd-and-quota-exceed/111179
+
+---
+
+## 11. Precificação no cenário real (~10 atendimentos/dia)
+
+> **Por que esta seção existe.** A dona da Lais Casa fixou o volume: **no máximo ~10
+> atendimentos/dia** (~200–300/mês), não os ~500/mês que o research 008 assumiu. E a Fase 1
+> é **só qualificação** — extrai nome / o que procura / prazo / consumidor-final-ou-arquiteto,
+> responde dúvida simples e **escala**. Não vende, não negocia. Logo: **conversa curta,
+> poucos turnos**; o arquiteto escala quase imediatamente (quase sem tokens). Esta seção
+> refaz a conta com esses números. Preços e tokens vêm das seções 2 a 6 (mesmas fontes;
+> tarifa de preço: https://ai.google.dev/gemini-api/docs/pricing). Câmbio **~R$ 5,50/US$ —
+> aproximação, só ordem de grandeza**.
+
+### 11.1. Preços usados (recapitulação das §2 e §5)
+
+| Item (por 1M tokens) | `gemini-3.6-flash` (promo até 31/12/2026) | `gemini-3.6-flash` (a partir de 01/01/2027) | `gemini-3.5-flash-lite` (sem mudança em 2027) |
+|---|---|---|---|
+| Entrada (texto/áudio/imagem, sem sobretaxa de áudio — §2.1) | **$0,75** | **$1,50** | **$0,30** |
+| Saída, **incluindo thinking** (§6) | **$3,75** | **$7,50** | **$2,50** |
+| Cache hit (prefixo) | **$0,075** | **$0,15** | **$0,03** |
+| Armazenamento de cache | **$0,50**/1M/hora | **$1,00**/1M/hora | **$1,00**/1M/hora |
+
+O `lite` **não entra na promoção**: a nota da §2.1 diz que o desconto vale só para *"3.6 e
+3.7 Flash"* e a linha do `lite` na tabela de preços não traz a marcação *"→ 01/01/2027"*.
+Confirmado no arquivo (§2.1 e §10, item 6).
+
+### 11.2. Modelo de uso — "atendimento típico" de qualificação
+
+Premissas (todas defensáveis para uma triagem de WhatsApp que termina em escalonamento):
+
+- **Turnos:** **5 mensagens do usuário + 5 respostas do agente**. Justificativa: saudação →
+  o agente pergunta o que procura → o cliente descreve o ambiente/item → prazo → modo
+  (consumidor/arquiteto) → o agente confirma e diz que uma consultora assume. Fora dessa
+  faixa: arquiteto sai em ~2 turnos (escala já); consumidor confuso pode chegar a 7–8
+  (cenário "pesado", §11.5).
+- **Function calling:** o modelo chama uma ferramenta (ex.: checar agenda da consultora) em
+  **2 dos 5 turnos**. Cada chamada = **2 invocações** do modelo (pedido → tool call;
+  reenvio com o resultado → resposta). Total: **7 invocações de modelo** por atendimento.
+- **Tamanho das mensagens:** mensagem do usuário ~**80 tokens**; resposta visível do agente
+  ~**150 tokens**; ida-e-volta de ferramenta ~**150 tokens** (args + resultado). WhatsApp de
+  triagem é curto.
+- **O histórico cresce a cada turno** — o prefixo cacheado é fixo, mas a conversa
+  re-enviada não. Crescimento modelado abaixo.
+- **System prompt:** dois casos, §11.3 — (a) sem cache, prompt pequeno ~1.500 tokens
+  reenviado inteiro; (b) prompt de **~5.000 tokens cacheado** (hit a $0,075/1M no 3.6, a
+  $0,03/1M no lite). O mínimo para cachear nos 3.x é ~4.096 tokens (§5) — se o system prompt
+  final ficar abaixo disso, vale o caso (a).
+- **Thinking (`thinking_level: "minimal"`):** ~**150 tokens/invocação** (faixa 50–300),
+  **cobrados como saída** (§6). É o principal item incerto da conta de saída.
+- **Áudio:** nota de voz OGG/Opus de ~30 s ≈ **960 tokens** (32 tok/s, §3). Premissa de
+  projeto: **transcrever na 1ª invocação e descartar o áudio do histórico** — assim ele é
+  faturado ~1×, não a cada turno. Se o áudio for reenviado no histórico, multiplique pelos
+  turnos seguintes.
+- **Imagem:** foto de ambiente ≈ **1.500–2.300 tokens** (§4); uso ~1.900. Planilha
+  fotografada só no fluxo de arquiteto, que escala antes de gastar tokens.
+
+**Crescimento do histórico (entrada não-cacheada, por invocação):**
+
+| Invocação | Conteúdo novo | Histórico já na conversa | Entrada não-cache |
+|---|---|---|---|
+| 1 (turno 1) | user (80) | 0 | ~80 |
+| 2 (turno 2) | user (80) | u1+a1 (~230) | ~310 |
+| 3 (turno 2, pós-tool) | tool result (~120) | ~350 | ~470 |
+| 4 (turno 3) | user (80) | ~620 | ~700 |
+| 5 (turno 4) | user (80) | ~850 | ~930 |
+| 6 (turno 4, pós-tool) | tool result (~120) | ~970 | ~1.090 |
+| 7 (turno 5) | user (80) | ~1.100 | ~1.180 |
+| **Soma** | | | **~4.760** |
+
+Arredondando: **~4.800 tokens** de conversa não-cacheada somados nas 7 invocações, mais
+**~1.400 tokens** de áudio (1 nota de voz, faturada ~1,5×), mais **7 × 5.000 = 35.000**
+tokens de prefixo cacheado. Saída: **7 × (150 visível + 150 thinking) ≈ 2.100 tokens**.
+
+### 11.3. Custo por atendimento — a conta
+
+**Cenário base:** 5 turnos, 2 tool calls, **1 nota de voz de 30 s, 0 foto**, prefixo de
+5.000 tokens **cacheado**.
+
+Tokens faturados: cache 35.000 · entrada não-cache 4.800 + áudio 1.400 = **6.200** ·
+saída **2.100**.
+
+| Parcela | 3.6-flash (2026) | 3.6-flash (2027) | 3.5-flash-lite |
+|---|---|---|---|
+| Cache: 35.000 × preço/1M | 35.000 × $0,075 = **$0,00263** | × $0,15 = **$0,00525** | × $0,03 = **$0,00105** |
+| Entrada: 6.200 × preço/1M | 6.200 × $0,75 = **$0,00465** | × $1,50 = **$0,00930** | × $0,30 = **$0,00186** |
+| Saída: 2.100 × preço/1M | 2.100 × $3,75 = **$0,00788** | × $7,50 = **$0,01575** | × $2,50 = **$0,00525** |
+| **Total / atendimento** | **~$0,0152** (~R$ 0,083) | **~$0,0303** (~R$ 0,17) | **~$0,0082** (~R$ 0,045) |
+
+**Caso (a) — sem cache, system prompt pequeno (~1.500 tokens), reenviado nas 7 invocações.**
+Entrada = 7 × 1.500 + 6.200 = 16.700 tokens; saída 2.100.
+
+| | 3.6-flash (2026) | 3.6-flash (2027) | 3.5-flash-lite |
+|---|---|---|---|
+| Entrada 16.700 × preço/1M | **$0,01253** | **$0,02505** | **$0,00501** |
+| Saída 2.100 × preço/1M | **$0,00788** | **$0,01575** | **$0,00525** |
+| **Total / atendimento** | **~$0,0204** (~R$ 0,11) | **~$0,0408** (~R$ 0,22) | **~$0,0103** (~R$ 0,057) |
+
+Observação: no 3.6-flash, **um prefixo de 5.000 tokens cacheado ($0,0152) sai mais barato
+que 1.500 tokens sem cache ($0,0204)** — porque o hit é 10× mais barato que a entrada
+normal. Ou seja: um system prompt maior e mais rico é praticamente de graça **se
+cacheado**. No `lite` a diferença entre os dois casos é de ~$0,002/atendimento — ruído.
+
+**Armazenamento de cache** (fixo, não por atendimento): manter o prefixo de 5.000 tokens
+quente ~10 h/dia em ~22 dias úteis ≈ 5.000/1e6 × $0,50 × 220 h ≈ **$0,55/mês** no 3.6
+(~R$ 3); **$1,10/mês** no `lite` (~R$ 6). Mantê-lo quente 24/7 ≈ $1,8/mês no 3.6 (§5).
+Desprezível de qualquer forma; incluído nas tabelas abaixo.
+
+### 11.4. Custo mensal por volume
+
+Cenário base (§11.3, cacheado) × volume, **já somado o armazenamento de cache**:
+
+| Volume | 3.6-flash (2026) | 3.6-flash (2027) | 3.5-flash-lite |
+|---|---|---|---|
+| **5/dia** (~150/mês) | ~$2,3 + $0,55 ≈ **$2,8 (~R$ 16)** | ~$4,5 + $1,1 ≈ **$5,6 (~R$ 31)** | ~$1,2 + $1,1 ≈ **$2,3 (~R$ 13)** |
+| **10/dia** (~300/mês) | ~$4,6 + $0,55 ≈ **$5,1 (~R$ 28)** | ~$9,1 + $1,1 ≈ **$10,2 (~R$ 56)** | ~$2,5 + $1,1 ≈ **$3,6 (~R$ 20)** |
+| **15/dia** (~450/mês) | ~$6,8 + $0,55 ≈ **$7,4 (~R$ 41)** | ~$13,6 + $1,1 ≈ **$14,7 (~R$ 81)** | ~$3,7 + $1,1 ≈ **$4,8 (~R$ 26)** |
+
+*(estimativa, não medição — calibrar com conversa real; câmbio ~R$ 5,50/US$)*
+
+### 11.5. Faixa de incerteza — enxuto vs. pesado
+
+O número real de cada atendimento cai entre dois extremos. Ambos com prefixo de 5.000
+cacheado; volume de referência **10/dia (~300/mês)**, armazenamento incluído.
+
+- **Enxuto:** 3 turnos, **só texto**, sem tool call, sem áudio, sem foto. ~3 invocações;
+  cache 15.000; entrada não-cache ~1.200; saída ~750 (inclui thinking minimal).
+  → 3.6-flash 2026 ~**$0,0048/atend.**; 3.6-flash 2027 ~**$0,0097**; lite ~**$0,0027**.
+- **Pesado:** 8 turnos, 3 tool calls (11 invocações), **2 notas de voz de 30 s + 1 foto de
+  ambiente**, multimodais reenviados em parte do histórico. Cache 55.000; entrada não-cache
+  ~40.000 (o áudio+foto pesam ao persistir no contexto); saída ~5.000 (thinking perto de
+  300 tok/invocação). → 3.6-flash 2026 ~**$0,053/atend.**; 3.6-flash 2027 ~**$0,106**;
+  lite ~**$0,026**.
+
+| Cenário (300/mês) | 3.6-flash (2026) | 3.6-flash (2027) | 3.5-flash-lite |
+|---|---|---|---|
+| Enxuto | ~$1,4 + $0,55 ≈ **R$ 11** | ~$2,9 + $1,1 ≈ **R$ 22** | ~$0,8 + $1,1 ≈ **R$ 11** |
+| **Típico (base §11.3)** | **~R$ 28** | **~R$ 56** | **~R$ 20** |
+| Pesado | ~$15,9 + $0,55 ≈ **R$ 91** | ~$31,8 + $1,1 ≈ **R$ 181** | ~$7,8 + $1,1 ≈ **R$ 49** |
+
+O que mais move o número: **quantidade de turnos** e **áudio/foto reenviados no histórico**
+(daí a premissa "transcrever e descartar"). Thinking em `minimal` que dispare para ~300
+tokens/invocação quase dobra a parcela de saída — vale monitorar no faturamento real.
+
+### 11.6. Conclusão — a diferença 3.6-flash × 3.5-flash-lite neste cenário
+
+No cenário real (~10/dia, ~300/mês), a diferença mensal entre os dois modelos é:
+
+| | Típico | Pior caso (pesado) |
+|---|---|---|
+| **2026 (promo)** | 3.6-flash ~R$ 28 vs. lite ~R$ 20 → **~R$ 8/mês** | ~R$ 91 vs. ~R$ 49 → **~R$ 42/mês** |
+| **2027 (3.6 dobra)** | ~R$ 56 vs. ~R$ 20 → **~R$ 36/mês** | ~R$ 181 vs. ~R$ 49 → **~R$ 132/mês** |
+
+**Isso é material para uma loja de ticket R$ 2.000–50.000? Não.** No pior caso projetado
+(2027, cenário pesado sustentado o mês inteiro) a diferença anual é ~R$ 1.600 — menos que a
+margem de **uma** venda de um vaso. No cenário típico de 2026 são ~R$ 8/mês: ruído contábil.
+
+**Isso reforça a recomendação da §9.** A §9 já dizia "custo não decide este ticket" com uma
+diferença estimada de ~R$ 70/mês (a 500/mês). No volume real a diferença é ainda menor
+(~R$ 8–42/mês em 2026) e os **totais absolutos são triviais** (~R$ 15–40/mês para o
+3.6-flash em 2026, ~R$ 30–80/mês em 2027). A escolha entre 3.6-flash e `lite` continua
+sendo **só de qualidade e latência** — nunca de custo. Mantém-se: **`gemini-3.6-flash` em
+produção**, `gemini-3.5-flash-lite` como plano B a validar com os ~20–30 casos reais (§9).
+
+**Ressalva à §9 (sem editar a §9):** a tabela de custo da §9 foi calculada com as premissas
+do research 008 — **500 atendimentos/mês** e **~40.000 tokens de entrada faturada por
+atendimento**. Ambos os números são **teto, não estimativa**, para uma triagem curta que
+termina em escalonamento: o volume real é ~300/mês e a entrada faturada por atendimento,
+com cache, fica em ~7.000–17.000 tokens (§11.2), chegando a ~40.000 só no cenário "pesado"
+(§11.5). O **sentido** da recomendação da §9 não muda; o que encolhe é a **magnitude** — os
+~R$ 130/mês da §9 para o 3.6-flash viram ~R$ 15–40/mês (2026). Ao reavaliar a §9 após
+01/01/2027 (lacuna §10, item 6), usar os números desta seção como base.
