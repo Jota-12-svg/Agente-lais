@@ -3,7 +3,19 @@
 Vite + Svelte 5. Uma tela: a fila de chamados. Sem backend — fala direto com o Supabase
 pela *publishable key* + RLS.
 
-## Rodar local
+## Só ver a tela (modo demo, sem Supabase)
+
+```sh
+cd advisor-platform/web
+npm install
+VITE_DEMO=1 npm run dev        # http://localhost:5173
+```
+
+Dados fictícios em memória (`src/lib/demo.js`), nada é salvo. O login é um clique
+(sem Google de verdade). Serve para visualizar e navegar o fluxo: fila → assumir →
+fechar.
+
+## Rodar contra o Supabase de verdade
 
 ```sh
 cd advisor-platform/web

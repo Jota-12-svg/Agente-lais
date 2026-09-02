@@ -49,6 +49,12 @@
   }
 </script>
 
+{#if ['1', 'true'].includes(String(import.meta.env.VITE_DEMO))}
+  <div style="background:#3f2f1f;color:#f6e9d8;text-align:center;font-size:0.78rem;padding:6px;border-radius:8px;margin-bottom:12px;">
+    modo demonstração — dados fictícios, nada é salvo
+  </div>
+{/if}
+
 {#if phase === 'loading' || phase === 'checking-access'}
   <div class="center">Carregando…</div>
 {:else if phase === 'signed-out'}
