@@ -144,3 +144,17 @@ o teste real responde.
 **Tickets abertos por este:** [029](029-canal-de-notificacao-da-fila.md) (canal de notificação).
 **Dependência criada:** [013](013-sinal-de-sucesso-do-aprendizado.md) precisa decidir o limiar de
 "contato perdido" também para a janela de retomada aqui descrita — mesmo conceito, dois usos.
+
+---
+
+## Addendum — 2026-09-02 (fechamento do ticket 013)
+
+A **janela de retomada** e o "reinício total" acima têm agora um número: **3 dias**, o mesmo do
+`terminal_state = esfriado` decidido no 013 (um número só para os dois usos, como este ticket
+pedia). Um contato que volta em até 3 dias após a escalada segue no mesmo atendimento (o agente
+só reafirma "a consultora já vai te atender"); passando de 3 dias, é atendimento novo do zero,
+no rodízio. Arredonda para cima o "2–3 dias" da consultora (levantamento 1 do 020).
+
+O ticket 013 também abriu o [033](033-superficie-das-consultoras-para-o-agente.md), que vai
+decidir se a **aba de fila** definida aqui basta como está ou precisa evoluir para carregar o
+`advisor_verdict` da consultora — nesse caso este ticket ganha outro addendum, sem reabrir.

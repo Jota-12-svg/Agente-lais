@@ -92,6 +92,25 @@ Comissão paga ao arquiteto sobre a compra que ele especifica. Interessa ao agen
 é arquiteto.
 _Avoid_: comissão, bonificação.
 
+**Sinal de sucesso** (`success_signal`):
+Na fase 1, o sucesso de um atendimento é a **qualidade da qualificação** — a consultora
+assumiu sem recomeçar, com os dados certos, a classificação certa e a escalada na hora
+certa —, não o desfecho de negócio (venda, visita), que acontece depois e fora do controle
+do agente. O desfecho é registrado por atendimento como contexto de peso baixo. O único
+sinal negativo que treina o agente é o **julgamento explícito da consultora**
+(`advisor_verdict`); `sem_venda`, `perdido` e `esfriado` são fatos **neutros** — tratá-los
+como falha ensinaria o agente a evitar cliente difícil. Ticket
+[013](wayfinder/tickets/013-sinal-de-sucesso-do-aprendizado.md).
+_Avoid_: métrica, KPI, taxa de conversão.
+
+**Atendimento esfriado** (`cooled`):
+Atendimento sem resposta do contato por **3 dias**, que nunca escalou. O mesmo número define
+a **janela de retomada**: depois de uma **escalada**, um contato que volta em até 3 dias
+segue no mesmo atendimento ("a consultora já vai te atender"); passando disso, começa
+atendimento novo, do zero, no **rodízio**. Desfecho **neutro** para aprendizado. Ticket
+[013](wayfinder/tickets/013-sinal-de-sucesso-do-aprendizado.md).
+_Avoid_: contato perdido, abandono, churn, no-show.
+
 ### Produto e estoque
 
 **Disponibilidade** (`availability`):
@@ -127,7 +146,5 @@ _Avoid_: base, CRM, cadastro.
 Termos que o projeto vai precisar e que **nenhuma decisão definiu ainda**. Não invente
 significado para eles:
 
-- **Sinal de sucesso** — o que conta como atendimento bem-sucedido, e como isso é capturado.
-  Ticket [013](wayfinder/tickets/013-sinal-de-sucesso-do-aprendizado.md).
-- **Contato perdido** — a partir de quando um atendimento sem resposta é dado como perdido.
-  Pergunta 15 do ticket [020](wayfinder/tickets/020-perguntas-para-as-consultoras.md).
+- _(nada pendente no momento — `Sinal de sucesso` e `Atendimento esfriado` foram definidos
+  pelo ticket [013](wayfinder/tickets/013-sinal-de-sucesso-do-aprendizado.md) em 2026-09-02.)_

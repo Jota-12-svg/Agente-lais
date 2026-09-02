@@ -215,14 +215,29 @@ prototipagem, `/prototype`. Em tickets de research, `/research` como subagente.
   `gemini-3.5-flash-lite` tem contrato idêntico. Fica pendente (não era escopo): teste de
   qualidade `3.6-flash × flash-lite` com conversas reais.
 
+- [Sinal de sucesso — o que se mede e como é capturado](tickets/013-sinal-de-sucesso-do-aprendizado.md)
+  — **na fase 1 o agente é medido pela qualidade da qualificação (Camada 1), não pelo desfecho de
+  negócio (Camada 2)**, que acontece depois e fora do controle dele. Taxonomia de `terminal_state`
+  (`escalado` / `resolvido_sem_escalada` / `esfriado` / `fora_de_escopo`) + `business_outcome`
+  quando escala. Captura automática onde dá (escalada, timer de esfriamento, polling de venda no
+  Mainô *best-effort*); o **julgamento da consultora** (`advisor_verdict`) é manual, é o único
+  sinal que treina a qualidade do agente e o de maior peso. **`sem_venda` / `perdido` / `esfriado`
+  são neutros** — de propósito, para não ensinar o agente a evitar cliente difícil. Sem rateio de
+  atribuição. Satisfação nunca perguntada ao cliente na fase 1. **Número único de 3 dias** para
+  "atendimento esfriado" e "janela de retomada" pós-escalada (addendum no 012). `CONTEXT.md` ganhou
+  `Sinal de sucesso` e `Atendimento esfriado`. Abriu o
+  [033](tickets/033-superficie-das-consultoras-para-o-agente.md).
+
 ## Not yet specified
 
 Névoa em escopo, ainda sem nitidez para virar ticket:
 
 - **Desenho do mecanismo de aprendizado.** Que forma exatamente a "base de treinamento"
   toma — prompt que evolui, recuperação de casos parecidos, memória por cliente,
-  fine-tune? Só fica nítido depois de existir um sinal de sucesso definido e de eu ver
-  conversas reais.
+  fine-tune? O sinal de sucesso já foi definido (ticket 013): o alvo é a qualidade da
+  qualificação, o `advisor_verdict` da consultora é o sinal de maior peso, e desfecho de
+  negócio negativo é neutro. Falta a forma do mecanismo — depende de ver conversas reais e
+  de a superfície do 033 existir para o `advisor_verdict` acumular.
 - **Modelo de dados no Supabase.** Esquema de clientes, conversas, produtos e aprendizado. O
   ticket 010 já fixou os campos que a qualificação extrai e que o Supabase é a memória interna
   do agente (todo atendimento, inclusive os perdidos); falta o esquema em si e como o catálogo
@@ -237,7 +252,9 @@ Névoa em escopo, ainda sem nitidez para virar ticket:
   com ela é um segundo fluxo inteiro, não uma variação do primeiro. Só ganha nitidez depois
   de ver planilhas reais — ticket [032](tickets/032-catalogo-do-maino-e-planilha-de-arquiteto.md).
 - **Superfície para as consultoras.** Como elas veem, corrigem e assumem uma conversa do
-  agente; como marcam que uma venda aconteceu.
+  agente; como marcam que uma venda aconteceu — e como registram o `advisor_verdict` do
+  ticket 013. Virou o ticket [033](tickets/033-superficie-das-consultoras-para-o-agente.md);
+  sai da névoa quando ele fechar.
 - **LGPD.** Consentimento, retenção e o que pode ser guardado de conversa de cliente.
 - **Estratégia de rollout.** Piloto com uma consultora, horário limitado, fallback quando
   o agente falha.
