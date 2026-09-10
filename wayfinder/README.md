@@ -24,7 +24,7 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 | 032 | [Obter o catálogo do Mainô e exemplos de planilha de arquiteto](tickets/032-catalogo-do-maino-e-planilha-de-arquiteto.md) | task |
 | 038 | [Estratégia de rollout do agente — piloto, horário, fallback, canal de erro](tickets/038-estrategia-de-rollout.md) | grilling · **in-progress** |
 
-> **038 — grilling feito, ticket ainda aberto** (2026-09-02): a **estratégia de rollout** foi
+> **038 — grilling feito, ticket ainda aberto** (2026-09-10): a **estratégia de rollout** foi
 > grelhada por inteiro com o dono (3 rodadas) e as decisões estão no ticket sob
 > `## Decisões do grilling`. Piloto = agente 24/7 + as três consultoras desde o dia 1 (sem
 > madrinha, sem horário restrito — **reverte o "piloto com uma consultora" da névoa**),

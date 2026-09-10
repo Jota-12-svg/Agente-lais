@@ -87,7 +87,7 @@ estarão definidas).
 
 ---
 
-## Decisões do grilling (2026-09-02)
+## Decisões do grilling (2026-09-10)
 
 Grilling com o dono, 3 rodadas (11 perguntas). A **forma** da estratégia está fechada. O
 ticket **fica `in-progress`** — não `closed` — porque partes dela ainda dependem de trabalho
