@@ -277,7 +277,9 @@ Névoa em escopo, ainda sem nitidez para virar ticket:
   única sobre o Supabase — ver a fila de chamados, assumir, fechar, registrar
   `business_outcome` + `advisor_verdict`. Login Google, notificação por e-mail, esquema
   `handoffs` definido. Construção é o ticket
-  [037](tickets/037-construir-plataforma-consultoras-v1.md), que espera o runtime do agente.
+  [037](tickets/037-construir-plataforma-consultoras-v1.md) — **código pronto** (branch
+  `feat/plataforma-consultoras`, PR #4: migrations + RLS + web app Svelte + Edge Function +
+  wizard de deploy); ticket `in-progress` até o dono rodar o wizard e testar de ponta a ponta.
   **Continua na névoa:** ver e **corrigir a conversa** do agente dentro da plataforma, e o
   fluxo de "assumir uma conversa em andamento" (retomar o controle no meio). Reenquadrou
   029/030/031.
