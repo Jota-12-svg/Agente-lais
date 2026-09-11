@@ -106,6 +106,27 @@ de integração permanente só adicionaria cerimônia.
 - Branch de ticket **carrega o número no corpo do PR**, não no nome.
 - Depois do merge, a branch é apagada.
 
+### Worktrees e sessões paralelas
+
+Sessões (inclusive em background) costumam isolar o trabalho numa worktree local
+(`.claude/worktrees/...`), numa branch própria. Isso já causou trabalho de um dia inteiro
+(deploy real da plataforma em produção, RPC no Postgres de produção) ficar preso **só numa
+branch local (`reconciliar-037`), nunca empurrada**, invisível para as sessões seguintes —
+incidente registrado no handover de 2026-09-11, sessão de reconciliação.
+
+- **Empurre a branch da worktree para o `origin` a cada commit relevante, não só no fim da
+  sessão.** Uma sessão pode ser encerrada, cair ou ter a worktree travada por outra sessão
+  antes de "terminar" — se o commit só existe localmente, ele pode ficar órfão.
+- **Nunca considere um ticket fechado só porque o arquivo local diz `status: closed`.**
+  Confirme que o commit que fechou o ticket está em `origin/wayfinder/atendimento-hoje`
+  (`git log origin/<branch> --oneline | grep <ticket>`) antes de basear trabalho novo nele.
+- **No início de toda sessão**, além do handover, rode `git fetch origin` e compare a branch de
+  trabalho local com `origin` (`git status -sb` mostra "ahead"/"behind"). Diferença em
+  qualquer sentido é sinal de reconciliação pendente — pare e reconcilie antes de puxar ticket
+  novo (mesmo padrão "à mão, não merge" já usado nas reconciliações de 2026-09-02 e 2026-09-11).
+- Rode também `git branch -a` e `git worktree list`: uma branch local sem equivalente em
+  `origin/*` é trabalho potencialmente perdido, não uma branch descartável.
+
 ### Commits
 
 **Conventional Commits**, assunto em **português**, no imperativo, minúsculo, sem ponto
@@ -182,8 +203,12 @@ do documento é reescrito a cada atualização; a seção "Sessões do dia" acum
 
 1. Leia `wayfinder/map.md` — destino, restrições e o que já foi decidido.
 2. Leia o handover do dia mais recente em `handover/`.
-3. Escolha um ticket da fronteira em `wayfinder/README.md` e **reivindique**.
-4. Crie a branch de trabalho a partir de `main` atualizado.
+3. **Confira branches/worktrees órfãos**: `git fetch origin`, depois `git status -sb` (ahead/
+   behind do remoto), `git branch -a` e `git worktree list`. Qualquer branch local sem par em
+   `origin/*`, ou a branch de trabalho divergindo do remoto, é reconciliação pendente — resolva
+   antes de puxar ticket novo (ver "Worktrees e sessões paralelas" na seção 3).
+4. Escolha um ticket da fronteira em `wayfinder/README.md` e **reivindique**.
+5. Crie a branch de trabalho a partir de `main` atualizado.
 
 E o de sempre: **não invente decisão que o mapa ainda não tomou.** Se a resposta não está no
 mapa nem no ticket, ela é uma pergunta para o dono do projeto — não um chute a ser
