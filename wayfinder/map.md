@@ -293,6 +293,19 @@ prototipagem, `/prototype`. Em tickets de research, `/research` como subagente.
   entrada do 038; desbloqueia o 034 (perde "011" do `blocked-by`); deixa requisito de
   conteúdo registrado no 037 (rótulo de prioridade no "reportar problema").
 
+- [Decidir a rotação das credenciais expostas](tickets/015-rotacao-das-credenciais.md) —
+  **senha do banco rotacionada** (nunca tinha sido trocada desde a criação do projeto), via
+  o endpoint dedicado `PATCH .../database/password` (o genérico `database/query` recusa
+  `ALTER USER` no papel `postgres`). `SUPABASE_ACCESS_TOKEN` e `GEMINI_API_KEY` mantidos —
+  já limpos (o primeiro rotacionado em 08/2026 após exposição em chat; o segundo confirmado
+  pelo dono como criado manualmente e funcionando). `KIE_API_KEY` removido — a kie.ai nunca
+  saiu do papel de fallback não usado (addendum no 008). `AGENT_DB_PASSWORD`/
+  `DATABASE_URL_AGENT` e `PLATFORM_DB_PASSWORD`/`DATABASE_URL_PLATFORM` removidas do `.env`:
+  apontavam para papéis que o ticket 002 já tinha derrubado, o segundo também resíduo da
+  plataforma multi-loja descartada. Onde as credenciais moram em produção segue sem decisão,
+  condicionado à stack de runtime (névoa). Achado incidental: o projeto Supabase pausa
+  sozinho no plano free após ~1 semana sem uso.
+
 ## Not yet specified
 
 Névoa em escopo, ainda sem nitidez para virar ticket:

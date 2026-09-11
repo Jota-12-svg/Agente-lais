@@ -16,7 +16,6 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 
 | # | Ticket | Tipo |
 |---|---|---|
-| 015 | [Decidir a rotação das credenciais expostas](tickets/015-rotacao-das-credenciais.md) | task |
 | 021 | [Instagram como porta de entrada para o WhatsApp](tickets/021-instagram-porta-de-entrada.md) | task |
 | 027 | [Testar a conexão self-hosted como dispositivo adicional, antes de tocar no número da loja](tickets/027-testar-self-hosted-no-numero-atual.md) | task |
 | 038 | [Estratégia de rollout do agente — piloto, horário, fallback, canal de erro](tickets/038-estrategia-de-rollout.md) | grilling · **in-progress** |
@@ -31,6 +30,12 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 > watchdog/SMS (← runtime) e o incremento no 037. **Gate de entrada:** itens 4 (011) e 5 (014)
 > já fecharam (2026-09-11); só o item 3 (027) segue aberto. **Não propagado ao map/036/037/034
 > até fechar.**
+>
+> **015 fechado** (2026-09-11, task): senha do banco rotacionada (nunca tinha sido trocada);
+> `SUPABASE_ACCESS_TOKEN` e `GEMINI_API_KEY` confirmados limpos, sem rotação; `KIE_API_KEY`
+> removido (fallback nunca usado, addendum no 008); resíduo de papéis já derrubados pelo 002
+> (`agent_runtime`/`platform_worker`) limpo do `.env`. Onde as credenciais moram em produção
+> segue condicionado à stack de runtime (névoa).
 >
 > **011 fechado** (2026-09-11, grilling): ratificou como decisão explícita o que já estava
 > implementado de fato no `prototipo-tom-014/system-prompt.md` — nunca preço/medida/material
@@ -106,3 +111,4 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 | 032 | [Obter o catálogo do Mainô e exemplos de planilha de arquiteto](tickets/032-catalogo-do-maino-e-planilha-de-arquiteto.md) | task | fechado sem buscar os dois materiais (decisão do dono, 2026-09-11) — `advisor_verdict` na plataforma das consultoras já é o sinal de sucesso, não vale integrar o Mainô; arquiteto escala sem coleta (010); derruba a premissa do 011 (catálogo como fonte de conhecimento de produto) e o desbloqueia |
 | 014 | [Como o agente soa — protótipo de atendimento no tom das consultoras](tickets/014-como-o-agente-soa.md) | prototype | branch paralela reconciliada e fechada em 2026-09-11: nome **Manu**, sete transcrições + tabela de tom v1, todas as sete perguntas de tom respondidas pelo dono confirmando a proposta; `prototipo-tom-014/` (ambiente de teste ao vivo); correção de nome/contexto da loja propagada ao `CONTEXT.md`; ticket "033" colidente renumerado para **039**; desbloqueou 034 |
 | 011 | [O que o agente pode afirmar sobre produto e disponibilidade](tickets/011-o-que-o-agente-pode-dizer-sobre-produto.md) | grilling | fechado 2026-09-11, ratificando o que já estava implementado no `prototipo-tom-014/system-prompt.md`: nunca preço/medida/material de peça específica, foto nunca reconhecida (sempre escala), alçada de desconto zero, contenção de erro = mecanismo pós-hoc do 038 com prioridade mais alta para erro de produto no canal "reportar problema"; fecha item 4 do gate do 038; desbloqueou 034; requisito de conteúdo registrado no 037 |
+| 015 | [Decidir a rotação das credenciais expostas](tickets/015-rotacao-das-credenciais.md) | task | senha do banco rotacionada via `PATCH .../database/password` (nunca trocada desde a criação do projeto); `SUPABASE_ACCESS_TOKEN`/`GEMINI_API_KEY` confirmados limpos; `KIE_API_KEY` removido (fallback nunca usado); resíduo de papéis já derrubados pelo 002 removido do `.env`; onde as credenciais moram em produção fica condicionado à stack de runtime (névoa) |
