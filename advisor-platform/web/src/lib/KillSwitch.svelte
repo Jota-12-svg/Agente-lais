@@ -1,51 +1,95 @@
 <script>
   // Freio de mão global — desligar o agente em TODAS as conversas de uma vez.
-  // Ticket 036. AINDA NÃO CONECTADO: por enquanto isto só muda o visual da tela,
-  // para demonstrar onde o controle vai ficar e como ele avisa. O mecanismo real
-  // (flag no Supabase lida pelo runtime a cada mensagem) espera a stack do agente.
+  // Ticket 036. Lê/grava a linha única de `agent_settings` (id=1) via Supabase, com
+  // Realtime pra refletir na hora se outra pessoa (ou outra aba) mudar o estado.
+  //
+  // O que isto NÃO faz ainda: parar o agente de responder de verdade — isso é o
+  // runtime (ticket 044) assinando a mesma tabela, que ainda não existe. Esta tela já
+  // grava o estado real no banco; falta o consumidor do outro lado.
 
-  const KEY = 'demo-agent-off';
+  import { onMount } from 'svelte';
+  import { supabase } from './supabase.js';
+  import { clock } from './labels.js';
 
-  function readStored() {
-    try {
-      return localStorage.getItem(KEY) === '1';
-    } catch {
-      return false;
-    }
-  }
+  let { email, names = {} } = $props();
 
-  let off = $state(readStored());
+  let enabled = $state(true);
+  let toggledBy = $state(null);
+  let toggledAt = $state(null);
+  let loading = $state(true);
+  let busy = $state(false);
+  let error = $state('');
   let asking = $state(false);
 
-  function setOff(value) {
-    off = value;
-    asking = false;
-    try {
-      localStorage.setItem(KEY, value ? '1' : '0');
-    } catch {
-      /* modo privado / storage bloqueado — segue só em memória */
+  const toggledByLabel = $derived(names[toggledBy] || toggledBy);
+
+  async function load() {
+    const { data, error: e } = await supabase
+      .from('agent_settings')
+      .select('*')
+      .eq('id', 1)
+      .maybeSingle();
+    if (e) {
+      error = 'Não deu para carregar o estado do agente.';
+    } else if (data) {
+      error = '';
+      enabled = data.agent_enabled;
+      toggledBy = data.toggled_by;
+      toggledAt = data.toggled_at;
     }
+    loading = false;
   }
+
+  async function setEnabled(value) {
+    busy = true;
+    error = '';
+    const { error: e } = await supabase
+      .from('agent_settings')
+      .update({ agent_enabled: value, toggled_by: email, toggled_at: new Date().toISOString() })
+      .eq('id', 1);
+    if (e) error = value ? 'Não deu para religar. Tente de novo.' : 'Não deu para desligar. Tente de novo.';
+    asking = false;
+    busy = false;
+    // Realtime também dispara `load()`, mas não espera por ele pra a tela responder na hora.
+    if (!e) load();
+  }
+
+  onMount(() => {
+    load();
+
+    const channel = supabase
+      .channel('agent-settings')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'agent_settings' }, load)
+      .subscribe();
+
+    return () => supabase.removeChannel(channel);
+  });
 </script>
 
-<div class="ks-bar" class:off>
-  <span class="ks-state">
-    <span class="ks-dot"></span>
-    {off ? 'Agente desligado' : 'Agente no ar'}
-  </span>
-  {#if off}
-    <button class="ks-btn on" onclick={() => setOff(false)}>Religar o agente</button>
-  {:else}
-    <button class="ks-btn off" onclick={() => (asking = true)}>Desligar o agente</button>
-  {/if}
-</div>
-
-{#if off}
-  <div class="ks-alert">
-    <strong>O agente está desligado.</strong>
-    Nenhuma conversa está recebendo resposta automática. Os contatos que escreverem
-    agora ficam esperando até alguém religar ou responder na mão.
+{#if !loading}
+  <div class="ks-bar" class:off={!enabled}>
+    <span class="ks-state">
+      <span class="ks-dot"></span>
+      {enabled ? 'Agente no ar' : 'Agente desligado'}
+    </span>
+    {#if enabled}
+      <button class="ks-btn off" onclick={() => (asking = true)} disabled={busy}>Desligar o agente</button>
+    {:else}
+      <button class="ks-btn on" onclick={() => setEnabled(true)} disabled={busy}>Religar o agente</button>
+    {/if}
   </div>
+
+  {#if error}<div class="err" style="margin:8px 0;">{error}</div>{/if}
+
+  {#if !enabled}
+    <div class="ks-alert">
+      <strong>O agente está desligado.</strong>
+      Nenhuma conversa está recebendo resposta automática.
+      {#if toggledBy}
+        Desligado por <strong>{toggledByLabel}</strong>{#if toggledAt} às {clock(toggledAt)}{/if}.
+      {/if}
+    </div>
+  {/if}
 {/if}
 
 {#if asking}
@@ -60,12 +104,11 @@
         Use quando o agente estiver respondendo errado (preço inventado, dizendo que tem
         um produto, travado). Para sair de <em>uma</em> conversa só, é só assumir o chamado.
       </p>
-      <p class="muted" style="margin:12px 0 0;font-size:0.8rem;">
-        Demonstração — este botão ainda não está ligado ao agente (ticket 036).
-      </p>
       <div class="actions" style="margin-top:20px;">
-        <button class="ghost" onclick={() => (asking = false)}>Cancelar</button>
-        <button class="ks-btn off" style="flex:1;" onclick={() => setOff(true)}>Desligar agora</button>
+        <button class="ghost" onclick={() => (asking = false)} disabled={busy}>Cancelar</button>
+        <button class="ks-btn off" style="flex:1;" onclick={() => setEnabled(false)} disabled={busy}>
+          Desligar agora
+        </button>
       </div>
     </div>
   </div>

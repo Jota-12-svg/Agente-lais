@@ -66,7 +66,7 @@
   </div>
 </div>
 
-<KillSwitch />
+<KillSwitch {email} {names} />
 
 {#if error}<div class="err">{error}</div>{/if}
 

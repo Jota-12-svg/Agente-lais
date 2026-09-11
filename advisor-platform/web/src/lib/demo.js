@@ -56,6 +56,11 @@ let handoffs = [
   },
 ];
 
+// Freio de mão global (ticket 036) — mesma forma da tabela real: linha única, id=1.
+let agentSettings = [
+  { id: 1, agent_enabled: true, toggled_by: null, toggled_at: null },
+];
+
 let realtimeListeners = [];
 const fireRealtime = () => realtimeListeners.forEach((fn) => fn({}));
 const ok = (data) => Promise.resolve({ data, error: null });
@@ -77,7 +82,11 @@ class Query {
   update(patch) {
     return {
       eq: (col, val) => {
-        handoffs = handoffs.map((h) => (h[col] === val ? { ...h, ...patch } : h));
+        if (this.table === 'agent_settings') {
+          agentSettings = agentSettings.map((r) => (r[col] === val ? { ...r, ...patch } : r));
+        } else {
+          handoffs = handoffs.map((h) => (h[col] === val ? { ...h, ...patch } : h));
+        }
         fireRealtime();
         return ok(null);
       },
@@ -85,10 +94,10 @@ class Query {
   }
 
   _rows() {
-    let rows =
-      this.table === 'handoffs'
-        ? handoffs.map(clone)
-        : Object.entries(NAMES).map(([email, name]) => ({ email, name }));
+    let rows;
+    if (this.table === 'handoffs') rows = handoffs.map(clone);
+    else if (this.table === 'agent_settings') rows = agentSettings.map(clone);
+    else rows = Object.entries(NAMES).map(([email, name]) => ({ email, name }));
     rows = rows.filter((r) => this._filters.every((f) => f(r)));
     if (this._order) {
       const { col, asc } = this._order;
