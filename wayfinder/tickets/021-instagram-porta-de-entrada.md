@@ -3,7 +3,7 @@ id: "021"
 title: Instagram como porta de entrada para o WhatsApp
 labels: [wayfinder:task]
 status: open
-assignee:
+assignee: claude-sonnet-5
 blocked-by: []
 ---
 
