@@ -128,8 +128,8 @@ antes de:
    agente de fato.
 3. **[027](027-testar-self-hosted-no-numero-atual.md)** validado — a conexão self-hosted no
    número de produção não bana.
-4. **[011](011-o-que-o-agente-pode-dizer-sobre-produto.md)** fechado — o agente sabe o que
-   pode e não pode afirmar sobre produto/disponibilidade.
+4. **[011](011-o-que-o-agente-pode-dizer-sobre-produto.md)** fechado (2026-09-11) — o agente
+   sabe o que pode e não pode afirmar sobre produto/disponibilidade. ✅
 5. **[014](014-como-o-agente-soa.md)** pronto — tom validado, prints existem.
 6. **[031](031-implementar-escrita-do-chamado-na-fila.md)** feito — o agente grava o chamado
    no Supabase.
@@ -227,8 +227,8 @@ ainda inexistente — estiverem amarradas:
   dispara.
 - **Incremento "reportar problema" + rota de SMS no [037](037-construir-plataforma-consultoras-v1.md)**
   — vira requisito formal do build quando o 037 for puxado; hoje o 037 espera o runtime.
-- **Confirmação do gate** — os itens 3 (027), 4 (011) e 5 (014) do gate ainda estão abertos;
-  quando fecharem, revisar se o gate mudou de forma.
+- **Confirmação do gate** — os itens **4 (011) e 5 (014) já fecharam** (2026-09-11); só o
+  item 3 (027) segue aberto no gate.
 - **Ajuste na seção do freio de mão do [033](033-manual-do-agente-para-as-consultoras.md)/[034](034-redigir-o-manual-do-agente.md)**
   — o veículo do aviso é plataforma + e-mail/SMS, não "o grupo". Aplicar na redação do 034.
 

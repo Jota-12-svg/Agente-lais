@@ -2,7 +2,7 @@
 id: "011"
 title: O que o agente pode afirmar sobre produto e disponibilidade
 labels: [wayfinder:grilling]
-status: open
+status: closed
 assignee: sessão-grilling-011
 blocked-by: ["009"]
 ---
@@ -85,3 +85,41 @@ A resposta de trabalho acima, que apontava o Mainô como fonte, cai. No lugar:
 Isso fecha a pergunta "de onde vem o conhecimento de produto". **Não fecha o ticket**: falta
 ainda a fronteira do que o agente pode afirmar dentro desse conhecimento (preço? dimensão?
 material?), o reconhecimento de foto, e como o erro é contido — ver `## Question` acima.
+
+---
+
+## Resolução (2026-09-11, grilling — 4 perguntas, 1 rodada)
+
+O grilling ratificou, como decisão explícita, o que já estava implementado de fato no
+`prototipo-tom-014/system-prompt.md` (construído para o 014 sem ter passado por decisão
+formal sob este ticket) e amarrou o único ponto genuinamente novo — prioridade do erro de
+produto dentro do canal do 038.
+
+- **Fronteira do que o agente afirma: nunca preço, medida ou material/acabamento de uma
+  peça específica** — qualquer pergunta desse tipo escala. A única coisa que o agente fala de
+  cabeça é **categoria/posicionamento da loja** (`CONTEXT.md` → "A loja"), já fechado pela
+  "Fonte do conhecimento de produto" acima — não é uma exceção nova, é o mesmo limite.
+  Disponibilidade segue com a fórmula "vou verificar e te retorno" (020), escalando só se o
+  cliente insistir (012).
+- **Foto de produto: o agente nunca tenta reconhecer**, mesmo quando a categoria parece óbvia
+  (ex.: um vaso claramente do estilo clássico da loja). Descreve o que vê para registro e
+  escala sempre — o custo de uma identificação visual errada supera o valor de evitar uma
+  escalada.
+- **Alçada de desconto: zero.** Nenhuma margem automática (nem "10% à vista"); preço e
+  condição são sempre da consultora — consistente com "preço nunca" (014).
+- **Contenção de erro: o mecanismo do [038](038-estrategia-de-rollout.md) basta** como
+  containment estrutural — sem revisão humana antes de enviar; erro isolado cai no canal
+  "reportar problema" (pós-hoc), série de erros aciona o freio de mão ([036](036-freio-de-mao-global.md)).
+  **Acréscimo deste ticket:** dentro desse mesmo canal (não é canal novo), afirmação de
+  produto/disponibilidade errada recebe **prioridade mais alta** que outros tipos de erro —
+  é o risco que abriu este ticket ("temos sim" sobre um item de R$ 30 mil). Fica registrado
+  aqui como requisito de conteúdo para quando a peça "reportar problema" for construída no
+  [037](037-construir-plataforma-consultoras-v1.md) (junto com o incremento que o 038 já
+  previu lá).
+
+**Efeito em cadeia:**
+- O `prototipo-tom-014/system-prompt.md` já reflete esta decisão sem precisar de mudança —
+  era extrapolação minha durante o 014, agora é decisão confirmada.
+- Fecha o item 4 do gate de entrada do [038](038-estrategia-de-rollout.md) ("011 fechado —
+  o agente sabe o que pode e não pode afirmar sobre produto/disponibilidade").
+- O [034](034-redigir-o-manual-do-agente.md) perde "011" do `blocked-by`.

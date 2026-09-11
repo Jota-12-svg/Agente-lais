@@ -4,12 +4,13 @@ title: Redigir o manual do agente para as consultoras
 labels: [wayfinder:task]
 status: open
 assignee:
-blocked-by: ["011", "036", "037"]
+blocked-by: ["036", "037"]
 ---
 
-> **014 fechou em 2026-09-11** (reconciliação da branch paralela) — sai do `blocked-by`. Segue
-> bloqueado por 011, 036, 037 e pela estratégia de rollout (038, ainda `in-progress`, não em
-> `blocked-by` porque nasceu como névoa do mapa, não como ticket, quando este foi aberto).
+> **014 fechou em 2026-09-11** (reconciliação da branch paralela) — sai do `blocked-by`.
+> **011 fechou em 2026-09-11** (grilling) — sai do `blocked-by`. Segue bloqueado por 036, 037
+> e pela estratégia de rollout (038, ainda `in-progress`, não em `blocked-by` porque nasceu
+> como névoa do mapa, não como ticket, quando este foi aberto).
 
 ## Question
 

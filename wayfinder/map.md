@@ -283,6 +283,16 @@ prototipagem, `/prototype`. Em tickets de research, `/research` como subagente.
   piloto. Abriu o [034](tickets/034-redigir-o-manual-do-agente.md) (redação), bloqueado por
   011, 014, 036, 037 e pela estratégia de rollout.
 
+- [O que o agente pode afirmar sobre produto e disponibilidade](tickets/011-o-que-o-agente-pode-dizer-sobre-produto.md)
+  — **ratificou, como decisão explícita, o que já estava implementado de fato no protótipo
+  do 014.** Nunca preço, medida ou material/acabamento de peça específica (só
+  categoria/posicionamento genérico); foto de produto nunca é reconhecida, sempre escala;
+  alçada de desconto é zero; contenção de erro é o mecanismo pós-hoc do 038 (sem revisão
+  antes de enviar), com um acréscimo: erro de afirmação de produto ganha **prioridade mais
+  alta** dentro do canal "reportar problema" (não é canal novo). Fecha o item 4 do gate de
+  entrada do 038; desbloqueia o 034 (perde "011" do `blocked-by`); deixa requisito de
+  conteúdo registrado no 037 (rótulo de prioridade no "reportar problema").
+
 ## Not yet specified
 
 Névoa em escopo, ainda sem nitidez para virar ticket:

@@ -11,6 +11,13 @@ blocked-by: ["035"]
 > o desenho: superfície única, stack, login, esquema `handoffs`, canal de aviso. Este ticket
 > **constrói** o v1. Absorve o [030](030-implementar-notificacao-da-fila.md) (fechado como
 > substituído — o disparo da notificação virou parte deste ticket).
+>
+> **Requisito trazido pelo [011](011-o-que-o-agente-pode-dizer-sobre-produto.md)** (fechado
+> 2026-09-11): quando a peça "reportar problema" do [038](038-estrategia-de-rollout.md) for
+> incorporada a este build, ela precisa distinguir **prioridade** — erro de afirmação de
+> produto/disponibilidade é mais urgente que outros tipos de erro, dentro do mesmo canal
+> (não é campo/canal novo, é um rótulo). Registrar junto do incremento que o 038 já previu
+> aqui quando ele fechar.
 
 ## Question
 
