@@ -4,8 +4,15 @@ title: O que o agente pode afirmar sobre produto e disponibilidade
 labels: [wayfinder:grilling]
 status: open
 assignee:
-blocked-by: ["009", "032"]
+blocked-by: ["009"]
 ---
+
+> **032 fechou (2026-09-11) sem trazer o catálogo do Mainô** — decisão do dono, o sinal de
+> sucesso já vem melhor da plataforma das consultoras (013/035/037), não valia o esforço.
+> Isso derruba a premissa da resposta abaixo ("o que ele afirmar tem de vir do catálogo do
+> Maino") — a pergunta "de onde vem o conhecimento de produto" **segue sem resposta**, agora
+> sem esse candidato. Ticket desbloqueado (só restava o 009, já fechado); entra na fronteira,
+> mas precisa de grilling com o dono para decidir a fonte antes de fechar.
 
 ## Question
 

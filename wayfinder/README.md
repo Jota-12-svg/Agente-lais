@@ -18,11 +18,10 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 |---|---|---|
 | 014 | [Como o agente soa — protótipo de atendimento no tom das consultoras](tickets/014-como-o-agente-soa.md) | prototype |
 | 015 | [Decidir a rotação das credenciais expostas](tickets/015-rotacao-das-credenciais.md) | task |
-| 020 | [Perguntas a levar às consultoras](tickets/020-perguntas-para-as-consultoras.md) | task |
 | 021 | [Instagram como porta de entrada para o WhatsApp](tickets/021-instagram-porta-de-entrada.md) | task |
 | 027 | [Testar a conexão self-hosted como dispositivo adicional, antes de tocar no número da loja](tickets/027-testar-self-hosted-no-numero-atual.md) | task |
-| 032 | [Obter o catálogo do Mainô e exemplos de planilha de arquiteto](tickets/032-catalogo-do-maino-e-planilha-de-arquiteto.md) | task |
 | 038 | [Estratégia de rollout do agente — piloto, horário, fallback, canal de erro](tickets/038-estrategia-de-rollout.md) | grilling · **in-progress** |
+| 011 | [O que o agente pode afirmar sobre produto e disponibilidade](tickets/011-o-que-o-agente-pode-dizer-sobre-produto.md) | grilling · **desbloqueado pelo fechamento do 032** — a pergunta de origem do conhecimento de produto segue em aberto |
 
 > **038 — grilling feito, ticket ainda aberto** (2026-09-10): a **estratégia de rollout** foi
 > grelhada por inteiro com o dono (3 rodadas) e as decisões estão no ticket sob
@@ -43,14 +42,15 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 > perdeu ao re-aplicar o 012 na trunk; requisito já decidido, não é design novo.
 >
 > **004 foi dividido** (2026-08-30): a planilha de clientes foi inspecionada e o 004 fechou; o
-> catálogo do Mainô e as planilhas de arquiteto foram para o **032**, que segue aberto e ainda
-> bloqueia **011**.
+> catálogo do Mainô e as planilhas de arquiteto foram para o **032**, que **fechou em
+> 2026-09-11 sem buscar os dois materiais** (decisão do dono — não vamos precisar do Mainô) e
+> desbloqueou o **011**, agora na fronteira com a pergunta de origem do conhecimento de
+> produto em aberto.
 
 ## Bloqueados
 
 | # | Ticket | Tipo | Espera |
 |---|---|---|---|
-| 011 | [O que o agente pode afirmar sobre produto e disponibilidade](tickets/011-o-que-o-agente-pode-dizer-sobre-produto.md) | grilling | 032 |
 | 019 | [De quais dispositivos a consultora pode responder sem cegar o agente](tickets/019-companion-windows-ponto-cego.md) | task | **em pausa** — premissa (Coexistence) não é mais o caminho; ver 016 |
 | 034 | [Redigir o manual do agente para as consultoras](tickets/034-redigir-o-manual-do-agente.md) | task | 011, 014, 036, 037 + estratégia de rollout (névoa) — forma decidida no 033, falta a redação |
 | 031 | [Implementar a escrita do chamado do agente na fila (INSERT no Supabase)](tickets/031-implementar-escrita-do-chamado-na-fila.md) | task | runtime do agente (035 fechado — esquema pronto); alvo é `INSERT` no Supabase + `chatModify markRead:false` |
@@ -80,3 +80,5 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 | 035 | [Plataforma central das consultoras — substrato da fila e desfecho](tickets/035-plataforma-central-das-consultoras.md) | grilling | plataforma web única sobre o Supabase (ver fila, assumir, fechar, `advisor_verdict`); Vite + framework leve, sem backend, login Google, Realtime; notificação **só e-mail** (webhook Supabase → Edge Function → Resend), SMS depois; agente marca conversa como "não lida" no WhatsApp ao escalar (validar no 027); esquema `handoffs` fixado; chamado fechado some da fila; construção espera o runtime — fecha 029 (conclusão)/030 (absorvido), reenquadra 031, abre 037; `CONTEXT.md` ganhou `Chamado` e `Plataforma das consultoras` |
 | 030 | [Implementar o script de notificação da fila (Apps Script)](tickets/030-implementar-notificacao-da-fila.md) | task | **substituído pelo 037** — a fila saiu da planilha, o disparo virou Database Webhook do Supabase; nada a construir aqui |
 | 033 | [Manual do agente para as consultoras — que forma toma](tickets/033-manual-do-agente-para-as-consultoras.md) | grilling | forma decidida (não a redação): um documento, duas partes (A "o que faz" estável / B "no dia a dia"); Google Doc; tom concreto com prints do 014; quatro pedidos à consultora + seção do freio de mão (fecha "quem aciona" do 036 incluindo consultoras); dono do manual = João Victor; abriu o **034** (redação), bloqueado por 011, 014, 036, 037 + rollout |
+| 020 | [Perguntas a levar às consultoras](tickets/020-perguntas-para-as-consultoras.md) | task | fechado sem nova rodada — não haverá informação adicional por este canal (decisão do dono, 2026-09-11); Levantamento 1 fica como resposta final; 18b/25/31/32 sem resposta e sem previsão; 34 (celular avisa e-mail?) segue como risco em aberto do 037 |
+| 032 | [Obter o catálogo do Mainô e exemplos de planilha de arquiteto](tickets/032-catalogo-do-maino-e-planilha-de-arquiteto.md) | task | fechado sem buscar os dois materiais (decisão do dono, 2026-09-11) — `advisor_verdict` na plataforma das consultoras já é o sinal de sucesso, não vale integrar o Mainô; arquiteto escala sem coleta (010); derruba a premissa do 011 (catálogo como fonte de conhecimento de produto) e o desbloqueia |

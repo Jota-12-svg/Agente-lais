@@ -245,6 +245,19 @@ prototipagem, `/prototype`. Em tickets de research, `/research` como subagente.
   [037](tickets/037-construir-plataforma-consultoras-v1.md) (build). `CONTEXT.md` ganhou
   `Chamado` e `Plataforma das consultoras`.
 
+- [Perguntas a levar às consultoras](tickets/020-perguntas-para-as-consultoras.md) —
+  **fechado sem nova rodada**, por decisão do dono: não haverá informação adicional por este
+  canal. O Levantamento 1 (2026-08-11) segue como está, já distribuído aos tickets de
+  origem. Ficam sem resposta e sem previsão: 18b (agenda), 25/32 (exemplos, perderam peso
+  depois do 013), 31. A pergunta 34 (celular avisa e-mail?) segue como risco em aberto do 037,
+  registrado à parte, sem reabrir o ticket.
+- [Obter o catálogo do Mainô e exemplos de planilha de arquiteto](tickets/032-catalogo-do-maino-e-planilha-de-arquiteto.md)
+  — **fechado sem buscar os dois materiais.** O sinal de sucesso já vem do `advisor_verdict`
+  na plataforma das consultoras (013/035/037), que rebaixou a venda no Mainô a reforço
+  best-effort — não vale mais o esforço de integrar o catálogo. Arquiteto já escala sem
+  coleta (010), então a planilha de arquiteto também deixa de ser necessária. **Derruba a
+  premissa do 011** (conhecimento de produto viria do catálogo do Maino) e o desbloqueia —
+  mas a pergunta de origem do conhecimento de produto segue sem resposta.
 - [Manual do agente para as consultoras — que forma toma](tickets/033-manual-do-agente-para-as-consultoras.md)
   — **grilling da forma, não da redação.** Um documento só, duas partes: **A "O que o agente
   faz"** (estável) e **B "No dia a dia"** (operacional, com data no cabeçalho). Público: as 3
@@ -283,8 +296,10 @@ Névoa em escopo, ainda sem nitidez para virar ticket:
   agente inteiro por mau funcionamento) é o ticket [036](tickets/036-freio-de-mao-global.md):
   requisito registrado, mecanismo depende de onde o runtime roda.
 - **Fluxo do arquiteto.** O agente recebe uma planilha com dezenas de itens — o que ele faz
-  com ela é um segundo fluxo inteiro, não uma variação do primeiro. Só ganha nitidez depois
-  de ver planilhas reais — ticket [032](tickets/032-catalogo-do-maino-e-planilha-de-arquiteto.md).
+  com ela é um segundo fluxo inteiro, não uma variação do primeiro. Na fase 1 ele escala
+  imediato, sem coleta (010); o ticket [032](tickets/032-catalogo-do-maino-e-planilha-de-arquiteto.md)
+  fechou (2026-09-11) sem buscar planilhas reais, então este fluxo fica parado como fase 2,
+  sem material novo à vista.
 - **Superfície para as consultoras.** **Fatia v1 fechada pelo ticket
   [035](tickets/035-plataforma-central-das-consultoras.md)** (2026-09-02): plataforma web
   única sobre o Supabase — ver a fila de chamados, assumir, fechar, registrar

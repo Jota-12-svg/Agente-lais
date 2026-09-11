@@ -2,8 +2,8 @@
 id: "020"
 title: Perguntas a levar às consultoras
 labels: [wayfinder:task]
-status: open
-assignee:
+status: closed
+assignee: sessão 2026-09-11
 blocked-by: []
 ---
 
@@ -407,3 +407,31 @@ Perguntar "como você atende" produz a versão idealizada. Duas coisas produzem 
 
 **Resolvido quando** as respostas estiverem registradas nos tickets de origem. Como é ticket
 vivo, pode fechar e reabrir conforme novas perguntas aparecerem.
+
+---
+
+## Resolução — 2026-09-11
+
+**Fechado por decisão do dono: não haverá informação adicional por este canal.** O
+Levantamento 1 (2026-08-11) foi a única rodada e segue como está, já distribuído aos tickets
+de origem (009, 006, 011, 012, 013, 014, 019).
+
+**Ficam sem resposta, e sem previsão de vir por aqui:**
+
+- **18b** (mostrar a agenda da semana que vem) — era o critério fixado em
+  [009](009-como-funciona-o-atendimento-hoje.md) para decidir se o agendamento automático
+  libera. Sem a tela, essa decisão não tem como fechar por este caminho — fica registrado
+  como lacuna, não como "confiável" nem "não confiável".
+- **25** (exemplo de nota fiscal) e **32** (exemplos de bons atendimentos) — nunca chegaram.
+  Perderam peso depois do 013 fechar (venda no Mainô é reforço best-effort, não sinal
+  central; `advisor_verdict` na plataforma é o sinal que importa), então não valem reabertura.
+- **31** (arquiteto comprando pra casa dele) — sem resposta; sem impacto conhecido em
+  decisão já tomada.
+- **34** (o celular avisa quando chega e-mail no expediente) — segue sem resposta. Essa é a
+  que ainda **importa**: o 037 decidiu notificação só por e-mail assumindo que o celular
+  avisa; sem confirmação, o risco registrado no 035 (§4) continua em aberto. Fica como nota
+  solta para quando alguém falar com as consultoras por outro motivo — não reabre o ticket
+  para isso sozinho.
+
+Ticket vivo fechado sem reabrir: se surgir pergunta nova, ela nasce onde o grilling esbarrar
+nela, não aqui.
