@@ -306,6 +306,15 @@ prototipagem, `/prototype`. Em tickets de research, `/research` como subagente.
   condicionado à stack de runtime (névoa). Achado incidental: o projeto Supabase pausa
   sozinho no plano free após ~1 semana sem uso.
 
+- [Confirmar se a GEMINI_API_KEY é do tipo "auth" antes do prazo de setembro/2026](tickets/040-tipo-da-chave-gemini.md)
+  — **é "auth", nada a trocar.** O AI Studio não mostra a coluna "Tipo de chave" que a
+  documentação descreve (rollout gradual da Google); confirmado pelo caminho alternativo — o
+  console do Google Cloud mostra a chave com uma **conta de serviço vinculada**
+  (`ais-gemini-key-...@...iam.gserviceaccount.com`), que é a definição de chave "auth". A
+  chave sobrevive ao corte de setembro/2026 sem ação. Achado à parte, sem relação com o tipo
+  da chave: aviso de conta de faturamento pedindo migração para pré-pagamento — abriu o
+  [041](tickets/041-billing-pre-pagamento.md).
+
 ## Not yet specified
 
 Névoa em escopo, ainda sem nitidez para virar ticket:

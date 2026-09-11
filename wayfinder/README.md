@@ -17,7 +17,7 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 | # | Ticket | Tipo |
 |---|---|---|
 | 021 | [Instagram como porta de entrada para o WhatsApp](tickets/021-instagram-porta-de-entrada.md) | task |
-| 040 | [Confirmar se a GEMINI_API_KEY é do tipo "auth" antes do prazo de setembro/2026](tickets/040-tipo-da-chave-gemini.md) | task · achado do 015, checagem rápida no painel |
+| 041 | [Colocar a conta de faturamento do Gemini em pré-pagamento antes que o serviço pare](tickets/041-billing-pre-pagamento.md) | task · achado do 040, aviso ativo no painel |
 | 027 | [Testar a conexão self-hosted como dispositivo adicional, antes de tocar no número da loja](tickets/027-testar-self-hosted-no-numero-atual.md) | task |
 | 038 | [Estratégia de rollout do agente — piloto, horário, fallback, canal de erro](tickets/038-estrategia-de-rollout.md) | grilling · **in-progress** |
 | 039 | [Laço de contexto — o contexto do agente evoluindo com os atendimentos](tickets/039-laco-de-contexto-do-agente.md) | grilling · trazido da reconciliação do 014; não urgente, refinamento contínuo |
@@ -31,6 +31,12 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 > watchdog/SMS (← runtime) e o incremento no 037. **Gate de entrada:** itens 4 (011) e 5 (014)
 > já fecharam (2026-09-11); só o item 3 (027) segue aberto. **Não propagado ao map/036/037/034
 > até fechar.**
+>
+> **040 fechado** (2026-09-11, task): a `GEMINI_API_KEY` é do tipo **"auth"** — confirmado via
+> console do Google Cloud (chave com conta de serviço vinculada), já que o AI Studio não
+> mostra a coluna "Tipo de chave" nesta conta. Nada a trocar; sobrevive ao corte de
+> setembro/2026. Achado à parte no mesmo painel: aviso de faturamento pedindo migração para
+> pré-pagamento — abriu o **041**, sem relação com o tipo da chave.
 >
 > **015 fechado** (2026-09-11, task): senha do banco rotacionada (nunca tinha sido trocada);
 > `SUPABASE_ACCESS_TOKEN` e `GEMINI_API_KEY` confirmados limpos, sem rotação; `KIE_API_KEY`
@@ -115,3 +121,4 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 | 014 | [Como o agente soa — protótipo de atendimento no tom das consultoras](tickets/014-como-o-agente-soa.md) | prototype | branch paralela reconciliada e fechada em 2026-09-11: nome **Manu**, sete transcrições + tabela de tom v1, todas as sete perguntas de tom respondidas pelo dono confirmando a proposta; `prototipo-tom-014/` (ambiente de teste ao vivo); correção de nome/contexto da loja propagada ao `CONTEXT.md`; ticket "033" colidente renumerado para **039**; desbloqueou 034 |
 | 011 | [O que o agente pode afirmar sobre produto e disponibilidade](tickets/011-o-que-o-agente-pode-dizer-sobre-produto.md) | grilling | fechado 2026-09-11, ratificando o que já estava implementado no `prototipo-tom-014/system-prompt.md`: nunca preço/medida/material de peça específica, foto nunca reconhecida (sempre escala), alçada de desconto zero, contenção de erro = mecanismo pós-hoc do 038 com prioridade mais alta para erro de produto no canal "reportar problema"; fecha item 4 do gate do 038; desbloqueou 034; requisito de conteúdo registrado no 037 |
 | 015 | [Decidir a rotação das credenciais expostas](tickets/015-rotacao-das-credenciais.md) | task | senha do banco rotacionada via `PATCH .../database/password` (nunca trocada desde a criação do projeto); `SUPABASE_ACCESS_TOKEN`/`GEMINI_API_KEY` confirmados limpos; `KIE_API_KEY` removido (fallback nunca usado); resíduo de papéis já derrubados pelo 002 removido do `.env`; onde as credenciais moram em produção fica condicionado à stack de runtime (névoa) |
+| 040 | [Confirmar se a GEMINI_API_KEY é do tipo "auth" antes do prazo de setembro/2026](tickets/040-tipo-da-chave-gemini.md) | task | é "auth" — confirmado via console do Google Cloud (chave com conta de serviço vinculada), não pela coluna "Tipo de chave" do AI Studio (não aparece nesta conta); nada a trocar; achado à parte (aviso de billing pré-pagamento) abriu o 041 |
