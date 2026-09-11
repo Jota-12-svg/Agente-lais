@@ -1,4 +1,4 @@
-# Tracker — Agente de WhatsApp da Lais Casa
+# Tracker — Agente de WhatsApp da Lais Aliski Casa
 
 Tracker local em markdown (nenhum tracker de issues foi configurado neste repositório).
 
@@ -16,12 +16,13 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 
 | # | Ticket | Tipo |
 |---|---|---|
-| 014 | [Como o agente soa — protótipo de atendimento no tom das consultoras](tickets/014-como-o-agente-soa.md) | prototype |
+| 014 | [Como o agente soa — protótipo de atendimento no tom das consultoras](tickets/014-como-o-agente-soa.md) | prototype · **in-progress** — branch paralela reconciliada nesta sessão, retomado |
 | 015 | [Decidir a rotação das credenciais expostas](tickets/015-rotacao-das-credenciais.md) | task |
 | 021 | [Instagram como porta de entrada para o WhatsApp](tickets/021-instagram-porta-de-entrada.md) | task |
 | 027 | [Testar a conexão self-hosted como dispositivo adicional, antes de tocar no número da loja](tickets/027-testar-self-hosted-no-numero-atual.md) | task |
 | 038 | [Estratégia de rollout do agente — piloto, horário, fallback, canal de erro](tickets/038-estrategia-de-rollout.md) | grilling · **in-progress** |
-| 011 | [O que o agente pode afirmar sobre produto e disponibilidade](tickets/011-o-que-o-agente-pode-dizer-sobre-produto.md) | grilling · **desbloqueado pelo fechamento do 032** — a pergunta de origem do conhecimento de produto segue em aberto |
+| 011 | [O que o agente pode afirmar sobre produto e disponibilidade](tickets/011-o-que-o-agente-pode-dizer-sobre-produto.md) | grilling · desbloqueado pelo 032; a origem do conhecimento de produto (site + categorias) já veio da reconciliação do 014 — falta a fronteira do que afirmar, foto e contenção de erro |
+| 039 | [Laço de contexto — o contexto do agente evoluindo com os atendimentos](tickets/039-laco-de-contexto-do-agente.md) | grilling · trazido da reconciliação do 014; não urgente, refinamento contínuo |
 
 > **038 — grilling feito, ticket ainda aberto** (2026-09-10): a **estratégia de rollout** foi
 > grelhada por inteiro com o dono (3 rodadas) e as decisões estão no ticket sob
@@ -44,8 +45,20 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 > **004 foi dividido** (2026-08-30): a planilha de clientes foi inspecionada e o 004 fechou; o
 > catálogo do Mainô e as planilhas de arquiteto foram para o **032**, que **fechou em
 > 2026-09-11 sem buscar os dois materiais** (decisão do dono — não vamos precisar do Mainô) e
-> desbloqueou o **011**, agora na fronteira com a pergunta de origem do conhecimento de
-> produto em aberto.
+> desbloqueou o **011**, agora na fronteira. A origem do conhecimento de produto que o 011
+> ainda precisava (site + categorias/posicionamento, não o Mainô) já tinha sido respondida
+> numa grelha de 2026-09-02 na branch do 014, recuperada nesta reconciliação.
+>
+> **014 reconciliado nesta sessão** (2026-09-11): a branch paralela `wayfinder/como-o-agente-soa-014`
+> estava parada desde 2026-09-02, sem worktree ativo. Trazido para a trunk: `prototipo-tom-014/`
+> (ambiente de teste ao vivo com a Manu), a especificação de tom v1 + sete transcrições no
+> próprio ticket, a correção de nome/contexto da loja (**Lais Aliski Casa**, dona Lais Aliski
+> que não atende, três consultoras nomeadas — Pamella, Gabriela/Gabi, Joslaine, corrigindo o
+> 009) propagada a `CONTEXT.md`/`CLAUDE.md`/`.env.example` e a todo ticket e research não
+> datado (handovers antigos ficam como registro). O ticket "033" que essa branch tinha aberto
+> ("laço de contexto do agente") colidia em número com o 033 da trunk — renumerado para
+> **039**. Ficam abertas as "Perguntas para o dono" do próprio 014 (nome do agente, preço,
+> áudio de saída, velocidade, emoji, tratamento, abertura) — é o que falta pra fechar.
 
 ## Bloqueados
 
@@ -68,7 +81,7 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 | 006 | [O que a integração com Google Calendar exige](tickets/006-integracao-com-google-calendar.md) | research | [research/006](research/006-google-calendar.md) |
 | 007 | [O Maino tem API? O que dá para ler de lá](tickets/007-maino-tem-api.md) | research | [research/007](research/007-maino-api.md) |
 | 008 | [Contrato real da API do Gemini via kie.ai](tickets/008-contrato-da-api-do-gemini.md) | research | [research/008](research/008-gemini-kie-ai.md) |
-| 009 | [Como funciona o atendimento da Lais Casa hoje, ponta a ponta](tickets/009-como-funciona-o-atendimento-hoje.md) | grilling | vocabulário em [`CONTEXT.md`](../CONTEXT.md); abriu 019, 020 e 021 |
+| 009 | [Como funciona o atendimento da Lais Aliski Casa hoje, ponta a ponta](tickets/009-como-funciona-o-atendimento-hoje.md) | grilling | vocabulário em [`CONTEXT.md`](../CONTEXT.md); abriu 019, 020 e 021 |
 | 010 | [O que é um lead qualificado e que dados o agente extrai](tickets/010-o-que-e-um-lead-qualificado.md) | grilling | agente não é formulário; campos núcleo + oportunistas, nada obrigatório; Supabase interno + relance na fila do 012; `Atendimento qualificado` no `CONTEXT.md` · **addendum 2026-09-01**: lookup por telefone só p/ diretório de arquitetos, pergunta do modo deliberada |
 | 017 | [Decidir o provedor de LLM e habilitar o billing](tickets/017-provedor-de-llm-e-billing.md) | task | chave do `.env` já no tier pago (`serviceTier: standard`); modelo `gemini-3.6-flash` (o `gemini-3-flash` do 008 sumiu), `thinking_level: "minimal"`; `flash-lite` como plano B; research 017 — desbloqueou 018 |
 | 018 | [Validar empiricamente o contrato do LLM](tickets/018-validar-contrato-do-llm.md) | task | function calling OK em HTTP cru (mas `thoughtSignature` das `functionCall` é obrigatório no reenvio, senão 400); áudio OGG/Opus inline sem ffmpeg; HEIC OK; cache mínimo 1024 (não 4096); áudio 25 tok/s (não 32); `minimal` vs `low` = 540 tokens + 3× latência |

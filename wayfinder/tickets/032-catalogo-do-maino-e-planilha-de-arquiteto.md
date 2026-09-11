@@ -66,6 +66,21 @@ catálogo do Mainô (`GET /produtos`, ticket 007) deixa de valer o esforço.
 
 **Efeito no mapa:** o [011](011-o-que-o-agente-pode-dizer-sobre-produto.md) perde a
 dependência deste ticket em `blocked-by` (só sobra 009, já fechado) e volta para a
-fronteira — mas com a pergunta de origem do conhecimento de produto reaberta, não
-respondida. A névoa **"Fluxo do arquiteto"** no `map.md` fica sem buscar mais material por
+fronteira. A névoa **"Fluxo do arquiteto"** no `map.md` fica sem buscar mais material por
 este canal; segue como fluxo de fase 2, fora do escopo atual.
+
+### Addendum — 2026-09-11 (reconciliação da branch do ticket 014)
+
+A branch paralela `wayfinder/como-o-agente-soa-014` já tinha fechado este mesmo ticket em
+**2026-09-02**, numa grelha própria com o dono, por um motivo complementar que nunca chegou à
+trunk: **o Mainô não tem catálogo de produtos mantido** — o `GET /produtos` do research 007
+existe como endpoint, mas a loja usa o Mainô só para cotação e nota, não cadastra produto lá.
+Puxar uma amostra não traria nada de útil de qualquer forma.
+
+Essa sessão também já respondeu a pergunta que este fechamento deixava em aberto para o 011
+("de onde vem o conhecimento de produto, já que não é do Mainô"): **o site da loja**
+(<https://www.laisaliskicasa.com.br/>) como referência de estilo e catálogo parcial, mais as
+**categorias e o posicionamento** escritos em `CONTEXT.md` → "A loja". O agente não consulta o
+site em runtime na fase 1 — conhece as categorias, compartilha o link quando o cliente quer
+explorar, e escala qualquer pergunta específica de produto. Aplicado ao 011 nesta
+reconciliação.

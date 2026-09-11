@@ -8,15 +8,19 @@ blocked-by: ["009"]
 ---
 
 > **032 fechou (2026-09-11) sem trazer o catálogo do Mainô** — decisão do dono, o sinal de
-> sucesso já vem melhor da plataforma das consultoras (013/035/037), não valia o esforço.
-> Isso derruba a premissa da resposta abaixo ("o que ele afirmar tem de vir do catálogo do
-> Maino") — a pergunta "de onde vem o conhecimento de produto" **segue sem resposta**, agora
-> sem esse candidato. Ticket desbloqueado (só restava o 009, já fechado); entra na fronteira,
-> mas precisa de grilling com o dono para decidir a fonte antes de fechar.
+> sucesso já vem melhor da plataforma das consultoras (013/035/037), não valia o esforço. Isso
+> derruba a premissa de trabalho abaixo ("o que ele afirmar tem de vir do catálogo do Maino").
+> Ticket desbloqueado (só restava o 009, já fechado).
+>
+> **Resposta recuperada da reconciliação da branch do 014 (2026-09-11):** essa mesma pergunta
+> já tinha sido respondida numa grelha com o dono em 2026-09-02, nessa branch paralela, que
+> nunca chegou à trunk — ver `## Fonte do conhecimento de produto` abaixo. O resto da pergunta
+> deste ticket (fronteira do que afirmar sobre preço/dimensão/material, reconhecimento de
+> foto, contenção de erro) **segue aberto**.
 
 ## Question
 
-A Lais Casa **não tem controle de estoque**: o que está à vista na loja é o estoque, e as
+A Lais Aliski Casa **não tem controle de estoque**: o que está à vista na loja é o estoque, e as
 consultoras conferem a olho. Isso cria o risco mais concreto do projeto — um agente
 respondendo "temos sim" sobre um item de R$ 30 mil que não existe, para um arquiteto que
 vai montar um projeto em cima disso.
@@ -60,3 +64,24 @@ e de como ele formula a resposta quando não pode afirmar.
 **Falta:** confirmar se a resposta 5 (nada de cabeça) se repete nas outras três pessoas — uma
 consultora não é a amostra toda, e isso muda o quanto o agente pode se apoiar no catálogo do
 Maino sozinho.
+
+---
+
+## Fonte do conhecimento de produto — grelha do 014 (2026-09-02, recuperado 2026-09-11)
+
+O Mainô **não tem catálogo de produtos mantido** (o dono confirmou na grelha do
+[014](014-como-o-agente-soa.md) — ver a resolução do [032](032-catalogo-do-maino-e-planilha-de-arquiteto.md)).
+A resposta de trabalho acima, que apontava o Mainô como fonte, cai. No lugar:
+
+- **Categorias e posicionamento** da loja, escritos em `CONTEXT.md` → "A loja" (vasos,
+  esculturas, quadros, cestos, aromas, mobiliário… alto padrão, curadoria, clássico).
+- **O site** (<https://www.laisaliskicasa.com.br/>) como referência de estilo e catálogo
+  parcial — o agente **manda o link** quando o cliente quer explorar, **não navega** nem
+  consulta o site em runtime na fase 1.
+- Qualquer pergunta de produto **específico** (peça, preço, medida, disponibilidade) escala
+  para a consultora — não é a categoria/posicionamento que responde isso, é motivo de
+  escalar.
+
+Isso fecha a pergunta "de onde vem o conhecimento de produto". **Não fecha o ticket**: falta
+ainda a fronteira do que o agente pode afirmar dentro desse conhecimento (preço? dimensão?
+material?), o reconhecimento de foto, e como o erro é contido — ver `## Question` acima.
