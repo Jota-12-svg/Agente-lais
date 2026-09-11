@@ -3,7 +3,7 @@ id: "040"
 title: Confirmar se a GEMINI_API_KEY é do tipo "auth" antes do prazo de setembro/2026
 labels: [wayfinder:task]
 status: open
-assignee:
+assignee: Claude
 blocked-by: []
 ---
 
