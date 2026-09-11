@@ -3,7 +3,7 @@ id: "036"
 title: Freio de mão global — desligamento de emergência do agente
 labels: [wayfinder:task]
 status: open
-assignee:
+assignee: Claude
 blocked-by: []
 ---
 
