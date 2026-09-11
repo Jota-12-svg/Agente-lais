@@ -3,7 +3,7 @@ id: "015"
 title: Decidir a rotação das credenciais expostas
 labels: [wayfinder:task]
 status: open
-assignee:
+assignee: Claude
 blocked-by: ["002"]
 ---
 
