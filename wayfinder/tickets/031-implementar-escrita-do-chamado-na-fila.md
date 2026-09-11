@@ -60,9 +60,13 @@ specified" em `map.md`), porque é lá que a chamada de escrita vai morar. Se o 
 estiver decidido quando este ticket for puxado, a parte de autenticação e esquema pode ser
 resolvida antes, e a integração no código real espera o runtime.
 
-**Resolvido quando** o agente conseguir escrever uma linha real na aba de fila da planilha de
-produção (ou de teste, se produção ainda não estiver liberada), com o esquema documentado e sem
-duplicar em caso de retry.
+**Resolvido quando** ~~o agente conseguir escrever uma linha real na aba de fila da planilha de
+produção~~ — desatualizado, a fila não é mais planilha (ver aviso no topo do ticket, 035/037).
+**Critério atual:** o runtime real do agente (não o protótipo de teste) conseguir escrever uma
+linha real em `handoffs` no Supabase de produção ao escalar uma conversa de WhatsApp de
+verdade, com o telefone real do cliente (não placeholder) e sem duplicar em caso de retry. O
+mecanismo de autenticação e o mapeamento de dados já estão decididos e testados — ver "Decisão
+do mecanismo" abaixo; falta só o runtime existir para plugar nele.
 
 ---
 
