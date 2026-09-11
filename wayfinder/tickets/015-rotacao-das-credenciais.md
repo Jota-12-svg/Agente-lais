@@ -72,7 +72,8 @@ existe, então nada quebra em produção com as trocas abaixo. `.env` nunca foi 
   Gemini API mostra que **chaves "Standard" param de funcionar em setembro/2026** — só
   chaves "auth" (vinculadas a service account) continuam aceitas; chaves criadas na AI Studio
   hoje já nascem como "auth" por padrão, então o mais provável é que não haja problema, mas
-  isso não foi confirmado diretamente no painel.
+  isso não foi confirmado diretamente no painel. Virou o ticket
+  [040](040-tipo-da-chave-gemini.md), pra não se perder.
 - **`AGENT_DB_PASSWORD` / `DATABASE_URL_AGENT`** — **removidas** (não rotacionadas: apagadas).
   Apontavam para o papel `agent_runtime` que o **ticket 002 já derrubou** (`DROP ROLE`, era
   do projeto anterior). Campo deixado em branco de propósito — só é preenchido quando a

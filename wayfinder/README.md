@@ -17,6 +17,7 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 | # | Ticket | Tipo |
 |---|---|---|
 | 021 | [Instagram como porta de entrada para o WhatsApp](tickets/021-instagram-porta-de-entrada.md) | task |
+| 040 | [Confirmar se a GEMINI_API_KEY é do tipo "auth" antes do prazo de setembro/2026](tickets/040-tipo-da-chave-gemini.md) | task · achado do 015, checagem rápida no painel |
 | 027 | [Testar a conexão self-hosted como dispositivo adicional, antes de tocar no número da loja](tickets/027-testar-self-hosted-no-numero-atual.md) | task |
 | 038 | [Estratégia de rollout do agente — piloto, horário, fallback, canal de erro](tickets/038-estrategia-de-rollout.md) | grilling · **in-progress** |
 | 039 | [Laço de contexto — o contexto do agente evoluindo com os atendimentos](tickets/039-laco-de-contexto-do-agente.md) | grilling · trazido da reconciliação do 014; não urgente, refinamento contínuo |
@@ -35,7 +36,9 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 > `SUPABASE_ACCESS_TOKEN` e `GEMINI_API_KEY` confirmados limpos, sem rotação; `KIE_API_KEY`
 > removido (fallback nunca usado, addendum no 008); resíduo de papéis já derrubados pelo 002
 > (`agent_runtime`/`platform_worker`) limpo do `.env`. Onde as credenciais moram em produção
-> segue condicionado à stack de runtime (névoa).
+> segue condicionado à stack de runtime (névoa). Abriu o **040** (checar se a
+> `GEMINI_API_KEY` é do tipo "auth" antes do prazo de setembro/2026 — achado do 015, não
+> bloqueava seu fechamento).
 >
 > **011 fechado** (2026-09-11, grilling): ratificou como decisão explícita o que já estava
 > implementado de fato no `prototipo-tom-014/system-prompt.md` — nunca preço/medida/material
