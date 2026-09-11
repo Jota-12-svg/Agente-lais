@@ -99,7 +99,7 @@ para registrar, mesmo que o pareamento em si tenha "dado certo".
 ## Plano de reversão
 
 Para desconectar o harness a qualquer momento: no aparelho principal, "Aparelhos vinculados" →
-selecionar o dispositivo de teste (o nome aparece como "Lais Casa - Teste 027") → Sair. Ou, no
+selecionar o dispositivo de teste (o nome aparece como "Lais Aliski Casa - Teste 027") → Sair. Ou, no
 Railway, pausar/remover o serviço — a sessão para de responder, mas o vínculo só é
 efetivamente removido pelo lado do WhatsApp quando alguém faz "Sair" no aparelho.
 

@@ -168,7 +168,7 @@ exatamente dois itens:
 ## 5. Mitigadores, já que captura não existe
 
 Nenhum destes vem de documentação da Meta — ela não trata do problema. São padrões de
-arquitetura de handoff, e o que descrevo abaixo é **desenho meu para o caso da Lais Casa**,
+arquitetura de handoff, e o que descrevo abaixo é **desenho meu para o caso da Lais Aliski Casa**,
 apoiado no padrão geral de *handoff flag* que a literatura de agentes de atendimento descreve
 (o bot para de enviar assim que um humano assume, controlado por estado explícito, não por
 heurística).

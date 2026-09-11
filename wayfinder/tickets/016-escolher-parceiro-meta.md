@@ -36,7 +36,7 @@ Zenvia, Take Blip, Meta Cloud API via parceiros menores — em:
    migração das contas até junho de 2027.
 
 **Resolvido quando** houver um comparativo com custo mensal estimado para o volume real da
-Lais Casa e uma recomendação. A escolha final é do dono do projeto — é ele quem assina o
+Lais Aliski Casa e uma recomendação. A escolha final é do dono do projeto — é ele quem assina o
 contrato.
 
 ## Resolução

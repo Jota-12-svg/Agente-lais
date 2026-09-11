@@ -18,7 +18,7 @@ são chute a codificar.
 
 Não é opcional, e o motivo é LGPD, não performance: a tabela de preços da Google marca, linha
 a linha, que o **free tier usa os dados para melhorar os produtos** e o **tier pago não usa**.
-Conversa real de cliente da Lais Casa no free tier significa entregar dado pessoal para
+Conversa real de cliente da Lais Aliski Casa no free tier significa entregar dado pessoal para
 treinamento. O free tier serve para protótipo com dado sintético, e só.
 
 Basta uma API key do AI Studio e uma conta de cobrança vinculada — não exige projeto GCP nem

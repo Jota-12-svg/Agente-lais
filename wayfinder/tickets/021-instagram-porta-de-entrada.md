@@ -10,7 +10,7 @@ blocked-by: []
 ## Question
 
 Surgiu no grilling do ticket [009](009-como-funciona-o-atendimento-hoje.md): os principais
-canais de entrada da Lais Casa são **Instagram e WhatsApp**. Existe um site, com movimento
+canais de entrada da Lais Aliski Casa são **Instagram e WhatsApp**. Existe um site, com movimento
 pequeno.
 
 O dono do projeto decidiu a versão mínima: **o Instagram não recebe agente.** Ele recebe uma

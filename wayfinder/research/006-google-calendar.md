@@ -10,7 +10,7 @@ Investigação do ticket [006](../tickets/006-integracao-com-google-calendar.md)
 a documentação oficial da Google Calendar API e das plataformas alternativas. Cada
 afirmação carrega a URL da fonte.
 
-> **A pergunta que não é técnica.** O mapa registra três sistemas em uso na Lais Casa —
+> **A pergunta que não é técnica.** O mapa registra três sistemas em uso na Lais Aliski Casa —
 > WhatsApp Business, Maino e a planilha compartilhada. O Google Calendar **não está entre
 > eles**. Tudo que segue está escrito supondo que a resposta a "as consultoras mantêm agenda
 > no Google hoje?" ainda é desconhecida. A seção final trata explicitamente dos dois
@@ -39,7 +39,7 @@ Requisitos exatos:
   Mesma fonte.
 - A propagação "pode levar até 24 horas, mas normalmente é mais rápida". Mesma fonte.
 
-**Consequência para a Lais Casa:** se as consultoras usam Gmail pessoal
+**Consequência para a Lais Aliski Casa:** se as consultoras usam Gmail pessoal
 (`@gmail.com`), **este caminho não existe**. Não há Admin console, não há Super Admin, não
 há domínio a delegar. A documentação do Google não descreve delegação sobre contas de
 consumidor — a funcionalidade é definida em termos de organização Workspace.

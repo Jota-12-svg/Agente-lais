@@ -140,7 +140,7 @@ O que a pesquisa confirma:
   [WhiskeySockets/Baileys #2488](https://github.com/WhiskeySockets/Baileys/issues/2488), que
   descreve o processo de pareamento como dependente do telefone confirmando o link.
 
-**Consequência prática para o desenho da Lais Casa:** a forma mais simples e mais bem documentada de
+**Consequência prática para o desenho da Lais Aliski Casa:** a forma mais simples e mais bem documentada de
 montar essa arquitetura é a consultora (ou um celular dedicado da loja) ser o **dispositivo
 principal** — instala o WhatsApp Business normalmente, verifica o número novo com um chip — e a
 automação (Baileys/Evolution API/WPPConnect, rodando num VPS) entra depois como um dos **dispositivos

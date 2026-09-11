@@ -9,7 +9,7 @@ blocked-by: []
 
 ## Question
 
-O **Maino** é o sistema onde a Lais Casa faz cotação e emite nota fiscal. Ele é o candidato
+O **Maino** é o sistema onde a Lais Aliski Casa faz cotação e emite nota fiscal. Ele é o candidato
 mais provável a ser a única fonte estruturada de **produtos e preços** da loja — e, pelas
 notas emitidas, a única fonte objetiva de **venda concretizada**, que é o sinal de sucesso
 mais forte que o aprendizado pode ter.
@@ -67,5 +67,5 @@ JWT, chave solicitada dentro do próprio sistema.
 **Próximo passo concreto**, que cai no ticket
 [Obter acesso à planilha de clientes e ao catálogo de produtos](004-acesso-a-planilha-e-ao-catalogo.md):
 pedir a chave de API e chamar `GET /produtos` de verdade. O caminho técnico está resolvido —
-o que falta é saber se o cadastro da Lais Casa **está preenchido**. Catálogo rico na API e
+o que falta é saber se o cadastro da Lais Aliski Casa **está preenchido**. Catálogo rico na API e
 vazio na prática não serve para nada.

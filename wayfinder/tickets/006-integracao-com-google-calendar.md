@@ -19,7 +19,7 @@ O research deve levantar:
 
 1. **Autenticação para ler a agenda de várias pessoas.** OAuth por consultora (cada uma
    autoriza uma vez) versus conta de serviço com delegação de domínio — que exige Google
-   Workspace, não Gmail comum. Descobrir qual o caso da Lais Casa é parte do ticket.
+   Workspace, não Gmail comum. Descobrir qual o caso da Lais Aliski Casa é parte do ticket.
 2. **Free/busy.** Como consultar disponibilidade sem ler o conteúdo dos eventos —
    privacidade importa, o agente não precisa saber que a consultora vai ao médico.
 3. **Criar e alterar evento** em nome da consultora: convite ao cliente, fuso horário,

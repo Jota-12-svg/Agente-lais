@@ -1,4 +1,4 @@
-# CLAUDE.md — Agente de Atendimento da Lais Casa
+# CLAUDE.md — Agente de Atendimento da Lais Aliski Casa
 
 Instruções para qualquer agente ou pessoa que trabalhe neste repositório. Leia antes de
 mexer em qualquer coisa.
@@ -7,7 +7,7 @@ mexer em qualquer coisa.
 
 ## 1. O que é este projeto
 
-Um **agente de WhatsApp** que atende os clientes da **Lais Casa**, loja de decoração e
+Um **agente de WhatsApp** que atende os clientes da **Lais Aliski Casa**, loja de decoração e
 mobiliário. O agente faz a **qualificação inicial** do contato, responde dúvidas sobre o
 negócio e sobre produtos que conhece, verifica disponibilidade de horário das consultoras e
 agenda — e **escala a conversa para uma consultora humana** quando o caso exige julgamento
