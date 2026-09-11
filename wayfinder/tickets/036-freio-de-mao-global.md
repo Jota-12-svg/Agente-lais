@@ -70,3 +70,29 @@ ticket 012. Aqui é o botão único que derruba o agente inteiro.
 
 **Resolvido quando** existir um jeito comprovado de desligar o agente inteiro — testado,
 com quem tem acesso documentado e o caminho de religar claro.
+
+## Progresso (2026-09-11) — não fecha o ticket
+
+**Mecanismo técnico e UI construídos e testados de ponta a ponta; falta só o runtime consumir.**
+
+- Tabela `agent_settings` (singleton, `id=1`) na migração
+  `advisor-platform/supabase/migrations/20260911180000_agent_settings.sql`: `agent_enabled`,
+  `toggled_by`, `toggled_at`. Mesma RLS das outras telas da plataforma (advisors da allow-list
+  leem e atualizam; sem `INSERT`/`DELETE` via API). Publicada no Realtime. **Aplicada no
+  Supabase de produção.**
+- `KillSwitch.svelte` trocou o `localStorage` do protótipo visual (521163f) por leitura/escrita
+  real: carrega o estado ao montar, assina Realtime (reflete na hora se outra aba/pessoa mudar),
+  grava `toggled_by`/`toggled_at` ao acionar. `demo.js` ganhou mock da tabela nova, o modo
+  demonstração continua funcionando.
+- **Testado de ponta a ponta em produção**
+  (`plataforma-consultoras-production.up.railway.app`), login Google real (João Victor):
+  desligar → "Desligado por Joao Victor às 16h28"; religar → volta a "Agente no ar". **Realtime
+  confirmado entre duas abas diferentes**: religado numa aba, a outra atualizou sozinha, sem
+  reload — prova o efeito "imediato e abrangente" que o ticket pede, não só que o dado grava.
+- **Quem aciona:** os mesmos advisors da allow-list (consultoras + dono) — decisão do 033/036
+  já cumprida, não é controle que o cliente final vê.
+- **O que falta para fechar de verdade:** o runtime (ticket
+  [044](044-construir-runtime-do-agente.md)) assinar esta mesma tabela via Realtime e
+  efetivamente parar de responder quando `agent_enabled = false` — sem isso, a UI prova que o
+  estado é gravado e propagado, mas não prova que o agente se cala. "Resolvido quando" deste
+  ticket continua de pé até esse teste real existir.
