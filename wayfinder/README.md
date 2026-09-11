@@ -21,6 +21,7 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 | 027 | [Testar a conexão self-hosted como dispositivo adicional, antes de tocar no número da loja](tickets/027-testar-self-hosted-no-numero-atual.md) | task |
 | 038 | [Estratégia de rollout do agente — piloto, horário, fallback, canal de erro](tickets/038-estrategia-de-rollout.md) | grilling · **in-progress** |
 | 039 | [Laço de contexto — o contexto do agente evoluindo com os atendimentos](tickets/039-laco-de-contexto-do-agente.md) | grilling · trazido da reconciliação do 014; não urgente, refinamento contínuo |
+| 042 | [Stack e hospedagem do runtime do agente](tickets/042-stack-e-hospedagem-do-runtime.md) | grilling · **in-progress** — a última névoa grande do mapa, destrava 031/036/038 |
 
 > **038 — grilling feito, ticket ainda aberto** (2026-09-10): a **estratégia de rollout** foi
 > grelhada por inteiro com o dono (3 rodadas) e as decisões estão no ticket sob
