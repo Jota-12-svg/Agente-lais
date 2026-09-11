@@ -32,6 +32,13 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 > já fecharam (2026-09-11); só o item 3 (027) segue aberto. **Não propagado ao map/036/037/034
 > até fechar.**
 >
+> **031 avançado, ainda aberto** (2026-09-11): o mecanismo de autenticação do `INSERT` na fila
+> foi decidido (grilling) e **testado ao vivo** — RPC Postgres `security definer` gateada por
+> segredo (`HANDOFF_INSERT_SECRET`), chamada por HTTPS com a publishable key, sem senha de
+> banco nem service role no código. Ligado ao `prototipo-tom-014/`: conversei de verdade com a
+> Manu, ela escalou, o chamado apareceu sozinho na fila da plataforma via Realtime — duas vezes,
+> incluindo nome do cliente. Falta só o runtime real (névoa do mapa) chamar o mesmo caminho.
+>
 > **037 fechado** (2026-09-11, task): a plataforma das consultoras foi **implantada de verdade e
 > testada de ponta a ponta** — Railway (não Cloudflare Pages, decisão do dono, sem domínio
 > próprio): https://plataforma-consultoras-production.up.railway.app. Login Google (mesmo
@@ -102,7 +109,7 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 |---|---|---|---|
 | 019 | [De quais dispositivos a consultora pode responder sem cegar o agente](tickets/019-companion-windows-ponto-cego.md) | task | **em pausa** — premissa (Coexistence) não é mais o caminho; ver 016 |
 | 034 | [Redigir o manual do agente para as consultoras](tickets/034-redigir-o-manual-do-agente.md) | task | 036 + estratégia de rollout (névoa) — forma decidida no 033, falta a redação; 014, 011 e 037 saíram do bloqueio (todos fecharam 2026-09-11) |
-| 031 | [Implementar a escrita do chamado do agente na fila (INSERT no Supabase)](tickets/031-implementar-escrita-do-chamado-na-fila.md) | task | runtime do agente (035 fechado — esquema pronto); alvo é `INSERT` no Supabase + `chatModify markRead:false` |
+| 031 | [Implementar a escrita do chamado do agente na fila (INSERT no Supabase)](tickets/031-implementar-escrita-do-chamado-na-fila.md) | task | runtime do agente (mecanismo de autenticação decidido e testado ao vivo em 2026-09-11 — RPC `security definer` gateada por segredo; falta só o runtime chamar de verdade); `chatModify markRead:false` continua pendente |
 | 036 | [Freio de mão global — desligamento de emergência do agente](tickets/036-freio-de-mao-global.md) | task | stack de runtime (névoa) — requisito registrado, mecanismo depende de onde o agente roda; protótipo visual já existe na plataforma (037) |
 
 ## Fechados

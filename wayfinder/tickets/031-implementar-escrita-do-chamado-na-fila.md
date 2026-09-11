@@ -3,9 +3,15 @@ id: "031"
 title: Implementar a escrita do chamado do agente na fila (INSERT no Supabase)
 labels: [wayfinder:task]
 status: open
-assignee:
+assignee: claude-sonnet-5
 blocked-by: ["035"]
 ---
+
+> **Mecanismo de autenticação decidido e testado ao vivo em 2026-09-11** (grilling + deploy
+> real, sessão de reconciliação do 037) — ver "Decisão do mecanismo" abaixo. O ticket **segue
+> `open`**: o mecanismo está pronto e provado, mas só está ligado ao `prototipo-tom-014/`
+> (descartável), não ao runtime de produção, que ainda não existe. Fecha quando o runtime
+> real chamar este mesmo caminho.
 
 > **Reenquadrado em 2026-09-02 — ver [035](035-plataforma-central-das-consultoras.md), agora
 > fechado.** A fila vive numa plataforma sobre o **Supabase**, não numa aba da planilha. A
@@ -78,3 +84,50 @@ A estrutura da planilha foi inspecionada (ver `## Resolução` no
 - As abas VISITAS e Entregas usam um layout de **blocos de colunas por consultora**; se a aba
   de fila seguir a convenção da casa, considerar isso, mas o 012 decidiu fila **sem trava por
   consultora** (qualquer uma pega) — provavelmente uma tabela única com coluna "dona" opcional.
+
+---
+
+## Decisão do mecanismo (2026-09-11)
+
+Testado ao vivo, ligado ao `prototipo-tom-014/` (não ao runtime — esse ainda não existe).
+Grelhado com o dono antes de escrever qualquer código.
+
+**Nem papel Postgres dedicado com senha, nem service role — uma RPC `security definer`,
+gateada por segredo.** A pergunta original ("papel dedicado × service role") tinha uma
+terceira resposta melhor que as duas:
+
+- **`public.handoffs_insert(...)`** — função Postgres `security definer`, roda com o
+  privilégio de quem a criou (contorna o RLS por dentro), mas é **chamada por HTTPS puro**
+  via `/rest/v1/rpc/handoffs_insert`, com a **publishable key** (pública por design, a mesma
+  que a plataforma já expõe no navegador — não é segredo).
+- **Gate por segredo dentro da função**: o primeiro argumento (`p_secret`) precisa bater com
+  um valor fixo gravado no corpo da função; se não bater, `raise exception` (HTTP 403). O
+  segredo (`HANDOFF_INSERT_SECRET`, `.env`, nunca commitado) só existe no processo que chama
+  — nunca chega a um navegador, então não pode vazar por aí.
+- **Por que não papel Postgres dedicado com conexão direta:** exigiria a lib `pg` (o
+  protótipo é zero-dependências por decisão própria) e guardar usuário/senha de banco no
+  processo do agente — mais uma credencial de infraestrutura pra rotacionar e proteger.
+- **Por que não service role:** o `CLAUDE.md` §4 veta — ignora RLS por completo, "se algum
+  dia parecer necessária, é sinal de que o modelo de acesso está errado".
+- **Mapeamento de dados** (do sinal `[[ESCALAR: trigger=X; nome=Y; motivo=Z]]` que a Manu
+  emite): `trigger` vem direto no enum certo (a Manu escolhe entre os 6 valores, não texto
+  livre); `engagement_mode` é inferido (`architect` se `trigger=architect`, senão
+  `consumer` — Fase 1 só tem esses dois); `contact_name` vem do sinal, opcional; **`summary`**
+  é o motivo em texto livre. **`contact_phone` não existe** nesse protótipo (é chat de
+  navegador, não WhatsApp) — usa um placeholder de teste (`TESTE-PROTOTIPO-014 (id-da-
+  conversa)`), nunca confundível com contato real. **Em produção isso desaparece por conta
+  própria**: toda mensagem do WhatsApp (Cloud API ou Baileys, ticket 016) já chega com o
+  número de quem mandou — não precisa perguntar nem extrair, é o identificador nativo da
+  conversa.
+- **Idempotência: deliberadamente fora de escopo deste teste.** Processo único, sem retry,
+  sem múltiplos workers — o runtime real vai precisar tratar isso quando existir.
+- Código: `prototipo-tom-014/handoff-writer.mjs` (módulo isolado, pra poder ser levado
+  praticamente inteiro pro runtime real quando ele existir) + o sinal de escalada em
+  `run.mjs`/`system-prompt.md` estendido com `trigger=`/`nome=`.
+- **Testado ao vivo duas vezes**: conversa real com a Manu → ela decide escalar → o chamado
+  aparece sozinho na fila da plataforma (Realtime), sem eu tocar em nada lá. Confirmado nome
+  do cliente, tipo (consumidor/arquiteto) e motivo corretos.
+
+**Ainda falta pro 031 fechar de verdade:** o runtime do agente (névoa do mapa) chamar este
+mesmo `handoff-writer.mjs` (ou algo equivalente) a partir do WhatsApp real, com o telefone
+verdadeiro no lugar do placeholder, e resolver idempotência.

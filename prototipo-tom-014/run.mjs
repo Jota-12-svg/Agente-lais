@@ -14,6 +14,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { costOfCall, rateFor, fmtUsd, fmtBrl, USD_BRL, CALIBRATION } from './pricing.mjs';
 import * as cache from './cache.mjs';
+import { writeHandoff, handoffWriterDisponivel } from './handoff-writer.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const PORT = Number(process.env.PROTOTIPO_PORT) || 4014;
@@ -89,7 +90,8 @@ if (!creds) {
 console.log(`  abra:     http://localhost:${PORT}`);
 console.log(`  custos:   http://localhost:${PORT}/custos    ·    cache: http://localhost:${PORT}/cache`);
 console.log(`  cache de prefixo: liga/desliga na barra do chat (cria um cachedContents com o system prompt)`);
-console.log(`  handoff: "enviar como Consultora" na barra → o agente cala; toggle do ponto cego simula o dispositivo não suportado\n`);
+console.log(`  handoff: "enviar como Consultora" na barra → o agente cala; toggle do ponto cego simula o dispositivo não suportado`);
+console.log(`  fila real (031, teste): ${handoffWriterDisponivel() ? 'ligada — escalar aqui grava em handoffs de verdade' : 'DESLIGADA (faltam SUPABASE_*/HANDOFF_INSERT_SECRET no .env)'}\n`);
 
 // A doc oficial (research 017) diz que os modelos 3.x usam `thinking_level` em
 // `generationConfig`, mas não fixa se é `generationConfig.thinkingLevel` ou
@@ -381,17 +383,37 @@ const server = createServer(async (req, res) => {
       const out = await askManu(history, foraDoExpediente, model, usarCache);
       out.ms = Date.now() - t0;
 
-      // --- detecta o sinal de escalada [[ESCALAR: motivo]] ---
-      const mEsc = out.text.match(/\[\[\s*ESCALAR\s*:?\s*([^\]]*?)\s*\]\]/i);
+      // --- detecta o sinal de escalada [[ESCALAR: trigger=X; motivo=Y]] ---
+      // Formato novo (ticket 031, teste de conexão real com a fila). Cai pro formato antigo
+      // (só motivo, sem trigger) se a Manu não seguir a sintaxe — trigger vira 'qualified'.
+      const mEsc = out.text.match(/\[\[\s*ESCALAR\s*:([^\]]*)\]\]/i);
       if (mEsc) {
         out.text = out.text
           .replace(/\n*\s*\[\[\s*ESCALAR[^\]]*\]\]\s*/i, '')
           .replace(/\s*\n\s*-{3,}\s*$/, '')  // separador `---` dangling antes do marcador
           .trim();
+        const corpo = mEsc[1] || '';
+        const mStruct = corpo.match(/trigger\s*=\s*([a-z_]+)\s*;\s*nome\s*=\s*([^;]*)\s*;\s*motivo\s*=\s*(.*)/i);
+        // Fallback pro formato anterior (trigger+motivo, sem nome) e pro formato mais antigo
+        // ainda (só motivo) — a Manu às vezes varia, não trava a escalada por isso.
+        const mSemNome = mStruct ? null : corpo.match(/trigger\s*=\s*([a-z_]+)\s*;\s*motivo\s*=\s*(.*)/i);
+        const trigger = (mStruct?.[1] || mSemNome?.[1] || 'qualified').trim();
+        const nome = (mStruct?.[2] || '').trim() || null;
+        const motivo = (mStruct?.[3] ?? mSemNome?.[2] ?? corpo).trim() || 'não informado';
+        if (!mStruct && !mSemNome) console.warn(`  [handoff] sinal fora do formato esperado (trigger=...; nome=...; motivo=...) — recebido: "${corpo.trim()}". Usando trigger=qualified, sem nome.`);
+
         st.status = 'escalado';
-        st.motivo = (mEsc[1] || '').trim() || 'não informado';
+        st.motivo = motivo;
         st.since = Date.now();
-        out.escalou = { motivo: st.motivo };
+        out.escalou = { motivo: st.motivo, trigger, nome };
+
+        // Grava na fila de verdade — não bloqueia a resposta ao cliente (ela já foi montada
+        // acima). Falha aqui vira log no console, nunca trava o atendimento (decisão do
+        // grilling de hoje, "responda o cliente primeiro" já vale desde o ticket 012).
+        writeHandoff({ trigger, motivo, contactName: nome, conversationId }).then((r) => {
+          if (r.ok) console.log(`  [handoff] gravado na fila real — id ${r.id}  (trigger=${trigger})`);
+          else console.warn(`  [handoff] NÃO gravou na fila — ${r.error}`);
+        });
       }
       handoff.set(conversationId, st);
       out.status = st.status;
