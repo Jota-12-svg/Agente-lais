@@ -2,8 +2,8 @@
 id: "037"
 title: Construir a plataforma das consultoras — v1
 labels: [wayfinder:task]
-status: open
-assignee:
+status: closed
+assignee: claude-sonnet-5
 blocked-by: ["035"]
 ---
 
@@ -79,3 +79,72 @@ decisões que ele fechou. Três peças:
 **Resolvido quando** a plataforma estiver no ar, uma consultora conseguir logar, ver um
 chamado (semeado ou real), assumir, fechar com desfecho + veredito, e o e-mail de aviso
 chegar — tudo testado de ponta a ponta.
+
+## Resolução
+
+**Construído, implantado e testado de ponta a ponta em 2026-09-11.** Código já existia pronto
+na branch `feat/plataforma-consultoras` (PR #4, sessão de 2026-09-02) — o trabalho de hoje foi
+rodar o deploy de verdade, corrigir o que quebrou no caminho, e validar.
+
+- **Hospedagem: Railway, não Cloudflare Pages.** Mudança de decisão do dono — já tinha Railway
+  disponível (o mesmo usado no harness do [027](027-testar-self-hosted-no-numero-atual.md)) e
+  não queria depender de domínio próprio. A SPA (Vite + Svelte 5) é servida por um processo Node
+  mínimo (`serve`) a partir de `advisor-platform/web`. URL pública:
+  **https://plataforma-consultoras-production.up.railway.app** — sem domínio customizado, só o
+  subdomínio que o Railway gera.
+- **Migração aplicada no Supabase de produção** (`handoffs`, `advisor_allowlist`, RLS, índices,
+  Realtime) via `supabase db push`. Achado no caminho: o histórico de migração do projeto tinha
+  3 entradas órfãs de 02/08 (resíduo do projeto anterior, sobrevivente à limpeza do
+  [002](002-limpar-o-projeto-supabase.md) porque `DROP SCHEMA`/`DROP ROLE` não tocam a tabela
+  de bookkeeping `supabase_migrations.schema_migrations`) — confirmado com uma query que não
+  havia tabela nenhuma por trás delas, e corrigido com `supabase migration repair --status
+  reverted`, sem alterar dado nenhum.
+- **Bug real corrigido:** `supabase/config.toml` tinha a chave `skip_nonce_check` duplicada em
+  `[auth.external.google]` (`true` numa linha, `false` do boilerplate do CLI logo abaixo) — TOML
+  não aceita chave repetida, e isso quebrava `supabase link`/`db push` por inteiro. Mantido só o
+  valor seguro (`false`); a plataforma roda em produção, não localmente, então não precisa do
+  ajuste que a linha `true` fazia para teste local.
+- **Allow-list: 3 dos 4 e-mails reais gravados** — Joslaine e Gabriela confirmadas; **Pamella
+  (`pamella_elling@outlook.com`) e a Lais ainda faltam.** A Pamella usa Outlook, e o Google
+  recusou ela como usuária de teste do OAuth porque o endereço não tem Conta do Google ativa
+  vinculada — ela precisa criar uma (pode ser com o próprio e-mail Outlook, não precisa de Gmail
+  novo) antes de conseguir logar. O e-mail da Lais nunca chegou a ser passado nesta sessão.
+- **Login Google configurado no mesmo projeto do Gemini** (`gen-lang-client-0815886762`), sem
+  criar projeto novo — app OAuth em modo **Testing** (não published), porque só 4 pessoas vão
+  logar para sempre e isso evita a revisão de verificação da Google. Client ID/secret gravados
+  no `.env` (`SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID`/`_SECRET`) e configurados no provider do
+  Supabase Auth via Management API. `site_url` e `uri_allow_list` apontando pra URL do Railway.
+- **Canal de notificação por e-mail (Resend) caiu do escopo do v1**, decisão do dono: as
+  consultoras não checam e-mail no dia a dia — o sinal real que elas usam é o **verde de "não
+  lida" no WhatsApp**, que é o item 6 do [027](027-testar-self-hosted-no-numero-atual.md), ainda
+  não validado (depende do runtime existir). Para agora, a fila ao vivo na tela é o sinal. Isso
+  também responde, de quebra, a pergunta 34 do [020](020-perguntas-para-as-consultoras.md) ("o
+  celular delas avisa quando chega e-mail?") — não adianta, elas não usam. Nada do Resend foi
+  implantado: sem conta criada, Edge Function `notify-handoff` não implantada, sem Database
+  Webhook. O código da função continua no repo, para quando/se o canal voltar a fazer sentido.
+- **Teste de ponta a ponta real, feito nesta sessão:** inserida uma linha de teste em
+  `handoffs` via Management API, login Google completo (usando temporariamente o e-mail do dono
+  na allow-list, removido depois do teste), card apareceu na fila com os dados certos, **Assumir**
+  funcionou (`assumed_by`/`assumed_at` gravados, "você pegou às HHhMM" na tela), **Finalizar
+  chamado** com o formulário de desfecho + veredito do [013](013-sinal-de-sucesso-do-aprendizado.md)
+  funcionou, e o chamado **sumiu da fila** ao fechar — exatamente o comportamento que o
+  [035](035-plataforma-central-das-consultoras.md) desenhou. Linha de teste apagada depois.
+- **Freio de mão global (ticket 036) já tem protótipo visual** nesta build ("Agente no ar" /
+  "Desligar o agente" no topo da tela) — commit anterior da sessão de 02/09. Não testado
+  funcionalmente hoje (não há runtime lendo a flag ainda), mas a peça de UI existe.
+
+**Pendências que não bloqueiam o fechamento deste ticket, mas ficam registradas:**
+
+1. Completar a allow-list (Pamella precisa de Conta Google; falta o e-mail da Lais).
+2. **Runtime do agente** (névoa do mapa) — sem ele, a plataforma roda só com dados de teste/
+   semeados; o [031](031-implementar-escrita-do-chamado-na-fila.md) é quem vai fazer o `INSERT`
+   real ao vivo.
+3. Decisão de autenticação do 031 (papel Postgres dedicado × service role) segue em aberto —
+   não avançada nesta sessão.
+4. `advisor-platform/deploy-wizard.sh` ficou desatualizado (ainda descreve o fluxo Cloudflare
+   Pages + Resend) — não corrigido nesta sessão, o deploy real de hoje não seguiu o script à
+   risca. Revisar antes de usá-lo de novo.
+
+Perde "037" do `blocked-by` do **034** (manual das consultoras) — que segue bloqueado só pelo
+**036** (freio de mão global, ainda sem o lado do runtime) e pela estratégia de rollout
+([038](038-estrategia-de-rollout.md)).

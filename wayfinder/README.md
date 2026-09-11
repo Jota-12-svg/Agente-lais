@@ -32,6 +32,19 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 > já fecharam (2026-09-11); só o item 3 (027) segue aberto. **Não propagado ao map/036/037/034
 > até fechar.**
 >
+> **037 fechado** (2026-09-11, task): a plataforma das consultoras foi **implantada de verdade e
+> testada de ponta a ponta** — Railway (não Cloudflare Pages, decisão do dono, sem domínio
+> próprio): https://plataforma-consultoras-production.up.railway.app. Login Google (mesmo
+> projeto do Gemini, modo Testing), migração `handoffs`/RLS aplicada no Supabase de produção,
+> fluxo completo validado (fila → assumir → fechar com desfecho+veredito → some da fila). Dois
+> bugs reais corrigidos no caminho: `skip_nonce_check` duplicada no `config.toml` (quebrava
+> `supabase link`) e histórico de migração órfão do projeto anterior (3 entradas sem tabela por
+> trás, resíduo que o 002 não alcançou). **Canal de aviso por e-mail caiu do escopo do v1** —
+> decisão do dono: as consultoras não checam e-mail, o sinal real é o "não lida" do WhatsApp
+> (item 6 do 027, ainda não validado); responde de quebra a pergunta 34 do 020. Allow-list com
+> 2 dos 4 e-mails reais (falta o da Lais; a Pamella usa Outlook sem Conta Google vinculada).
+> Perde "037" do `blocked-by` do **034**.
+>
 > **040 fechado** (2026-09-11, task): a `GEMINI_API_KEY` é do tipo **"auth"** — confirmado via
 > console do Google Cloud (chave com conta de serviço vinculada), já que o AI Studio não
 > mostra a coluna "Tipo de chave" nesta conta. Nada a trocar; sobrevive ao corte de
@@ -88,10 +101,9 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 | # | Ticket | Tipo | Espera |
 |---|---|---|---|
 | 019 | [De quais dispositivos a consultora pode responder sem cegar o agente](tickets/019-companion-windows-ponto-cego.md) | task | **em pausa** — premissa (Coexistence) não é mais o caminho; ver 016 |
-| 034 | [Redigir o manual do agente para as consultoras](tickets/034-redigir-o-manual-do-agente.md) | task | 036, 037 + estratégia de rollout (névoa) — forma decidida no 033, falta a redação; 014 e 011 saíram do bloqueio (ambos fecharam 2026-09-11) |
+| 034 | [Redigir o manual do agente para as consultoras](tickets/034-redigir-o-manual-do-agente.md) | task | 036 + estratégia de rollout (névoa) — forma decidida no 033, falta a redação; 014, 011 e 037 saíram do bloqueio (todos fecharam 2026-09-11) |
 | 031 | [Implementar a escrita do chamado do agente na fila (INSERT no Supabase)](tickets/031-implementar-escrita-do-chamado-na-fila.md) | task | runtime do agente (035 fechado — esquema pronto); alvo é `INSERT` no Supabase + `chatModify markRead:false` |
-| 036 | [Freio de mão global — desligamento de emergência do agente](tickets/036-freio-de-mao-global.md) | task | stack de runtime (névoa) — requisito registrado, mecanismo depende de onde o agente roda |
-| 037 | [Construir a plataforma das consultoras — v1](tickets/037-construir-plataforma-consultoras-v1.md) | task | runtime do agente (035 fechado — esquema e desenho prontos); **puxável para adiantar schema/protótipo** com dados semeados |
+| 036 | [Freio de mão global — desligamento de emergência do agente](tickets/036-freio-de-mao-global.md) | task | stack de runtime (névoa) — requisito registrado, mecanismo depende de onde o agente roda; protótipo visual já existe na plataforma (037) |
 
 ## Fechados
 
@@ -122,3 +134,4 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 | 011 | [O que o agente pode afirmar sobre produto e disponibilidade](tickets/011-o-que-o-agente-pode-dizer-sobre-produto.md) | grilling | fechado 2026-09-11, ratificando o que já estava implementado no `prototipo-tom-014/system-prompt.md`: nunca preço/medida/material de peça específica, foto nunca reconhecida (sempre escala), alçada de desconto zero, contenção de erro = mecanismo pós-hoc do 038 com prioridade mais alta para erro de produto no canal "reportar problema"; fecha item 4 do gate do 038; desbloqueou 034; requisito de conteúdo registrado no 037 |
 | 015 | [Decidir a rotação das credenciais expostas](tickets/015-rotacao-das-credenciais.md) | task | senha do banco rotacionada via `PATCH .../database/password` (nunca trocada desde a criação do projeto); `SUPABASE_ACCESS_TOKEN`/`GEMINI_API_KEY` confirmados limpos; `KIE_API_KEY` removido (fallback nunca usado); resíduo de papéis já derrubados pelo 002 removido do `.env`; onde as credenciais moram em produção fica condicionado à stack de runtime (névoa) |
 | 040 | [Confirmar se a GEMINI_API_KEY é do tipo "auth" antes do prazo de setembro/2026](tickets/040-tipo-da-chave-gemini.md) | task | é "auth" — confirmado via console do Google Cloud (chave com conta de serviço vinculada), não pela coluna "Tipo de chave" do AI Studio (não aparece nesta conta); nada a trocar; achado à parte (aviso de billing pré-pagamento) abriu o 041 |
+| 037 | [Construir a plataforma das consultoras — v1](tickets/037-construir-plataforma-consultoras-v1.md) | task | implantada no Railway (não Cloudflare — sem domínio próprio) e testada de ponta a ponta: login Google, fila, assumir, fechar com desfecho+veredito; migração `handoffs`/RLS aplicada em produção; 2 bugs reais corrigidos (`skip_nonce_check` duplicada no config.toml, histórico de migração órfão); canal de e-mail (Resend) caiu do escopo do v1 — consultoras não checam e-mail, sinal real é o "não lida" do WhatsApp (027); allow-list com 2/4 e-mails (falta Lais; Pamella usa Outlook sem Conta Google); perde "037" do `blocked-by` do 034 |

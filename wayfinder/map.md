@@ -306,6 +306,18 @@ prototipagem, `/prototype`. Em tickets de research, `/research` como subagente.
   condicionado à stack de runtime (névoa). Achado incidental: o projeto Supabase pausa
   sozinho no plano free após ~1 semana sem uso.
 
+- [Construir a plataforma das consultoras — v1](tickets/037-construir-plataforma-consultoras-v1.md)
+  — **implantada em produção e testada de ponta a ponta em 2026-09-11**, no Railway (não
+  Cloudflare Pages — decisão do dono, sem domínio próprio):
+  **https://plataforma-consultoras-production.up.railway.app**. Login Google (mesmo projeto do
+  Gemini, modo Testing), migração `handoffs`/RLS aplicada no Supabase de produção, fluxo
+  completo validado (fila → assumir → fechar com desfecho+veredito → some da fila). Dois bugs
+  reais corrigidos no caminho: `skip_nonce_check` duplicada no `config.toml` e histórico de
+  migração órfão do projeto anterior. **Canal de aviso por e-mail (Resend) caiu do escopo do
+  v1** — decisão do dono: as consultoras não checam e-mail, o sinal real é o "não lida" do
+  WhatsApp (item 6 do 027, ainda não validado); responde de quebra a pergunta 34 do 020.
+  Allow-list com 2 dos 4 e-mails reais (falta o da Lais; a Pamella usa Outlook sem Conta Google
+  vinculada, não entra como está). Perde "037" do `blocked-by` do 034.
 - [Confirmar se a GEMINI_API_KEY é do tipo "auth" antes do prazo de setembro/2026](tickets/040-tipo-da-chave-gemini.md)
   — **é "auth", nada a trocar.** O AI Studio não mostra a coluna "Tipo de chave" que a
   documentação descreve (rollout gradual da Google); confirmado pelo caminho alternativo — o
@@ -344,15 +356,16 @@ Névoa em escopo, ainda sem nitidez para virar ticket:
   imediato, sem coleta (010); o ticket [032](tickets/032-catalogo-do-maino-e-planilha-de-arquiteto.md)
   fechou (2026-09-11) sem buscar planilhas reais, então este fluxo fica parado como fase 2,
   sem material novo à vista.
-- **Superfície para as consultoras.** **Fatia v1 fechada pelo ticket
-  [035](tickets/035-plataforma-central-das-consultoras.md)** (2026-09-02): plataforma web
-  única sobre o Supabase — ver a fila de chamados, assumir, fechar, registrar
-  `business_outcome` + `advisor_verdict`. Login Google, notificação por e-mail, esquema
-  `handoffs` definido. Construção é o ticket
-  [037](tickets/037-construir-plataforma-consultoras-v1.md), que espera o runtime do agente.
-  **Continua na névoa:** ver e **corrigir a conversa** do agente dentro da plataforma, e o
-  fluxo de "assumir uma conversa em andamento" (retomar o controle no meio). Reenquadrou
-  029/030/031.
+- **Superfície para as consultoras.** **Fatia v1 fechada e implantada** —
+  [035](tickets/035-plataforma-central-das-consultoras.md) (desenho, 2026-09-02) e
+  [037](tickets/037-construir-plataforma-consultoras-v1.md) (build + deploy, 2026-09-11):
+  plataforma web única sobre o Supabase, no ar no Railway — ver a fila de chamados, assumir,
+  fechar, registrar `business_outcome` + `advisor_verdict`. Login Google. **Sem notificação por
+  e-mail** (caiu do escopo do v1, decisão do dono — ver 037). Só entra em uso real com dado de
+  verdade quando o runtime do agente existir ([031](tickets/031-implementar-escrita-do-chamado-na-fila.md)
+  escreve o chamado). **Continua na névoa:** ver e **corrigir a conversa** do agente dentro da
+  plataforma, e o fluxo de "assumir uma conversa em andamento" (retomar o controle no meio).
+  Reenquadrou 029/030/031.
 - **LGPD.** Consentimento, retenção e o que pode ser guardado de conversa de cliente.
 - **Estratégia de rollout.** Piloto com uma consultora, horário limitado, fallback quando
   o agente falha. Bloqueia a redação do manual das consultoras
