@@ -350,6 +350,50 @@ com identificação de qual chip usou.
 
 ---
 
+## Addendum — Salvy: MVNO regulada, candidata não considerada na pesquisa original
+
+**Investigado em 2026-09-11, depois da pesquisa principal**, a partir de um link que o dono do
+projeto encontrou e pediu para verificar (`salvy.com.br`) — não fazia parte do escopo original,
+que comparou só TIM/Claro/Vivo. Verificação direta na página oficial da empresa
+(**[primária]**):
+
+- **É uma operadora móvel virtual (MVNO) regulada pela Anatel** — não um serviço de número
+  virtual/VoIP disfarçado. Fundada em 2022 em Curitiba (mesma cidade da loja), com aporte de
+  EBANX, Madeira Madeira, Olist e Pipefy, investida pela Y Combinator, vencedora do "MVNO Nation
+  Global Awards 2024" como melhor operadora B2B — dados apresentados no próprio FAQ da empresa,
+  não verificados de forma independente nesta sessão, mas verificáveis (Anatel publica outorgas
+  de MVNO).
+- **A própria empresa separa dois produtos que não devem ser confundidos** (FAQ, citação direta):
+  > "Chip (físico) e eSIM (chip digital): Têm dados móveis, ligações e SMS. Funcionam como uma
+  > linha móvel. [...] Número virtual: Não possui chip. Não tem planos de dados e não faz
+  > ligações. Uso exclusivo no WhatsApp Business, indicado para quem opera pela API oficial da
+  > Meta."
+
+  Ou seja: o produto "**eSIM**" da Salvy é uma **linha móvel real** (candidato válido para o
+  027, na mesma categoria de TIM/Claro/Vivo); o produto "**Número virtual**" deles é outra coisa
+  — feito para quem usa a **API oficial da Meta** (BSP/Cloud API), que este projeto **não** usa
+  (decisão do ticket 016, self-hosted via Baileys) — não serve para este teste.
+- **Sinal de "imediato" nos depoimentos da própria página** (não confirmado por fonte
+  independente): "a ativação acontece em segundos" (CTO cliente) e "chip ativo em poucos
+  minutos" (cliente de suporte) — mas são depoimentos de marketing, não documentação técnica do
+  fluxo.
+- **É um produto B2B, não uma compra de varejo avulsa.** O cadastro (`app.salvy.com.br/sign-up`)
+  pede **e-mail corporativo** (`nome@empresa.com.br`) já na primeira tela — não foi levado além
+  disso nesta sessão (criar conta é decisão do dono do projeto, não algo a fazer por ele). Não
+  há tabela de preço pública no site — o modelo é lead-gen com chat comercial ("Carla da
+  Salvy"), preço provavelmente sob consulta.
+- **Não confirmado nesta investigação:** preço do eSIM avulso, se aceita pessoa física com CNPJ
+  de pequena empresa (a loja tem CNPJ, então provavelmente qualifica) ou exige volume mínimo de
+  linhas, e se o número entregue é genuinamente novo (nenhuma fonte independente de reciclagem
+  de número foi encontrada especificamente sobre MVNOs, só sobre TIM/Claro/Vivo).
+
+**Não é uma substituição das operadoras tradicionais na conclusão principal** — é uma
+alternativa a mais, que parece resolver "online e imediato" melhor do que qualquer uma das três
+grandes (nenhuma delas confirmou isso para linha nova), mas com o custo de ser um fluxo B2B com
+e-mail corporativo, não uma compra anônima de balcão.
+
+---
+
 ## Recomendação (não-vinculante — a decisão é do dono do projeto)
 
 Para o teste do ticket 027, **a escolha de operadora não é uma decisão de engenharia** — nenhuma
