@@ -16,12 +16,23 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 
 | # | Ticket | Tipo |
 |---|---|---|
+| 044 | [Construir o runtime do agente — v1](tickets/044-construir-runtime-do-agente.md) | task · **reivindicado, prioridade** — última peça de código que falta pro agente existir de verdade |
 | 021 | [Instagram como porta de entrada para o WhatsApp](tickets/021-instagram-porta-de-entrada.md) | task |
 | 041 | [Colocar a conta de faturamento do Gemini em pré-pagamento antes que o serviço pare](tickets/041-billing-pre-pagamento.md) | task · achado do 040, aviso ativo no painel |
 | 027 | [Testar a conexão self-hosted como dispositivo adicional, antes de tocar no número da loja](tickets/027-testar-self-hosted-no-numero-atual.md) | task |
 | 038 | [Estratégia de rollout do agente — piloto, horário, fallback, canal de erro](tickets/038-estrategia-de-rollout.md) | grilling · **in-progress** |
 | 039 | [Laço de contexto — o contexto do agente evoluindo com os atendimentos](tickets/039-laco-de-contexto-do-agente.md) | grilling · trazido da reconciliação do 014; não urgente, refinamento contínuo |
 
+> **044 aberto e reivindicado** (2026-09-11): construção do runtime do agente — junta as três
+> peças já validadas separadamente (conversa com a Manu do `prototipo-tom-014/`, escrita na
+> fila do [031](tickets/031-implementar-escrita-do-chamado-na-fila.md), conexão Baileys do
+> harness do [027](tickets/027-testar-self-hosted-no-numero-atual.md)) num processo de
+> produção único, seguindo as seis decisões já fechadas no 042. **É a peça que falta para o
+> agente atender de verdade** — nada mais no mapa bloqueia isto. Não depende do 027 concluir
+> (pode ser construído e testado contra o número/chip de teste que o 027 está validando, ou
+> sem WhatsApp real, como o 031 foi testado); só o *ir ao ar no número real da loja* espera o
+> veredito do 027.
+>
 > **042 fechado** (2026-09-11, grilling): a **última névoa grande de arquitetura do mapa**
 > fechou. Runtime = processo único (WhatsApp + qualificação + Gemini), novo serviço no mesmo
 > projeto Railway da plataforma das consultoras; sessão do WhatsApp e estado da conversa no
