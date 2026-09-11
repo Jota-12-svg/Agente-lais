@@ -108,3 +108,11 @@ Dois achados operacionais acima **envelheceram** e foram corrigidos no ticket
 
 O resto da resolução (ir direto à Google por LGPD e cache; interface fina de LLM; kie.ai só
 com dado sintético) **continua de pé**.
+
+## Addendum — 2026-09-11 · kie.ai como fallback, abandonado
+
+No ticket [015](015-rotacao-das-credenciais.md), o dono confirmou que o papel de
+"protótipo e fallback" reservado à kie.ai nunca se materializou — não está em uso em lugar
+nenhum. `KIE_API_KEY`/`KIE_BASE_URL`/`KIE_GEMINI_PATH` removidos do `.env` e do
+`.env.example`. Se um fallback de provedor voltar a ser necessário, é decisão nova, não
+retomada desta.
