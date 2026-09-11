@@ -133,9 +133,17 @@ rodar o deploy de verdade, corrigir o que quebrou no caminho, e validar.
   "Desligar o agente" no topo da tela) — commit anterior da sessão de 02/09. Não testado
   funcionalmente hoje (não há runtime lendo a flag ainda), mas a peça de UI existe.
 
+**Addendum (mesmo dia, depois do teste):** o dono pediu acesso próprio, permanente — a
+allow-list agora tem **5 e-mails**, não os 4 originais do 035/037 (3 consultoras + dona):
+`joaovictormarchi76@gmail.com` (o dono do projeto, João Victor) entrou como acesso de
+dono/dev, além das 4 pessoas do negócio. Achado ao verificar: a Pamella (Outlook) **já estava**
+na tabela `advisor_allowlist` desde a inserção original da sessão — a recusa dela é só na
+lista de test users do OAuth do Google, que é uma trava separada e continua pendente.
+
 **Pendências que não bloqueiam o fechamento deste ticket, mas ficam registradas:**
 
-1. Completar a allow-list (Pamella precisa de Conta Google; falta o e-mail da Lais).
+1. Completar a allow-list: falta o e-mail da **Lais**; a **Pamella** precisa criar/vincular
+   uma Conta Google ao e-mail Outlook antes de entrar na lista de test users do OAuth.
 2. **Runtime do agente** (névoa do mapa) — sem ele, a plataforma roda só com dados de teste/
    semeados; o [031](031-implementar-escrita-do-chamado-na-fila.md) é quem vai fazer o `INSERT`
    real ao vivo.
