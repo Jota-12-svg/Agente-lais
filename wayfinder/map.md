@@ -306,6 +306,22 @@ prototipagem, `/prototype`. Em tickets de research, `/research` como subagente.
   condicionado à stack de runtime (névoa). Achado incidental: o projeto Supabase pausa
   sozinho no plano free após ~1 semana sem uso.
 
+- [Stack e hospedagem do runtime do agente](tickets/042-stack-e-hospedagem-do-runtime.md) —
+  **a última névoa grande de arquitetura do mapa fechou.** Processo único (WhatsApp +
+  qualificação + Gemini) num **segundo serviço no mesmo projeto Railway** da plataforma das
+  consultoras — always-on por padrão, WebSocket isento dos limites de timeout do Railway.
+  Sessão do WhatsApp e estado da conversa persistidos no **Supabase** (não em disco), sem
+  adapter oficial de Baileys pra isso — quem implementar escreve um adapter fino. Freio de mão
+  ([036](tickets/036-freio-de-mao-global.md)) integra via **Realtime** numa tabela do Supabase.
+  Watchdog do fallback "agente caiu" ([038](tickets/038-estrategia-de-rollout.md)) é **uptime
+  monitoring externo** (UptimeRobot/Better Stack) com alerta SMS/Telegram direto, não o
+  healthcheck nativo do Railway (só atua no deploy, não monitora produção). Segredos em
+  variáveis de ambiente do serviço Railway do runtime, isoladas da plataforma — resolve a
+  pendência deixada pelo [015](tickets/015-rotacao-das-credenciais.md). Deploy via GitHub com
+  rollback de um clique; janela curta de reconexão em cada redeploy aceita como risco
+  residual, mesmo espírito do risco de banimento aceito no [016](tickets/016-escolher-parceiro-meta.md).
+  Dá o lugar concreto onde a chamada de escrita do [031](tickets/031-implementar-escrita-do-chamado-na-fila.md)
+  vai morar.
 - [Construir a plataforma das consultoras — v1](tickets/037-construir-plataforma-consultoras-v1.md)
   — **implantada em produção e testada de ponta a ponta em 2026-09-11**, no Railway (não
   Cloudflare Pages — decisão do dono, sem domínio próprio):

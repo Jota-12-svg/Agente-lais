@@ -21,8 +21,16 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 | 027 | [Testar a conexão self-hosted como dispositivo adicional, antes de tocar no número da loja](tickets/027-testar-self-hosted-no-numero-atual.md) | task |
 | 038 | [Estratégia de rollout do agente — piloto, horário, fallback, canal de erro](tickets/038-estrategia-de-rollout.md) | grilling · **in-progress** |
 | 039 | [Laço de contexto — o contexto do agente evoluindo com os atendimentos](tickets/039-laco-de-contexto-do-agente.md) | grilling · trazido da reconciliação do 014; não urgente, refinamento contínuo |
-| 042 | [Stack e hospedagem do runtime do agente](tickets/042-stack-e-hospedagem-do-runtime.md) | grilling · **in-progress** — a última névoa grande do mapa, destrava 031/036/038 |
 
+> **042 fechado** (2026-09-11, grilling): a **última névoa grande de arquitetura do mapa**
+> fechou. Runtime = processo único (WhatsApp + qualificação + Gemini), novo serviço no mesmo
+> projeto Railway da plataforma das consultoras; sessão do WhatsApp e estado da conversa no
+> **Supabase**, não em disco; freio de mão (036) integra via Realtime; watchdog do 038 é
+> uptime monitoring externo (UptimeRobot/Better Stack) com SMS/Telegram, não o healthcheck
+> nativo do Railway (só atua no deploy); segredos em variáveis de ambiente do serviço Railway,
+> isoladas da plataforma — resolve a pendência do **015**. Dá lugar concreto para a chamada de
+> escrita do **031**. Ver `## Resolução` no ticket para os fatos e fontes.
+>
 > **038 — grilling feito, ticket ainda aberto** (2026-09-10): a **estratégia de rollout** foi
 > grelhada por inteiro com o dono (3 rodadas) e as decisões estão no ticket sob
 > `## Decisões do grilling`. Piloto = agente 24/7 + as três consultoras desde o dia 1 (sem
@@ -143,3 +151,4 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 | 015 | [Decidir a rotação das credenciais expostas](tickets/015-rotacao-das-credenciais.md) | task | senha do banco rotacionada via `PATCH .../database/password` (nunca trocada desde a criação do projeto); `SUPABASE_ACCESS_TOKEN`/`GEMINI_API_KEY` confirmados limpos; `KIE_API_KEY` removido (fallback nunca usado); resíduo de papéis já derrubados pelo 002 removido do `.env`; onde as credenciais moram em produção fica condicionado à stack de runtime (névoa) |
 | 040 | [Confirmar se a GEMINI_API_KEY é do tipo "auth" antes do prazo de setembro/2026](tickets/040-tipo-da-chave-gemini.md) | task | é "auth" — confirmado via console do Google Cloud (chave com conta de serviço vinculada), não pela coluna "Tipo de chave" do AI Studio (não aparece nesta conta); nada a trocar; achado à parte (aviso de billing pré-pagamento) abriu o 041 |
 | 037 | [Construir a plataforma das consultoras — v1](tickets/037-construir-plataforma-consultoras-v1.md) | task | implantada no Railway (não Cloudflare — sem domínio próprio) e testada de ponta a ponta: login Google, fila, assumir, fechar com desfecho+veredito; migração `handoffs`/RLS aplicada em produção; 2 bugs reais corrigidos (`skip_nonce_check` duplicada no config.toml, histórico de migração órfão); canal de e-mail (Resend) caiu do escopo do v1 — consultoras não checam e-mail, sinal real é o "não lida" do WhatsApp (027); allow-list com 2/4 e-mails (falta Lais; Pamella usa Outlook sem Conta Google); perde "037" do `blocked-by` do 034 |
+| 042 | [Stack e hospedagem do runtime do agente](tickets/042-stack-e-hospedagem-do-runtime.md) | grilling | processo único, novo serviço no mesmo projeto Railway da plataforma; sessão WhatsApp + estado da conversa no Supabase (sem adapter oficial de Baileys, adapter fino sob medida); freio de mão via Realtime; watchdog = uptime monitoring externo + SMS/Telegram (healthcheck nativo do Railway só atua no deploy); segredos em env vars do serviço, isoladas da plataforma; deploy GitHub + rollback de 1 clique; janela curta de reconexão aceita como risco residual; resolve pendência do 015, dá lugar concreto pro 031, fecha "Not yet specified" de arquitetura no mapa |

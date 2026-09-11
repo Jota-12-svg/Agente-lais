@@ -133,7 +133,8 @@ antes de:
 5. **[014](014-como-o-agente-soa.md)** pronto — tom validado, prints existem.
 6. **[031](031-implementar-escrita-do-chamado-na-fila.md)** feito — o agente grava o chamado
    no Supabase.
-7. Runtime hospedado num lugar estável (névoa do mapa — stack de runtime).
+7. Runtime hospedado num lugar estável — **stack decidida no [042](042-stack-e-hospedagem-do-runtime.md)**
+   (Railway); falta construir/implantar de fato.
 8. Lógica de qualificação de fato construída (o [010](010-o-que-e-um-lead-qualificado.md)
    decidiu os campos; a extração ainda não existe).
 9. **Parte A do manual entregue + demonstração ao vivo** feita com as três consultoras + a
@@ -222,9 +223,11 @@ fase 2, que está **fora de escopo** deste mapa (volta como mapa novo).
 O grilling decidiu a forma. O ticket fecha quando estas pontas — que dependem de trabalho
 ainda inexistente — estiverem amarradas:
 
-- **Watchdog + canal de push (SMS/Telegram) para o dono** — mecanismo concreto depende da
-  **stack de runtime** (névoa do mapa): onde o agente roda decide como um watchdog observa e
-  dispara.
+- ~~**Watchdog + canal de push (SMS/Telegram) para o dono**~~ — **resolvido pelo
+  [042](042-stack-e-hospedagem-do-runtime.md)** (2026-09-11): uptime monitoring externo
+  (UptimeRobot/Better Stack) batendo num `/health` do runtime, com alerta SMS/Telegram
+  configurado direto na ferramenta — não o healthcheck nativo do Railway, que só atua no
+  momento do deploy.
 - **Incremento "reportar problema" + rota de SMS no [037](037-construir-plataforma-consultoras-v1.md)**
   — vira requisito formal do build quando o 037 for puxado; hoje o 037 espera o runtime.
 - **Confirmação do gate** — os itens **4 (011) e 5 (014) já fecharam** (2026-09-11); só o

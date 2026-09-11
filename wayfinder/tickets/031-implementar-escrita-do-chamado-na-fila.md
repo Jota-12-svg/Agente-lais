@@ -13,6 +13,12 @@ blocked-by: ["035"]
 > (descartável), não ao runtime de produção, que ainda não existe. Fecha quando o runtime
 > real chamar este mesmo caminho.
 
+> **Stack do runtime decidida em 2026-09-11** — ver
+> [042](042-stack-e-hospedagem-do-runtime.md). A chamada de escrita deste ticket vai morar num
+> serviço Railway (mesmo projeto da plataforma), com `HANDOFF_INSERT_SECRET` em variável de
+> ambiente do serviço (não `.env` de dev). Não muda o mecanismo já decidido abaixo, só dá o
+> lugar concreto onde ele mora.
+
 > **Reenquadrado em 2026-09-02 — ver [035](035-plataforma-central-das-consultoras.md), agora
 > fechado.** A fila vive numa plataforma sobre o **Supabase**, não numa aba da planilha. A
 > intenção deste ticket continua — o agente escreve o chamado ao escalar —, mas o alvo muda:

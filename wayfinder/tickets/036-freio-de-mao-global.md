@@ -17,6 +17,11 @@ blocked-by: []
 > gera evento no Baileys). O desligamento global ficou sem dono. Este ticket restaura esse
 > item de trabalho — já decidido, não é design novo.
 
+> **Ponto de integração decidido em 2026-09-11** — ver
+> [042](042-stack-e-hospedagem-do-runtime.md). O runtime lê a flag via **Realtime** numa
+> tabela do Supabase (não polling — efeito precisa ser imediato). O esquema da tabela e a UI
+> na plataforma das consultoras continuam escopo deste ticket.
+
 ## Question
 
 Todo serviço em produção precisa de um **desligamento de emergência**. Para este agente, o
