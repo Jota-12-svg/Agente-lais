@@ -60,7 +60,10 @@ abaixo só se respondem tentando, não lendo mais documentação.
 **Não usar o número real da Lais Aliski Casa nesta primeira rodada.** Montar um cenário equivalente
 com um número de teste (chip novo, barato):
 
-1. Registrar o número de teste no WhatsApp Business comum, com um aparelho real.
+1. Registrar o número de teste no WhatsApp Business comum, com um aparelho real. Sobre qual
+   chip/linha usar e onde comprar — incluindo o requisito de compra 100% online e imediata,
+   sem esperar entrega física — ver research
+   [043](../research/043-chip-de-teste-para-o-027.md).
 2. Vincular alguns dispositivos extras (WhatsApp Web, um segundo celular, se possível o app de
    Windows) para reproduzir o arranjo de vários companions que a loja tem hoje — replicando o
    cenário real o mais fiel possível.

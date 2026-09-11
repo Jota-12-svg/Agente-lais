@@ -41,7 +41,13 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 > agora "cinco pontos"; item 6 continua não-bloqueante). **Segue bloqueado pela mesma pendência
 > física de sempre**: chip de teste, registro no WhatsApp Business comum, dispositivos extras
 > vinculados — nada disso é ação que dá para fazer sem o dono. Ver `README.md` do harness para
-> o passo a passo atualizado.
+> o passo a passo atualizado. **Addendum (mesmo dia):** research
+> [043](research/043-chip-de-teste-para-o-027.md) respondeu qual chip comprar — não há
+> diferença de risco/fricção relatada pela comunidade entre TIM/Claro/Vivo, mas o requisito de
+> compra **100% online e imediata** (sem esperar entrega física) favorece testar primeiro o
+> eSIM da Vivo pelo app, sem confirmação de que cobre linha nova; TIM nega a opção online, Claro
+> exige loja para linha nova. Nenhuma fonte confirma "chip nunca usado no WhatsApp", nem
+> comprando em canal oficial.
 >
 > **038 — grilling feito, ticket ainda aberto** (2026-09-10): a **estratégia de rollout** foi
 > grelhada por inteiro com o dono (3 rodadas) e as decisões estão no ticket sob
