@@ -3,7 +3,7 @@ id: "011"
 title: O que o agente pode afirmar sobre produto e disponibilidade
 labels: [wayfinder:grilling]
 status: open
-assignee:
+assignee: sessão-grilling-011
 blocked-by: ["009"]
 ---
 
