@@ -4,7 +4,7 @@ Instrumento de teste para o ticket
 [027](../wayfinder/tickets/027-testar-self-hosted-no-numero-atual.md). **Não é o runtime do
 agente** — a "Stack e hospedagem do runtime" segue como névoa em aberto no
 [`wayfinder/map.md`](../wayfinder/map.md). Isto aqui existe só para responder, com teste real,
-as cinco perguntas que os research 024/026 deixaram em aberto.
+os seis pontos que o ticket lista (research 024/026/028 e o pedido do 035, item 6).
 
 ## Estado do teste (atualizar conforme avança)
 
@@ -17,8 +17,9 @@ as cinco perguntas que os research 024/026 deixaram em aberto.
 - [ ] Item 3 — mensagem mandada de um companion (ex.: Windows) gerou evento aqui?
 - [ ] Item 4 — apareceu erro 463 numa resposta a contato novo?
 - [ ] Item 5 — algo estranho aconteceu logo após vincular (antes de qualquer mensagem)?
+- [ ] Item 6 — marcar como não lida sincronizou para os outros dispositivos, sem soar estranho?
 
-Quando os cinco estiverem marcados, transcrever o resultado para a seção `## Resolução` do
+Quando os seis estiverem marcados, transcrever o resultado para a seção `## Resolução` do
 ticket 027 — é lá que a decisão fica registrada, não aqui.
 
 ## O que falta antes de rodar o teste (pendência física, fora do meu alcance)
@@ -96,6 +97,29 @@ Assim que escanear o QR, preste atenção no aparelho principal por alguns minut
 aviso de segurança, desconexão inesperada de outro dispositivo, ou notificação da Meta é sinal
 para registrar, mesmo que o pareamento em si tenha "dado certo".
 
+**Item 6 — marcar como não lida (pedido do ticket 035).** Requer um chat com pelo menos uma
+mensagem já vista pelo harness (o item 3 já deve ter gerado uma).
+
+> [!AVISO] A própria documentação do Baileys é explícita: um `chatModify` malformado pode
+> deslogar a conta **de todos os dispositivos**. É por isso que a rota abaixo só aceita um
+> `jid` que o harness já confirmou ter visto recado — não dá para chamar "no escuro".
+
+1. Abra `/chats` para ver os jids de que o harness já tem recado (`{"chats":[{"jid":"...",
+   "ultimoRecadoEm":...}]}`).
+2. Abra `/mark-unread?jid=<o jid escolhido>` no navegador. A resposta `{"ok":true,...}`
+   confirma que o Baileys aceitou o pedido (parte **(a)** do item 6) — isso **não** significa
+   que sincronizou para os outros aparelhos, só que não deu erro no lado do harness.
+3. Confira, nos próximos segundos, nos outros dispositivos vinculados a esse número (celular,
+   WhatsApp Web, o app de Windows se estiver vinculado): o chat aparece com o indicador de não
+   lida? Isso responde a parte **(b)**.
+4. Pelos próximos minutos, o mesmo cuidado do item 5: qualquer desconexão, deslogamento ou
+   aviso estranho logo depois de chamar `/mark-unread` é sinal de risco — registre o horário
+   exato. Isso responde a parte **(c)**. Se o log mostrar `Sessão deslogada pelo WhatsApp`
+   logo após essa chamada, é o cenário do aviso acima acontecendo de verdade.
+
+Se `/mark-unread` responder com erro (`{"ok":false,...}`) ou `404`/`409`, o erro completo vai
+para o log em trace — cole no ticket como parte do resultado real.
+
 ## Plano de reversão
 
 Para desconectar o harness a qualquer momento: no aparelho principal, "Aparelhos vinculados" →
@@ -103,8 +127,9 @@ selecionar o dispositivo de teste (o nome aparece como "Lais Aliski Casa - Teste
 Railway, pausar/remover o serviço — a sessão para de responder, mas o vínculo só é
 efetivamente removido pelo lado do WhatsApp quando alguém faz "Sair" no aparelho.
 
-## Depois de confirmar os quatro primeiros pontos
+## Depois de confirmar os cinco primeiros pontos
 
 Só faz sentido repetir o processo no número real da loja depois de um resultado positivo nos
-itens 1–4 — e mesmo assim, fora do horário de atendimento, com este mesmo plano de reversão à
+itens 1–5 — o item 6 (marca de não-lida) não bloqueia essa recomendação, ver ticket — e mesmo
+assim, fora do horário de atendimento, com este mesmo plano de reversão à
 mão.

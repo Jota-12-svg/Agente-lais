@@ -31,6 +31,18 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 > isoladas da plataforma — resolve a pendência do **015**. Dá lugar concreto para a chamada de
 > escrita do **031**. Ver `## Resolução` no ticket para os fatos e fontes.
 >
+> **027 avançado, ainda aberto** (2026-09-11): o harness de teste (parado desde 12/08) foi
+> **atualizado** para cobrir o item 6 do ticket (marca de não-lida, pedido do 035, adicionado
+> depois que o harness foi construído — nunca tinha ganhado código). Novas rotas
+> `/chats` e `/mark-unread?jid=` em `whatsapp-self-hosted-test/index.js`, testadas localmente
+> (smoke test, sem WhatsApp real — só confirma que as rotas respondem certo, inclusive os
+> erros 404/409). Corrigida também uma inconsistência de contagem no próprio ticket e no
+> README do harness ("quatro pontos" bloqueando a recomendação, de antes do item 5 existir —
+> agora "cinco pontos"; item 6 continua não-bloqueante). **Segue bloqueado pela mesma pendência
+> física de sempre**: chip de teste, registro no WhatsApp Business comum, dispositivos extras
+> vinculados — nada disso é ação que dá para fazer sem o dono. Ver `README.md` do harness para
+> o passo a passo atualizado.
+>
 > **038 — grilling feito, ticket ainda aberto** (2026-09-10): a **estratégia de rollout** foi
 > grelhada por inteiro com o dono (3 rodadas) e as decisões estão no ticket sob
 > `## Decisões do grilling`. Piloto = agente 24/7 + as três consultoras desde o dia 1 (sem

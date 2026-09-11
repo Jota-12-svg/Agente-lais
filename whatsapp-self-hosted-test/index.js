@@ -1,11 +1,12 @@
 // Harness de teste do ticket 027 (wayfinder/tickets/027-testar-self-hosted-no-numero-atual.md).
 //
 // Não é o runtime do agente. É só o instrumento para responder, com teste real,
-// as cinco perguntas que o research 024/026 deixou em aberto: o pareamento
-// completa; os dispositivos já vinculados sobrevivem; mensagem de outro
-// companion (ex.: WhatsApp para Windows) gera evento aqui; o ciclo de token de
-// relação evita o erro 463; e o próprio ato de vincular já é, sozinho, um
-// momento de risco.
+// os seis pontos que o ticket deixou em aberto: o pareamento completa; os
+// dispositivos já vinculados sobrevivem; mensagem de outro companion (ex.:
+// WhatsApp para Windows) gera evento aqui; o ciclo de token de relação evita o
+// erro 463; o próprio ato de vincular já é, sozinho, um momento de risco; e
+// marcar um chat como não lido (pedido do ticket 035) sincroniza para os
+// outros dispositivos vinculados.
 //
 // Uso: ver README.md deste diretório.
 
@@ -31,10 +32,17 @@ const logger = pino({
   transport: { target: 'pino-pretty', options: { colorize: true, translateTime: 'SYS:HH:MM:ss' } },
 })
 
-// Estado exposto para a rota /qr — não há sessão de usuário aqui, é um teste
-// de uma pessoa só, então uma variável de módulo é suficiente.
+// Estado exposto para as rotas HTTP — não há sessão de usuário aqui, é um
+// teste de uma pessoa só, então variáveis de módulo são suficientes.
 let latestQR = null
 let connectionStatus = 'iniciando'
+let sock = null
+
+// Último recado visto em cada chat, na forma que o item 6 (chatModify)
+// exige (`lastMessages`). Guardamos só o essencial, atualizado a cada
+// messages.upsert — não é persistido, então some ao reiniciar o processo
+// (aceitável: é teste manual, o operador manda uma mensagem de novo).
+const lastMessageByJid = new Map()
 
 function describeDisconnect(lastDisconnect) {
   const statusCode = lastDisconnect?.error?.output?.statusCode
@@ -47,7 +55,7 @@ async function start() {
   const { version, isLatest } = await fetchLatestBaileysVersion()
   logger.info({ version, isLatest }, 'Versão do protocolo Baileys')
 
-  const sock = makeWASocket({
+  sock = makeWASocket({
     version,
     auth: state,
     logger,
@@ -108,6 +116,16 @@ async function start() {
         msg.message?.extendedTextMessage?.text ||
         (msg.message ? `[${Object.keys(msg.message)[0]}]` : '[sem conteúdo]')
 
+      // Item 6 precisa do último recado do chat no formato que chatModify
+      // exige (`lastMessages: [{ key, messageTimestamp }]`) — guardamos aqui
+      // para a rota /mark-unread usar, sem precisar caçar no log.
+      if (msg.key.remoteJid) {
+        lastMessageByJid.set(msg.key.remoteJid, {
+          key: msg.key,
+          messageTimestamp: msg.messageTimestamp,
+        })
+      }
+
       logger.info(
         {
           fromMe: msg.key.fromMe,
@@ -137,7 +155,12 @@ start().catch((err) => {
 const app = express()
 
 app.get('/', (_req, res) => {
-  res.type('text/plain').send(`status: ${connectionStatus}\nqr disponível em /qr quando status = conectando`)
+  res.type('text/plain').send(
+    `status: ${connectionStatus}\n` +
+      'qr disponível em /qr quando status = conectando\n' +
+      '/chats — lista os jids de que este harness já viu recado\n' +
+      '/mark-unread?jid=<jid> — dispara o teste do item 6 (marcar como não lida)',
+  )
 })
 
 app.get('/qr', async (_req, res) => {
@@ -160,5 +183,55 @@ app.get('/qr', async (_req, res) => {
 })
 
 app.get('/health', (_req, res) => res.json({ status: connectionStatus }))
+
+// Item 6 do ticket: listar os chats de que o harness já viu recado, para o
+// operador escolher o jid sem caçar no log em trace.
+app.get('/chats', (_req, res) => {
+  const chats = [...lastMessageByJid.entries()].map(([jid, last]) => ({
+    jid,
+    ultimoRecadoEm: last.messageTimestamp,
+  }))
+  res.json({ chats })
+})
+
+// Item 6 do ticket: dispara chatModify({ markRead: false }, jid) sob demanda
+// — precisa ser manual porque o teste é "marquei não lida aqui, foi para os
+// outros dispositivos (celular, Web, Windows)?", uma verificação visual que
+// só o operador faz. AVISO da própria doc do Baileys: um chatModify malformado
+// pode deslogar a conta de todos os dispositivos — por isso a rota exige o
+// jid exato e só usa o último recado que o harness já confirmou ter visto.
+app.get('/mark-unread', async (req, res) => {
+  const { jid } = req.query
+  if (!jid) {
+    res.status(400).json({ erro: 'passe ?jid=<remoteJid>, ver /chats para os conhecidos' })
+    return
+  }
+  if (connectionStatus !== 'conectado' || !sock) {
+    res.status(409).json({ erro: `socket não está conectado (status: ${connectionStatus})` })
+    return
+  }
+  const lastMessage = lastMessageByJid.get(jid)
+  if (!lastMessage) {
+    res.status(404).json({
+      erro: 'nenhum recado visto ainda para esse jid — mande uma mensagem nesse chat primeiro (ver /chats)',
+    })
+    return
+  }
+
+  logger.info({ jid }, '>>> Item 6: disparando chatModify({ markRead: false }, jid) — ' +
+    'confira agora nos outros dispositivos vinculados (celular, WhatsApp Web, app de Windows) ' +
+    'se o chat aparece como não lido, e observe a conexão pelos próximos minutos.')
+
+  try {
+    await sock.chatModify({ markRead: false, lastMessages: [lastMessage] }, jid)
+    logger.info({ jid }, '>>> Item 6: chatModify aplicado sem erro no lado do Baileys — isso ' +
+      'responde (a) do item 6. Falta confirmar (b) nos outros aparelhos e (c) que não gerou ' +
+      'nada estranho na conexão (mesmo cuidado do item 5).')
+    res.json({ ok: true, jid })
+  } catch (err) {
+    logger.error({ err, jid }, '>>> Item 6: chatModify falhou — registrar no ticket como resultado real')
+    res.status(500).json({ ok: false, erro: err.message })
+  }
+})
 
 app.listen(PORT, () => logger.info({ port: PORT }, 'Servidor HTTP no ar'))

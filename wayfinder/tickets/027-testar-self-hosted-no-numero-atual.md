@@ -65,10 +65,11 @@ com um número de teste (chip novo, barato):
    Windows) para reproduzir o arranjo de vários companions que a loja tem hoje — replicando o
    cenário real o mais fiel possível.
 3. Subir Baileys (ou Evolution API) num VPS e tentar vincular como dispositivo adicional.
-4. Rodar os quatro itens acima, registrando o que de fato aconteceu — não o que a documentação
-   sugeria que aconteceria.
+4. Rodar os cinco itens acima, registrando o que de fato aconteceu — não o que a documentação
+   sugeria que aconteceria. (O item 6, marca de não-lida, pode ser testado na mesma rodada, mas
+   não é condição para a recomendação de ir/não-ir — ver abaixo.)
 
-Só depois de um resultado positivo nos quatro pontos é que faz sentido considerar repetir o
+Só depois de um resultado positivo nos cinco pontos é que faz sentido considerar repetir o
 processo no número real da loja — e mesmo assim, fora do horário de atendimento, com plano de
 reverter (desconectar o Baileys) se algo parecer errado.
 
