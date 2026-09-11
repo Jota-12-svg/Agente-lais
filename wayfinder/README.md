@@ -16,7 +16,6 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 
 | # | Ticket | Tipo |
 |---|---|---|
-| 014 | [Como o agente soa — protótipo de atendimento no tom das consultoras](tickets/014-como-o-agente-soa.md) | prototype · **in-progress** — branch paralela reconciliada nesta sessão, retomado |
 | 015 | [Decidir a rotação das credenciais expostas](tickets/015-rotacao-das-credenciais.md) | task |
 | 021 | [Instagram como porta de entrada para o WhatsApp](tickets/021-instagram-porta-de-entrada.md) | task |
 | 027 | [Testar a conexão self-hosted como dispositivo adicional, antes de tocar no número da loja](tickets/027-testar-self-hosted-no-numero-atual.md) | task |
@@ -36,7 +35,8 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 > **033 fechado** (2026-09-02, grilling): a **forma** do manual está decidida — um documento,
 > duas partes (A "o que o agente faz" / B "no dia a dia"), Google Doc, tom concreto com prints
 > do 014, quatro pedidos à consultora + seção do freio de mão. A **redação** é o ticket
-> **034** (Bloqueados), por 011, 014, 036, 037 e pela estratégia de rollout.
+> **034** (Bloqueados), por 011, 036, 037 e pela estratégia de rollout — **014 saiu do
+> bloqueio, fechou em 2026-09-11**.
 >
 > **036** e **037** nascem/ficam bloqueados pela stack de runtime (névoa do mapa) — ver
 > Bloqueados. O **036** (freio de mão global) foi separado do 012 numa branch paralela e se
@@ -49,23 +49,25 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 > ainda precisava (site + categorias/posicionamento, não o Mainô) já tinha sido respondida
 > numa grelha de 2026-09-02 na branch do 014, recuperada nesta reconciliação.
 >
-> **014 reconciliado nesta sessão** (2026-09-11): a branch paralela `wayfinder/como-o-agente-soa-014`
-> estava parada desde 2026-09-02, sem worktree ativo. Trazido para a trunk: `prototipo-tom-014/`
-> (ambiente de teste ao vivo com a Manu), a especificação de tom v1 + sete transcrições no
-> próprio ticket, a correção de nome/contexto da loja (**Lais Aliski Casa**, dona Lais Aliski
-> que não atende, três consultoras nomeadas — Pamella, Gabriela/Gabi, Joslaine, corrigindo o
-> 009) propagada a `CONTEXT.md`/`CLAUDE.md`/`.env.example` e a todo ticket e research não
-> datado (handovers antigos ficam como registro). O ticket "033" que essa branch tinha aberto
-> ("laço de contexto do agente") colidia em número com o 033 da trunk — renumerado para
-> **039**. Ficam abertas as "Perguntas para o dono" do próprio 014 (nome do agente, preço,
-> áudio de saída, velocidade, emoji, tratamento, abertura) — é o que falta pra fechar.
+> **014 reconciliado e fechado nesta sessão** (2026-09-11): a branch paralela
+> `wayfinder/como-o-agente-soa-014` estava parada desde 2026-09-02, sem worktree ativo.
+> Trazido para a trunk: `prototipo-tom-014/` (ambiente de teste ao vivo com a Manu), a
+> especificação de tom v1 + sete transcrições no próprio ticket, a correção de nome/contexto
+> da loja (**Lais Aliski Casa**, dona Lais Aliski que não atende, três consultoras nomeadas —
+> Pamella, Gabriela/Gabi, Joslaine, corrigindo o 009) propagada a
+> `CONTEXT.md`/`CLAUDE.md`/`.env.example` e a todo ticket e research não datado (handovers
+> antigos ficam como registro). O ticket "033" que essa branch tinha aberto ("laço de contexto
+> do agente") colidia em número com o 033 da trunk — renumerado para **039**. As sete
+> "Perguntas para o dono" do próprio 014 foram respondidas na sequência (nome **Manu**, preço
+> nunca, áudio nunca, 1–3 min, emoji como proposto, sempre "você", sempre se apresenta) —
+> todas confirmaram a proposta v1, sem mudar o protótipo. **014 fechado.**
 
 ## Bloqueados
 
 | # | Ticket | Tipo | Espera |
 |---|---|---|---|
 | 019 | [De quais dispositivos a consultora pode responder sem cegar o agente](tickets/019-companion-windows-ponto-cego.md) | task | **em pausa** — premissa (Coexistence) não é mais o caminho; ver 016 |
-| 034 | [Redigir o manual do agente para as consultoras](tickets/034-redigir-o-manual-do-agente.md) | task | 011, 014, 036, 037 + estratégia de rollout (névoa) — forma decidida no 033, falta a redação |
+| 034 | [Redigir o manual do agente para as consultoras](tickets/034-redigir-o-manual-do-agente.md) | task | 011, 036, 037 + estratégia de rollout (névoa) — forma decidida no 033, falta a redação; 014 saiu do bloqueio (fechou 2026-09-11) |
 | 031 | [Implementar a escrita do chamado do agente na fila (INSERT no Supabase)](tickets/031-implementar-escrita-do-chamado-na-fila.md) | task | runtime do agente (035 fechado — esquema pronto); alvo é `INSERT` no Supabase + `chatModify markRead:false` |
 | 036 | [Freio de mão global — desligamento de emergência do agente](tickets/036-freio-de-mao-global.md) | task | stack de runtime (névoa) — requisito registrado, mecanismo depende de onde o agente roda |
 | 037 | [Construir a plataforma das consultoras — v1](tickets/037-construir-plataforma-consultoras-v1.md) | task | runtime do agente (035 fechado — esquema e desenho prontos); **puxável para adiantar schema/protótipo** com dados semeados |
@@ -92,6 +94,7 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 | 013 | [Sinal de sucesso — o que se mede e como é capturado](tickets/013-sinal-de-sucesso-do-aprendizado.md) | grilling | fase 1 mede qualidade da qualificação, não desfecho de negócio; taxonomia `terminal_state` + `business_outcome`; `advisor_verdict` da consultora é o sinal de maior peso; `sem_venda`/`perdido`/`esfriado` neutros de propósito; nº único de 3 dias (esfriado + retomada); `CONTEXT.md` ganhou `Sinal de sucesso` e `Atendimento esfriado`; veículo do `advisor_verdict` → 035. Fechado em branch paralela, integrado na reconciliação de 2026-09-02 |
 | 035 | [Plataforma central das consultoras — substrato da fila e desfecho](tickets/035-plataforma-central-das-consultoras.md) | grilling | plataforma web única sobre o Supabase (ver fila, assumir, fechar, `advisor_verdict`); Vite + framework leve, sem backend, login Google, Realtime; notificação **só e-mail** (webhook Supabase → Edge Function → Resend), SMS depois; agente marca conversa como "não lida" no WhatsApp ao escalar (validar no 027); esquema `handoffs` fixado; chamado fechado some da fila; construção espera o runtime — fecha 029 (conclusão)/030 (absorvido), reenquadra 031, abre 037; `CONTEXT.md` ganhou `Chamado` e `Plataforma das consultoras` |
 | 030 | [Implementar o script de notificação da fila (Apps Script)](tickets/030-implementar-notificacao-da-fila.md) | task | **substituído pelo 037** — a fila saiu da planilha, o disparo virou Database Webhook do Supabase; nada a construir aqui |
-| 033 | [Manual do agente para as consultoras — que forma toma](tickets/033-manual-do-agente-para-as-consultoras.md) | grilling | forma decidida (não a redação): um documento, duas partes (A "o que faz" estável / B "no dia a dia"); Google Doc; tom concreto com prints do 014; quatro pedidos à consultora + seção do freio de mão (fecha "quem aciona" do 036 incluindo consultoras); dono do manual = João Victor; abriu o **034** (redação), bloqueado por 011, 014, 036, 037 + rollout |
+| 033 | [Manual do agente para as consultoras — que forma toma](tickets/033-manual-do-agente-para-as-consultoras.md) | grilling | forma decidida (não a redação): um documento, duas partes (A "o que faz" estável / B "no dia a dia"); Google Doc; tom concreto com prints do 014; quatro pedidos à consultora + seção do freio de mão (fecha "quem aciona" do 036 incluindo consultoras); dono do manual = João Victor; abriu o **034** (redação), bloqueado por 011, 036, 037 + rollout (014 já fechou) |
 | 020 | [Perguntas a levar às consultoras](tickets/020-perguntas-para-as-consultoras.md) | task | fechado sem nova rodada — não haverá informação adicional por este canal (decisão do dono, 2026-09-11); Levantamento 1 fica como resposta final; 18b/25/31/32 sem resposta e sem previsão; 34 (celular avisa e-mail?) segue como risco em aberto do 037 |
 | 032 | [Obter o catálogo do Mainô e exemplos de planilha de arquiteto](tickets/032-catalogo-do-maino-e-planilha-de-arquiteto.md) | task | fechado sem buscar os dois materiais (decisão do dono, 2026-09-11) — `advisor_verdict` na plataforma das consultoras já é o sinal de sucesso, não vale integrar o Mainô; arquiteto escala sem coleta (010); derruba a premissa do 011 (catálogo como fonte de conhecimento de produto) e o desbloqueia |
+| 014 | [Como o agente soa — protótipo de atendimento no tom das consultoras](tickets/014-como-o-agente-soa.md) | prototype | branch paralela reconciliada e fechada em 2026-09-11: nome **Manu**, sete transcrições + tabela de tom v1, todas as sete perguntas de tom respondidas pelo dono confirmando a proposta; `prototipo-tom-014/` (ambiente de teste ao vivo); correção de nome/contexto da loja propagada ao `CONTEXT.md`; ticket "033" colidente renumerado para **039**; desbloqueou 034 |

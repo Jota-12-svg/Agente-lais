@@ -261,6 +261,15 @@ prototipagem, `/prototype`. Em tickets de research, `/research` como subagente.
   coleta (010), então a planilha de arquiteto também deixa de ser necessária. **Derruba a
   premissa do 011** (conhecimento de produto viria do catálogo do Maino) e o desbloqueia —
   mas a pergunta de origem do conhecimento de produto segue sem resposta.
+- [Como o agente soa — protótipo de atendimento no tom das consultoras](tickets/014-como-o-agente-soa.md)
+  — **fechado em 2026-09-11**, reconciliando uma branch paralela parada desde 2026-09-02.
+  Nome do agente: **Manu**. Especificação de tom v1 + sete transcrições, todas as sete
+  perguntas de tom respondidas pelo dono (preço nunca, áudio nunca, 1–3 min de atraso, emoji
+  como proposto, sempre "você", sempre se apresenta) — nenhuma mudou a proposta original.
+  Ambiente de teste ao vivo em `prototipo-tom-014/`. A correção de nome e contexto da loja
+  (Lais Aliski Casa, dona Lais Aliski, três consultoras nomeadas) veio junto e está em
+  `CONTEXT.md` → "A loja". Abriu o [039](tickets/039-laco-de-contexto-do-agente.md) (laço de
+  contexto, refinamento não urgente); desbloqueou o 034.
 - [Manual do agente para as consultoras — que forma toma](tickets/033-manual-do-agente-para-as-consultoras.md)
   — **grilling da forma, não da redação.** Um documento só, duas partes: **A "O que o agente
   faz"** (estável) e **B "No dia a dia"** (operacional, com data no cabeçalho). Público: as 3

@@ -2,7 +2,7 @@
 id: "014"
 title: Como o agente soa — protótipo de atendimento no tom das consultoras
 labels: [wayfinder:prototype]
-status: in-progress
+status: closed
 assignee: sessão 2026-09-11 (reconciliação da branch como-o-agente-soa-014)
 blocked-by: ["003", "009"]
 ---
@@ -330,18 +330,23 @@ topar.*
 
 ### Perguntas abertas para o dono do projeto (e para uma consultora, se der)
 
-1. **Nome do agente.** "Manu" serve? A dona prefere outro? (evitei "Lia" por soar como Lais.)
-2. **Preço.** O agente **nunca** dá valor na fase 1 — nem faixa. Isso trava toda pergunta de
-   preço até o 011/032. Aceitável, ou o agente passa a dar faixa de catálogo quando existir?
-3. **Áudio de saída.** Confirmar: o agente só responde em texto, nunca manda áudio.
-4. **Velocidade.** "Alguns minutos" de atraso proposital — que faixa? (1–3 min? varia com a
-   hora?) É parâmetro de implementação, mas o número certo vem das consultoras.
-5. **Emoji.** No máximo 1 por mensagem, nenhum em escala/preço/irritação. Combina com a loja?
-6. **Tratamento.** Assumi "você" sempre. Alguma cliente espera "senhora"?
-7. **Abertura.** O agente sempre abre se apresentando, mesmo que a consultora costume emendar
-   sem se apresentar de novo?
+1. ~~**Nome do agente.** "Manu" serve? A dona prefere outro? (evitei "Lia" por soar como
+   Lais.)~~ — **respondido**, ver "Decisões do dono" abaixo.
+2. ~~**Preço.** O agente **nunca** dá valor na fase 1 — nem faixa. Isso trava toda pergunta de
+   preço até o 011/032. Aceitável, ou o agente passa a dar faixa de catálogo quando
+   existir?~~ — **respondido**.
+3. ~~**Áudio de saída.** Confirmar: o agente só responde em texto, nunca manda áudio.~~ —
+   **respondido**.
+4. ~~**Velocidade.** "Alguns minutos" de atraso proposital — que faixa? (1–3 min? varia com a
+   hora?)~~ — **respondido**.
+5. ~~**Emoji.** No máximo 1 por mensagem, nenhum em escala/preço/irritação. Combina com a
+   loja?~~ — **respondido**.
+6. ~~**Tratamento.** Assumi "você" sempre. Alguma cliente espera "senhora"?~~ — **respondido**.
+7. ~~**Abertura.** O agente sempre abre se apresentando, mesmo que a consultora costume
+   emendar sem se apresentar de novo?~~ — **respondido**.
 8. **Fidelidade.** São transcrições v1 sem conversa real (003). Quando/se elas aparecerem,
-   reler tudo contra elas.
+   reler tudo contra elas. **Continua em aberto** — não é decisão do dono, é pendência que só
+   se resolve com material que ainda não existe.
 
 ---
 
@@ -394,3 +399,54 @@ da trunk — renumerado para **[039](039-laco-de-contexto-do-agente.md)**.
 **Segue `in-progress`, não fecha ainda.** Falta exatamente o que já estava listado como
 "Perguntas abertas" acima — nenhuma delas foi respondida na grelha de contexto, que resolveu
 fatos do negócio, não parâmetros de tom.
+
+---
+
+## Decisões do dono — 2026-09-11
+
+As sete perguntas abertas de tom, respondidas diretamente com o dono. **Todas confirmam a
+proposta v1** — nenhuma mudança no `system-prompt.md`, na tabela de tom nem nas sete
+transcrições:
+
+1. **Nome:** **Manu**.
+2. **Preço:** o agente **nunca** dá valor nem faixa na fase 1, em nenhuma situação — preço é
+   sempre assunto de consultora. Não muda quando 011/032 avançarem.
+3. **Áudio de saída:** confirmado — só texto, nunca áudio, mesmo recebendo áudio do cliente.
+4. **Velocidade:** **1–3 minutos, fixo**. Sem variação por horário.
+5. **Emoji:** como proposto — no máximo 1 por mensagem, quente, zero em escala/preço/cliente
+   irritado.
+6. **Tratamento:** **sempre "você"**, sem adaptação por sinal da cliente.
+7. **Abertura:** o agente **sempre se apresenta no 1º turno**, mesmo que a consultora que
+   assumir depois não repita a apresentação.
+
+**Fica em aberto, mas não bloqueia o fechamento:** item 8 (fidelidade) — sem corpus real de
+conversas (003 fechou sem exportação), a validação linha a linha contra atendimento de
+verdade só acontece se/quando esse material aparecer. Não é uma decisão do dono, é uma
+dependência externa.
+
+---
+
+## Resolução — 2026-09-11
+
+**Fechado.** Critério do ticket ("transcrições aprovadas que sirvam de referência de tom")
+está satisfeito: as sete transcrições e a especificação de tom v1 (seção "Protótipo — v1 para
+reação") têm agora as sete perguntas abertas respondidas pelo dono, todas confirmando a
+proposta como estava — nada no protótipo precisou mudar.
+
+**O que este ticket deixa pronto para a construção:**
+- `prototipo-tom-014/system-prompt.md` — as regras de tom já na forma de instrução, testadas
+  ao vivo contra `gemini-3.6-flash`.
+- A tabela de tom e as sete transcrições, como referência de comparação quando o agente
+  estiver rodando de verdade.
+- O nome **Manu**, a política de preço (nunca), e os seis outros parâmetros de tom, todos
+  confirmados nesta sessão.
+
+**O que não fecha aqui, por não ser escopo deste ticket:**
+- Item 8 (fidelidade a conversas reais) — aberto, depende do ticket
+  [003](003-exportacao-das-conversas-das-consultoras.md), já fechado sem exportação. Se
+  material real aparecer por outro caminho, reler o protótipo contra ele.
+- [011](011-o-que-o-agente-pode-dizer-sobre-produto.md) — a fronteira do que o agente pode
+  afirmar sobre produto (além de "nunca preço") segue com grilling próprio, agora
+  desbloqueado.
+- [039](039-laco-de-contexto-do-agente.md) — o laço de contexto (como uma observação
+  recorrente vira contexto aprovado) é refinamento à parte, não bloqueia o agente rodando.
