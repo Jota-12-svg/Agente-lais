@@ -142,8 +142,16 @@ lista de test users do OAuth do Google, que é uma trava separada e continua pen
 
 **Pendências que não bloqueiam o fechamento deste ticket, mas ficam registradas:**
 
-1. Completar a allow-list: falta o e-mail da **Lais**; a **Pamella** precisa criar/vincular
-   uma Conta Google ao e-mail Outlook antes de entrar na lista de test users do OAuth.
+1. **A Pamella segue de fora** — confirmado de novo (mesma sessão): o Google recusa
+   `pamella_elling@outlook.com` como test user porque o endereço não tem Conta do Google, do
+   Google Workspace ou do Cloud Identity associada. Não é algo resolvível por API/console —
+   só a própria Pamella cria a conta (precisa confirmar um código no Outlook dela; ver
+   `accounts.google.com/signup` → "Usar meu endereço de e-mail atual"). Assim que ela fizer
+   isso, falta só adicioná-la de novo como test user.
+   **Decisão do dono (2026-09-11): a Lais não entra na allow-list.** Não é mais pendência —
+   a `advisor_allowlist` fica com 4 e-mails (Joslaine, Gabriela, Pamella, o dono do projeto),
+   sem a dona; funcionalmente, hoje só 3 desses conseguem logar de verdade (a Pamella depende
+   do item acima).
 2. **Runtime do agente** (névoa do mapa) — sem ele, a plataforma roda só com dados de teste/
    semeados; o [031](031-implementar-escrita-do-chamado-na-fila.md) é quem vai fazer o `INSERT`
    real ao vivo.
