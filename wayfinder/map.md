@@ -359,9 +359,6 @@ Névoa em escopo, ainda sem nitidez para virar ticket:
   `handoffs`** (a fila de chamados escalados que as consultoras enxergam — distinta da memória
   do agente, ligada a ela por `engagement_id`). Falta o esquema da memória (`engagements`),
   como o catálogo é representado, e a relação entre os dois.
-- **Stack e hospedagem do runtime.** **Virou o ticket
-  [042](tickets/042-stack-e-hospedagem-do-runtime.md)** (grilling, aberto 2026-09-11) — quando
-  fechar, some desta lista.
 - **Fluxo do arquiteto.** O agente recebe uma planilha com dezenas de itens — o que ele faz
   com ela é um segundo fluxo inteiro, não uma variação do primeiro. Na fase 1 ele escala
   imediato, sem coleta (010); o ticket [032](tickets/032-catalogo-do-maino-e-planilha-de-arquiteto.md)
