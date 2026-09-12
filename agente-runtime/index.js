@@ -352,8 +352,17 @@ async function start() {
     for (const msg of messages) {
       const jid = msg.key.remoteJid
 
-      // Grupos e newsletters não são clientes 1:1 — a Manu não responde ali.
-      if (jid?.endsWith('@g.us') || jid?.endsWith('@newsletter')) continue
+      // Grupos e newsletters não são clientes 1:1 — a Manu não responde ali, EXCETO o grupo
+      // de teste interno apontado por ALLOWED_JID (pedido do dono, 2026-09-12: testar com
+      // várias pessoas — Lais, Otavio — no mesmo chat, antes de ir pra clientes reais). Loga
+      // o jid de qualquer grupo ignorado (não o conteúdo) pra achar o jid do grupo de teste
+      // sem garimpar log bruto do Baileys.
+      if ((jid?.endsWith('@g.us') || jid?.endsWith('@newsletter')) && jid !== ALLOWED_JID) {
+        if (jid?.endsWith('@g.us')) {
+          logger.info({ jid, pushName: msg.pushName || null, fromMe: msg.key.fromMe }, 'Mensagem de grupo — ignorada (não é o grupo de teste).')
+        }
+        continue
+      }
 
       // Restrição de teste (ver ALLOWED_JID acima) — ignora qualquer outro contato, sem
       // tocar em estado nem responder. Loga só o jid (não o conteúdo) pra trocar de contato
