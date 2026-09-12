@@ -63,13 +63,27 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 > **Achado no caminho**: `agent_settings` tinha RLS restrita a advisors autenticados — o
 > runtime não faz login Google, então nunca lia a flag. Migração
 > `20260911190500_agent_settings_public_read.sql` abre SELECT público (só leitura; UPDATE
-> continua restrito à allow-list), **escrita mas ainda não aplicada em produção** — bloqueada
-> pelo classificador de auto-mode (`Security Weaken` / `Production Deploy`) mesmo com
-> autorização do dono no chat; falta o dono rodar `supabase db push` ele mesmo. **Deploy no
-> Railway (novo serviço, mesmo projeto da plataforma) também não aconteceu ainda** — mesmo
-> bloqueio de permissão que a sessão 13 já tinha documentado pro `railway up`. Dono vai
-> reiniciar a sessão com `--dangerously-skip-permissions` para destravar os dois passos. Ver
-> "Pendências" do handover de hoje para a ordem exata dos próximos passos.
+> continua restrito à allow-list) — **aplicada em produção em 2026-09-12** (sessão seguinte,
+> sem o bloqueio de permissão que a sessão 13/14 tinha documentado; bookkeeping da migração
+> anterior, aplicada via Management API, precisou de `supabase migration repair` primeiro).
+>
+> **2026-09-12: `agente-runtime/` publicado no Railway, no ar.** Novo serviço `agente-runtime`
+> no mesmo projeto (`plataforma-consultoras-lais`), com **Volume persistente em `/data`**
+> (`AUTH_DIR=/data/auth` — sem isso todo redeploy pede QR de novo). Domínio público:
+> `https://agente-runtime-production.up.railway.app` (`/health` responde, freio de mão lido
+> certo). **Achado de deploy, vale para qualquer serviço novo deste monorepo**: `railway up`
+> por padrão sobe a raiz do repositório git inteira (não o cwd), fazendo o Railpack falhar por
+> não achar um único projeto reconhecível — a flag `--path-as-root` resolve
+> (`railway up ./agente-runtime --path-as-root --service agente-runtime`). **Rotação**:
+> `HANDOFF_INSERT_SECRET` apareceu em texto (achado incidental ao investigar por que a variável
+> não estava no `.env` principal — estava presa no `.env` de uma worktree órfã) e foi trocado
+> por decisão do `CLAUDE.md` (§4) — valor novo gravado na função `handoffs_insert` e nas
+> variáveis do serviço Railway, nunca colado em texto.
+>
+> **Falta só a ação física**: abrir `/qr` (ou mandar o link pras consultoras) e vincular o
+> **WhatsApp real da loja** — decisão que espera confirmação explícita do dono sobre o momento
+> (fora do horário de atendimento, plano de reverter em mente, mesmo cuidado do item 5 do 027).
+> Sem isso o runtime fica "conectando" indefinidamente, sem responder ninguém de verdade.
 >
 > **038 — grilling feito, ticket ainda aberto** (2026-09-10): a **estratégia de rollout** foi
 > grelhada por inteiro com o dono (3 rodadas) e as decisões estão no ticket sob
