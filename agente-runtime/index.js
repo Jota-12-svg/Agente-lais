@@ -232,10 +232,14 @@ async function start() {
       // Grupos e newsletters não são clientes 1:1 — a Manu não responde ali.
       if (jid?.endsWith('@g.us') || jid?.endsWith('@newsletter')) continue
 
-      // Restrição de teste (ver ALLOWED_JID acima) — ignora silenciosamente qualquer outro
-      // contato, sem logar nem tocar em estado. Cliente real nenhum recebe resposta enquanto
-      // isso estiver setado.
-      if (ALLOWED_JID && jid !== ALLOWED_JID) continue
+      // Restrição de teste (ver ALLOWED_JID acima) — ignora qualquer outro contato, sem
+      // tocar em estado nem responder. Loga só o jid (não o conteúdo) pra trocar de contato
+      // de teste sem precisar investigar log bruto do Baileys (achado real, 2026-09-12).
+      // Cliente real nenhum recebe resposta enquanto isso estiver setado.
+      if (ALLOWED_JID && jid !== ALLOWED_JID) {
+        logger.info({ jid }, 'Modo teste: contato fora do ALLOWED_JID, ignorado.')
+        continue
+      }
 
       // Histórico recente reenviado ao reconectar (item 3 do 027) não é evento de agora.
       const idadeMs = Date.now() - Number(msg.messageTimestamp) * 1000
