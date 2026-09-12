@@ -237,7 +237,11 @@ async function start() {
       // de teste sem precisar investigar log bruto do Baileys (achado real, 2026-09-12).
       // Cliente real nenhum recebe resposta enquanto isso estiver setado.
       if (ALLOWED_JID && jid !== ALLOWED_JID) {
-        logger.info({ jid }, 'Modo teste: contato fora do ALLOWED_JID, ignorado.')
+        // pushName é o nome que o próprio contato define no WhatsApp dele — não é confiável
+        // como identidade (a pessoa escolhe o que quiser), mas ajuda a reconhecer de quem é
+        // a mensagem sem precisar cruzar número por fora (achado real, 2026-09-12: perder
+        // tempo com log bruto do Baileys pra achar um jid por eliminação).
+        logger.info({ jid, pushName: msg.pushName || null, fromMe: msg.key.fromMe }, 'Modo teste: contato fora do ALLOWED_JID, ignorado.')
         continue
       }
 
