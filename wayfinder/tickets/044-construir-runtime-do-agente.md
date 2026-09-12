@@ -43,6 +43,16 @@ validadas isoladamente**, mas nunca conectadas de ponta a ponta com WhatsApp de 
   mensagem chega via Baileys (o telefone do cliente já vem nativo, sem placeholder) → contexto
   da conversa carregado do Supabase → chamada ao Gemini → resposta enviada de volta via
   Baileys. O `system-prompt.md` e o formato do sinal `[[ESCALAR:...]]` não mudam.
+- **Suporte a áudio de entrada** (achado em 2026-09-12, fora do escopo original deste
+  ticket — não era esquecimento consciente): o runtime provisório (`agente-runtime/`) não
+  tratava `audioMessage`, só texto — mensagens de voz do cliente eram descartadas em
+  silêncio, contrariando o comportamento já fechado no [014](014-como-o-agente-soa.md)
+  ("entende o áudio do cliente e devolve o entendimento por escrito"). Corrigido diretamente
+  no provisório: baixa o buffer via `downloadMediaMessage` (Baileys) e manda como `inlineData`
+  pro Gemini, mesmo padrão já validado no [018](018-validar-contrato-do-llm.md) (OGG/Opus
+  aceito sem transcodificar) e já usado manualmente no `prototipo-tom-014/run.mjs`. A versão
+  definitiva deste ticket precisa portar esse suporte também — não é só texto que vira
+  `contents` do Gemini, é texto **e** anexo de áudio por turno do histórico.
 - **Ligar a chamada real ao `handoffs_insert`** com o telefone de WhatsApp de verdade, e
   **tratar idempotência** (não escalar duas vezes o mesmo atendimento se a mensagem de
   gatilho for reprocessada) — a lacuna que o 031 deixou registrada.

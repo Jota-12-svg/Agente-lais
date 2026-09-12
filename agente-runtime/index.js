@@ -18,6 +18,8 @@
 //   - Silêncio por conversa (009/012): se uma mensagem chegar de outro dispositivo seu
 //     (fromMe, não eco da própria Manu), aquela conversa entra em silêncio.
 //   - Escalada grava na fila real (031) com o telefone de verdade do cliente.
+//   - Áudio de entrada (nota de voz do cliente): baixa via Baileys e manda como `inlineData`
+//     pro Gemini, mesmo padrão validado no 018 — achado e corrigido em 2026-09-12, ver 044.
 
 import { readFileSync, existsSync } from 'node:fs'
 import path from 'node:path'
@@ -26,7 +28,7 @@ import express from 'express'
 import pino from 'pino'
 import qrcode from 'qrcode'
 import { createClient } from '@supabase/supabase-js'
-import { default as makeWASocket, useMultiFileAuthState, fetchLatestBaileysVersion, DisconnectReason } from '@whiskeysockets/baileys'
+import { default as makeWASocket, useMultiFileAuthState, fetchLatestBaileysVersion, DisconnectReason, downloadMediaMessage } from '@whiskeysockets/baileys'
 import { writeHandoff, handoffWriterDisponivel, telefoneDoJid } from './handoff-writer.mjs'
 
 const HERE = path.dirname(fileURLToPath(import.meta.url))
@@ -119,7 +121,17 @@ async function askManu(history) {
     `- Situação: ${fde ? 'FORA do horário de atendimento — qualifique, mas não prometa que alguém responde agora; diga quando o atendimento volta.' : 'DENTRO do horário de atendimento.'}`,
   ].join('\n')
 
-  const contents = history.map((m) => ({ role: m.role === 'agent' ? 'model' : 'user', parts: [{ text: m.text }] }))
+  // Um turno pode carregar áudio em `attachments: [{mimeType, data(base64)}]` (018/prototipo-tom-014)
+  // — entra como `inlineData` junto do texto, sem transcrever à parte.
+  const contents = history.map((m) => {
+    const parts = []
+    if (m.text) parts.push({ text: m.text })
+    for (const a of m.attachments || []) {
+      if (a?.mimeType && a?.data) parts.push({ inlineData: { mimeType: a.mimeType, data: a.data } })
+    }
+    if (parts.length === 0) parts.push({ text: '(mensagem vazia)' })
+    return { role: m.role === 'agent' ? 'model' : 'user', parts }
+  })
 
   const body = {
     systemInstruction: { parts: [{ text: SYSTEM_PROMPT + '\n\n---\n' + contexto }] },
@@ -229,7 +241,8 @@ async function start() {
       }
 
       const texto = msg.message?.conversation || msg.message?.extendedTextMessage?.text
-      if (!texto) continue
+      const audioMsg = msg.message?.audioMessage
+      if (!texto && !audioMsg) continue
 
       if (!agentEnabled) {
         logger.warn({ jid }, '>>> FREIO DE MÃO ligado — agente não responde (nem loga como qualificando).')
@@ -241,8 +254,23 @@ async function start() {
         continue
       }
 
-      logger.info({ jid, texto }, 'Mensagem de cliente — pedindo resposta à Manu (Gemini)...')
-      st.history.push({ role: 'client', text: texto })
+      // Áudio (nota de voz): baixa o buffer e manda pro Gemini como inlineData, sem
+      // transcrever à parte — o modelo já entende OGG/Opus direto (validado no 018). O
+      // "entendimento por escrito" (014) vira o histórico salvo, não um eco pro cliente (Q9).
+      const attachments = []
+      if (audioMsg) {
+        try {
+          const buffer = await downloadMediaMessage(msg, 'buffer', {}, { logger, reuploadRequest: sock.updateMediaMessage })
+          const mimeType = (audioMsg.mimetype || 'audio/ogg').split(';')[0].trim()
+          attachments.push({ mimeType, data: buffer.toString('base64') })
+        } catch (err) {
+          logger.error({ jid, err: err.message }, 'Falha ao baixar áudio recebido — mensagem ignorada.')
+          continue
+        }
+      }
+
+      logger.info({ jid, texto: texto || '[áudio]' }, 'Mensagem de cliente — pedindo resposta à Manu (Gemini)...')
+      st.history.push({ role: 'client', text: texto || '', attachments })
 
       try {
         const bruto = await askManu(st.history)

@@ -15,7 +15,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import pino from 'pino'
 import qrcode from 'qrcode'
-import { default as makeWASocket, useMultiFileAuthState, fetchLatestBaileysVersion, DisconnectReason } from '@whiskeysockets/baileys'
+import { default as makeWASocket, useMultiFileAuthState, fetchLatestBaileysVersion, DisconnectReason, downloadMediaMessage } from '@whiskeysockets/baileys'
 import { writeHandoff, handoffWriterDisponivel } from '../prototipo-tom-014/handoff-writer.mjs'
 
 const HERE = path.dirname(fileURLToPath(import.meta.url))
@@ -81,7 +81,17 @@ async function askManu() {
     '- Situação: DENTRO do horário de atendimento.',
   ].join('\n')
 
-  const contents = history.map((m) => ({ role: m.role === 'agent' ? 'model' : 'user', parts: [{ text: m.text }] }))
+  // Mesmo padrão do agente-runtime/index.js e do prototipo-tom-014/run.mjs (018): áudio entra
+  // como `inlineData` junto do texto, sem transcrever à parte.
+  const contents = history.map((m) => {
+    const parts = []
+    if (m.text) parts.push({ text: m.text })
+    for (const a of m.attachments || []) {
+      if (a?.mimeType && a?.data) parts.push({ inlineData: { mimeType: a.mimeType, data: a.data } })
+    }
+    if (parts.length === 0) parts.push({ text: '(mensagem vazia)' })
+    return { role: m.role === 'agent' ? 'model' : 'user', parts }
+  })
 
   const body = {
     systemInstruction: { parts: [{ text: SYSTEM_PROMPT + '\n\n---\n' + contexto }] },
@@ -196,15 +206,30 @@ async function start() {
       }
 
       const texto = msg.message?.conversation || msg.message?.extendedTextMessage?.text
-      if (!texto) continue
+      const audioMsg = msg.message?.audioMessage
+      if (!texto && !audioMsg) continue
 
       if (state.status === 'escalado' || state.status === 'com_consultora') {
         logger.info({ status: state.status }, '>>> Silêncio — já escalado/com consultora, o agente não responde por cima.')
         continue
       }
 
-      logger.info({ texto }, '>>> Mensagem do chat permitido — pedindo resposta à Manu (Gemini)...')
-      history.push({ role: 'client', text: texto })
+      // Áudio (nota de voz): baixa e manda como inlineData pro Gemini — mesma lógica do
+      // agente-runtime/index.js, validada no 018 (OGG/Opus entra sem transcodificar).
+      const attachments = []
+      if (audioMsg) {
+        try {
+          const buffer = await downloadMediaMessage(msg, 'buffer', {}, { logger, reuploadRequest: sock.updateMediaMessage })
+          const mimeType = (audioMsg.mimetype || 'audio/ogg').split(';')[0].trim()
+          attachments.push({ mimeType, data: buffer.toString('base64') })
+        } catch (err) {
+          logger.error({ err: err.message }, '>>> Falha ao baixar áudio recebido — mensagem ignorada.')
+          continue
+        }
+      }
+
+      logger.info({ texto: texto || '[áudio]' }, '>>> Mensagem do chat permitido — pedindo resposta à Manu (Gemini)...')
+      history.push({ role: 'client', text: texto || '', attachments })
 
       try {
         const bruto = await askManu()
