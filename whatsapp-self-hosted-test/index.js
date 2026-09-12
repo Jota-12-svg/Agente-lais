@@ -159,7 +159,8 @@ app.get('/', (_req, res) => {
     `status: ${connectionStatus}\n` +
       'qr disponível em /qr quando status = conectando\n' +
       '/chats — lista os jids de que este harness já viu recado\n' +
-      '/mark-unread?jid=<jid> — dispara o teste do item 6 (marcar como não lida)',
+      '/mark-unread?jid=<jid> — dispara o teste do item 6 (marcar como não lida)\n' +
+      '/reply?jid=<jid>&text=<msg> — envia resposta manual, para o teste do item 4 (erro 463)',
   )
 })
 
@@ -230,6 +231,34 @@ app.get('/mark-unread', async (req, res) => {
     res.json({ ok: true, jid })
   } catch (err) {
     logger.error({ err, jid }, '>>> Item 6: chatModify falhou — registrar no ticket como resultado real')
+    res.status(500).json({ ok: false, erro: err.message })
+  }
+})
+
+// Item 4 do ticket: o harness só escuta por padrão (não tem lógica de
+// resposta automática, de propósito — ver README). Para o teste do erro 463
+// precisa de uma resposta de verdade saindo pelo Baileys para um contato
+// novo; esta rota é esse gatilho manual, não um agente.
+app.get('/reply', async (req, res) => {
+  const { jid, text } = req.query
+  if (!jid || !text) {
+    res.status(400).json({ erro: 'passe ?jid=<remoteJid>&text=<mensagem>' })
+    return
+  }
+  if (connectionStatus !== 'conectado' || !sock) {
+    res.status(409).json({ erro: `socket não está conectado (status: ${connectionStatus})` })
+    return
+  }
+
+  logger.info({ jid, text }, '>>> Item 4: enviando resposta manual — observe os próximos logs ' +
+    'por qualquer erro/463/NackCallerReachoutTimelocked, mesmo sendo uma resposta pura.')
+
+  try {
+    const result = await sock.sendMessage(jid, { text })
+    logger.info({ jid, messageId: result?.key?.id }, '>>> Item 4: envio aceito sem erro imediato pelo Baileys.')
+    res.json({ ok: true, jid, messageId: result?.key?.id })
+  } catch (err) {
+    logger.error({ err, jid }, '>>> Item 4: envio falhou — registrar erro completo no ticket')
     res.status(500).json({ ok: false, erro: err.message })
   }
 })

@@ -19,7 +19,6 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 | 044 | [Construir o runtime do agente — v1](tickets/044-construir-runtime-do-agente.md) | task · **reivindicado, prioridade** — última peça de código que falta pro agente existir de verdade |
 | 021 | [Instagram como porta de entrada para o WhatsApp](tickets/021-instagram-porta-de-entrada.md) | task |
 | 041 | [Colocar a conta de faturamento do Gemini em pré-pagamento antes que o serviço pare](tickets/041-billing-pre-pagamento.md) | task · achado do 040, aviso ativo no painel |
-| 027 | [Testar a conexão self-hosted como dispositivo adicional, antes de tocar no número da loja](tickets/027-testar-self-hosted-no-numero-atual.md) | task |
 | 038 | [Estratégia de rollout do agente — piloto, horário, fallback, canal de erro](tickets/038-estrategia-de-rollout.md) | grilling · **in-progress** |
 | 039 | [Laço de contexto — o contexto do agente evoluindo com os atendimentos](tickets/039-laco-de-contexto-do-agente.md) | grilling · trazido da reconciliação do 014; não urgente, refinamento contínuo |
 
@@ -42,23 +41,35 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 > isoladas da plataforma — resolve a pendência do **015**. Dá lugar concreto para a chamada de
 > escrita do **031**. Ver `## Resolução` no ticket para os fatos e fontes.
 >
-> **027 avançado, ainda aberto** (2026-09-11): o harness de teste (parado desde 12/08) foi
-> **atualizado** para cobrir o item 6 do ticket (marca de não-lida, pedido do 035, adicionado
-> depois que o harness foi construído — nunca tinha ganhado código). Novas rotas
-> `/chats` e `/mark-unread?jid=` em `whatsapp-self-hosted-test/index.js`, testadas localmente
-> (smoke test, sem WhatsApp real — só confirma que as rotas respondem certo, inclusive os
-> erros 404/409). Corrigida também uma inconsistência de contagem no próprio ticket e no
-> README do harness ("quatro pontos" bloqueando a recomendação, de antes do item 5 existir —
-> agora "cinco pontos"; item 6 continua não-bloqueante). **Segue bloqueado pela mesma pendência
-> física de sempre**: chip de teste, registro no WhatsApp Business comum, dispositivos extras
-> vinculados — nada disso é ação que dá para fazer sem o dono. Ver `README.md` do harness para
-> o passo a passo atualizado. **Addendum (mesmo dia):** research
-> [043](research/043-chip-de-teste-para-o-027.md) respondeu qual chip comprar — não há
-> diferença de risco/fricção relatada pela comunidade entre TIM/Claro/Vivo, mas o requisito de
-> compra **100% online e imediata** (sem esperar entrega física) favorece testar primeiro o
-> eSIM da Vivo pelo app, sem confirmação de que cobre linha nova; TIM nega a opção online, Claro
-> exige loja para linha nova. Nenhuma fonte confirma "chip nunca usado no WhatsApp", nem
-> comprando em canal oficial.
+> **027 fechado** (2026-09-11/12): testado ao vivo, sem chip comprado a tempo (research
+> 043) — o dono aceitou testar no **próprio número pessoal**, WhatsApp comum, ciente do risco
+> do research 028. **Os seis pontos passaram**: pareamento sem travar no passkey, dispositivos
+> sobreviventes, evento de companion confirmado 3×, sem erro 463 (contato novo, resposta
+> observada), sem sinal de risco em ~20min contínuos (incluindo um restart), marca de não-lida
+> sincronizando. **Recomendação: viável ir para o número real da loja.** Ver `## Resolução`
+> no ticket para o detalhe item a item e a ressalva sobre fidelidade do teste (WhatsApp comum,
+> não Business; poucos companions reais).
+>
+> **Runtime provisório em construção, fora do 044 formal** (2026-09-11/12, mesma sessão): o
+> dono decidiu ir direto ao número real da loja no mesmo dia, sem esperar a versão definitiva
+> do [044](tickets/044-construir-runtime-do-agente.md) (que segue reivindicado, em construção
+> **noutra sessão em paralelo** — cuidado com duplicação). Criado `agente-runtime/` — Baileys +
+> Gemini + escrita real na fila (031) + assinatura Realtime do freio de mão (036, tabela
+> `agent_settings`), tudo num processo só, respondendo qualquer cliente real (não restrito a um
+> jid, ao contrário do `manu-live-bridge.mjs` usado no teste pessoal). **Faltas conhecidas,
+> registradas de propósito, que o 044 formal ainda resolve**: auth do Baileys em disco (não
+> Supabase — todo redeploy sem Volume pede QR de novo), estado de conversa em memória (não
+> Supabase — perde tudo num restart), sem idempotência na escalada, sem watchdog SMS/Telegram.
+> **Achado no caminho**: `agent_settings` tinha RLS restrita a advisors autenticados — o
+> runtime não faz login Google, então nunca lia a flag. Migração
+> `20260911190500_agent_settings_public_read.sql` abre SELECT público (só leitura; UPDATE
+> continua restrito à allow-list), **escrita mas ainda não aplicada em produção** — bloqueada
+> pelo classificador de auto-mode (`Security Weaken` / `Production Deploy`) mesmo com
+> autorização do dono no chat; falta o dono rodar `supabase db push` ele mesmo. **Deploy no
+> Railway (novo serviço, mesmo projeto da plataforma) também não aconteceu ainda** — mesmo
+> bloqueio de permissão que a sessão 13 já tinha documentado pro `railway up`. Dono vai
+> reiniciar a sessão com `--dangerously-skip-permissions` para destravar os dois passos. Ver
+> "Pendências" do handover de hoje para a ordem exata dos próximos passos.
 >
 > **038 — grilling feito, ticket ainda aberto** (2026-09-10): a **estratégia de rollout** foi
 > grelhada por inteiro com o dono (3 rodadas) e as decisões estão no ticket sob
@@ -181,3 +192,4 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 | 040 | [Confirmar se a GEMINI_API_KEY é do tipo "auth" antes do prazo de setembro/2026](tickets/040-tipo-da-chave-gemini.md) | task | é "auth" — confirmado via console do Google Cloud (chave com conta de serviço vinculada), não pela coluna "Tipo de chave" do AI Studio (não aparece nesta conta); nada a trocar; achado à parte (aviso de billing pré-pagamento) abriu o 041 |
 | 037 | [Construir a plataforma das consultoras — v1](tickets/037-construir-plataforma-consultoras-v1.md) | task | implantada no Railway (não Cloudflare — sem domínio próprio) e testada de ponta a ponta: login Google, fila, assumir, fechar com desfecho+veredito; migração `handoffs`/RLS aplicada em produção; 2 bugs reais corrigidos (`skip_nonce_check` duplicada no config.toml, histórico de migração órfão); canal de e-mail (Resend) caiu do escopo do v1 — consultoras não checam e-mail, sinal real é o "não lida" do WhatsApp (027); allow-list com 2/4 e-mails (falta Lais; Pamella usa Outlook sem Conta Google); perde "037" do `blocked-by` do 034 |
 | 042 | [Stack e hospedagem do runtime do agente](tickets/042-stack-e-hospedagem-do-runtime.md) | grilling | processo único, novo serviço no mesmo projeto Railway da plataforma; sessão WhatsApp + estado da conversa no Supabase (sem adapter oficial de Baileys, adapter fino sob medida); freio de mão via Realtime; watchdog = uptime monitoring externo + SMS/Telegram (healthcheck nativo do Railway só atua no deploy); segredos em env vars do serviço, isoladas da plataforma; deploy GitHub + rollback de 1 clique; janela curta de reconexão aceita como risco residual; resolve pendência do 015, dá lugar concreto pro 031, fecha "Not yet specified" de arquitetura no mapa |
+| 027 | [Testar a conexão self-hosted como dispositivo adicional, antes de tocar no número da loja](tickets/027-testar-self-hosted-no-numero-atual.md) | task | testado ao vivo no número pessoal do dono (sem chip comprado a tempo, research 043); os seis pontos passaram — pareamento sem travar no passkey, dispositivos sobreviventes, evento de companion confirmado, sem erro 463, sem sinal de risco em ~20min, marca de não-lida sincronizando; recomendação: viável ir para o número real da loja; ressalva de fidelidade (WhatsApp comum, poucos companions); efeito em cadeia: dono foi direto pro número real via runtime provisório (`agente-runtime/`), sem esperar o 044 formal |

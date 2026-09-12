@@ -342,6 +342,15 @@ prototipagem, `/prototype`. Em tickets de research, `/research` como subagente.
   chave sobrevive ao corte de setembro/2026 sem ação. Achado à parte, sem relação com o tipo
   da chave: aviso de conta de faturamento pedindo migração para pré-pagamento — abriu o
   [041](tickets/041-billing-pre-pagamento.md).
+- [Testar a conexão self-hosted como dispositivo adicional](tickets/027-testar-self-hosted-no-numero-atual.md)
+  — **testado ao vivo, os seis pontos passaram.** Desvio consciente do plano: sem chip de
+  teste comprado a tempo (research 043), o dono testou no **próprio número pessoal**, WhatsApp
+  comum. Pareamento sem travar no passkey, dispositivos sobreviventes, evento de companion
+  confirmado, sem erro 463, sem sinal de risco em ~20min, marca de não-lida sincronizando.
+  **Recomendação: viável ir para o número real da loja.** Ressalva: não replica o arranjo
+  social de várias consultoras num só número. Efeito em cadeia: o dono decidiu conectar o
+  número real da loja no mesmo dia, via runtime provisório (`agente-runtime/`), sem esperar o
+  044 formal — ver handover de 2026-09-11/12.
 
 ## Not yet specified
 
