@@ -177,15 +177,12 @@ reenquadramento de 029/030/031 no próprio 035.
 Grilling com o dono adiciona uma terceira exceção ao "definitivo" acima — as duas exceções de
 2026-08-12 (janela de retomada, reinício total) continuam valendo sem mudança:
 
-- **Devolução manual, só antes da consultora ter respondido de fato.** Uma consultora pode
-  assumir um chamado por engano, ou perceber que é um caso simples que a Manu resolve sozinha,
-  e devolvê-lo ao agente — **mas só se ela ainda não escreveu nada para o cliente** naquele
-  chamado. Depois da primeira resposta humana de verdade, vale o "definitivo" original sem
-  exceção: não há botão nem comando que traga o agente de volta.
-- **Por quê esse critério, e não "a consultora decide na hora"**: preserva o espírito original
-  do "definitivo" — uma vez que o cliente teve contato humano real, a troca de volta pra um
-  agente automatizado seria perceptível e ruim pra experiência. O caso que motivou a exceção
-  (assumiu por engano/sem necessidade) não tem esse problema, porque o cliente nunca chegou a
-  saber que uma pessoa entrou na conversa.
+- **Devolução manual, sem restrição.** Uma consultora que assumiu um chamado pode devolvê-lo
+  ao agente a qualquer momento, pelo mesmo botão que devolve à fila — **mesma confiança já
+  dada ao "Devolver à fila"** de hoje, sem gate técnico (não depende de a consultora já ter
+  respondido ou não ao cliente). Decisão revisada em 2026-09-12: a primeira versão desta
+  exceção (registrada e depois corrigida na mesma sessão) só permitia devolver antes da
+  primeira resposta humana real; o dono pediu para reverter para julgamento livre da
+  consultora — ela decide, na hora, se faz sentido devolver, mesmo que já tenha respondido.
 - **Implementação:** ticket novo [045](045-devolver-chamado-ao-agente.md), bloqueado pelo
   [044](044-construir-runtime-do-agente.md) — motivo no próprio 045.

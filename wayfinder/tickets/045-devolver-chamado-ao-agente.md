@@ -26,23 +26,15 @@ como revisão explícita dela, não como feature solta. Ver addendum de 2026-09-
 
 ## Decisões do grilling (2026-09-12)
 
-- **Critério de quando o botão aparece/funciona:** só antes de a consultora ter
-  **respondido de fato** ao cliente naquele chamado (ela assumiu por engano, ou viu que era
-  caso simples que a Manu resolve sozinha, e devolve **sem ter escrito nada**). Depois da
-  primeira resposta humana real, o botão não aparece mais — vale o "definitivo" original do
-  012 sem exceção. Motivo: uma vez que o cliente teve contato humano de verdade, a troca de
-  volta pra automação seria perceptível e ruim; o caso que motivou a exceção não tem esse
-  problema porque o cliente nunca soube que uma pessoa entrou.
-  - **Implica rastrear, por chamado, se a consultora já mandou mensagem** desde que assumiu
-    — hoje `handoffs` não guarda isso. Candidato mais simples: uma coluna
-    `advisor_replied_at` (ou booleano), setada pelo primeiro envio dela naquele WhatsApp —
-    mas **quem observa isso é o runtime** (só ele vê o WhatsApp de verdade, via o mesmo
-    sinal `fromMe`/companion que já detecta "consultora assumiu"), não a plataforma. A
-    plataforma sozinha não tem como saber se a consultora "só olhou" ou "já respondeu".
-  - **Nota do 044**: como o 044 vai fazer o runtime ler `handoffs` pela primeira vez (hoje
-    ele não lê, achado registrado no addendum de 2026-09-12), esse é o mesmo fio de trabalho
-    que já precisa existir para o runtime saber, por conversa, que uma consultora assumiu
-    via plataforma (e não só via detecção indireta no WhatsApp).
+- **Critério de quando o botão aparece/funciona: sem restrição.** Decisão revisada em
+  2026-09-12 (a versão original desta sessão de grilling só permitia devolver antes da
+  primeira resposta humana real — o dono corrigiu para julgamento livre da consultora,
+  mesma confiança já dada hoje ao "Devolver à fila"). O botão aparece sempre que
+  `status = 'assumed'`, junto do "Devolver à fila", e a consultora decide na hora, mesmo que
+  já tenha respondido ao cliente. **Simplifica a implementação**: não precisa rastrear, por
+  chamado, se/quando a consultora respondeu (não precisa de coluna nova tipo
+  `advisor_replied_at`, nem do runtime observar esse sinal) — só precisa saber que o chamado
+  foi marcado como devolvido.
 - **Modelagem do estado "devolvido":** **4º valor no enum `handoff_status`**
   (`pending | assumed | closed | returned_to_agent`, nome exato fica para quem implementar),
   em vez de reaproveitar `pending` como o "Devolver à fila" já faz. Motivo: `pending` hoje
@@ -70,7 +62,7 @@ como revisão explícita dela, não como feature solta. Ver addendum de 2026-09-
   sobrevive a um redeploy. Não desbloqueia sozinho: quem fechar o 044 decide se este ticket
   vira parte dele ou continua separado.
 
-**Resolvido quando**: o botão existe no `HandoffCard.svelte`, some depois da primeira
-resposta real da consultora, grava o novo estado em `handoffs`, e o runtime volta a
-responder o cliente naquele chamado a partir do estado persistido (não do `Map` em memória) —
-validado com um chamado de teste de ponta a ponta.
+**Resolvido quando**: o botão existe no `HandoffCard.svelte` ao lado de "Devolver à fila",
+grava o novo estado em `handoffs`, e o runtime volta a responder o cliente naquele chamado a
+partir do estado persistido (não do `Map` em memória) — validado com um chamado de teste de
+ponta a ponta.

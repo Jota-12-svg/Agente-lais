@@ -94,8 +94,10 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 > [018](018-validar-contrato-do-llm.md) (OGG/Opus sem transcodificar). Registrado como lacuna
 > a portar no **044** (não era esquecimento consciente — ver o próprio ticket). Grilling do
 > mesmo pedido abriu o **045** (botão "devolver ao agente" na plataforma) e um addendum no
-> **012** (terceira exceção ao "caminho de volta", só antes da consultora ter respondido de
-> fato) — construção do 045 fica bloqueada pelo **044**.
+> **012** (terceira exceção ao "caminho de volta") — construção do 045 fica bloqueada pelo
+> **044**. **Correção do dono, mesma sessão**: o critério da exceção não é "só antes da
+> consultora responder" — é **sem restrição**, mesma confiança já dada ao "Devolver à fila"
+> de hoje; 012 e 045 atualizados.
 >
 > **038 — grilling feito, ticket ainda aberto** (2026-09-10): a **estratégia de rollout** foi
 > grelhada por inteiro com o dono (3 rodadas) e as decisões estão no ticket sob
