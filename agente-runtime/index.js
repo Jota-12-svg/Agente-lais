@@ -20,6 +20,11 @@
 //   - Escalada grava na fila real (031) com o telefone de verdade do cliente.
 //   - Áudio de entrada (nota de voz do cliente): baixa via Baileys e manda como `inlineData`
 //     pro Gemini, mesmo padrão validado no 018 — achado e corrigido em 2026-09-12, ver 044.
+//   - "Devolver ao agente" e "fechar chamado reinicia o atendimento" (045/012, 2026-09-12):
+//     poll (15s) numa RPC secret-gated, só pras conversas escaladas em memória — sem Realtime
+//     nem SELECT público em `handoffs` (tem PII, ao contrário de agent_settings).
+//   - Telefone resolvido best-effort pra contato @lid (mesmo achado do dia) — cai pro fallback
+//     "LID:..." de sempre quando o Baileys ainda não viu a correspondência @lid→número.
 
 import { readFileSync, existsSync, rmSync } from 'node:fs'
 import path from 'node:path'
@@ -29,7 +34,22 @@ import pino from 'pino'
 import qrcode from 'qrcode'
 import { createClient } from '@supabase/supabase-js'
 import { default as makeWASocket, useMultiFileAuthState, fetchLatestBaileysVersion, DisconnectReason, downloadMediaMessage } from '@whiskeysockets/baileys'
-import { writeHandoff, handoffWriterDisponivel, telefoneDoJid } from './handoff-writer.mjs'
+import { writeHandoff, handoffWriterDisponivel, telefoneDoJid, fetchHandoffStatuses } from './handoff-writer.mjs'
+
+// Achado real, 2026-09-12: contato @lid (endereçamento indireto do WhatsApp, não expõe o
+// número) fazia a plataforma mostrar "LID:..." em vez de telefone de verdade — a consultora
+// não tinha como usar aquilo pra achar o cliente fora do agente. Baileys só resolve @lid → PN
+// (número) se já tiver visto essa correspondência chegar pela rede (sock.signalRepository.
+// lidMapping.getPNForLID) — não é garantido, é best-effort mesmo (ver baileys.wiki/concepts/jids).
+// Quando não resolve, cai no fallback "LID:..." de sempre — melhor que inventar um número.
+async function telefoneResolvido(jid) {
+  if (!jid?.endsWith('@lid')) return telefoneDoJid(jid)
+  try {
+    const pn = await sock?.signalRepository?.lidMapping?.getPNForLID?.(jid)
+    if (pn) return telefoneDoJid(pn)
+  } catch { /* segue pro fallback abaixo */ }
+  return telefoneDoJid(jid)
+}
 
 const HERE = path.dirname(fileURLToPath(import.meta.url))
 const PORT = process.env.PORT || 3000
@@ -101,6 +121,39 @@ function estadoDe(jid) {
   if (!conversas.has(jid)) conversas.set(jid, { history: [], status: 'qualificando', sentByBridge: new Set() })
   return conversas.get(jid)
 }
+
+// ---- Reagir a mudanças de handoffs feitas pela plataforma (045/012, 2026-09-12) ----
+// Construído direto em cima do runtime provisório, por decisão do dono na sessão — o 045
+// original previa esperar o 044 (estado persistido), mas o pedido era usar agora. Limitação
+// aceita conscientemente: só funciona pra conversas que ainda estão no `conversas` Map deste
+// processo (um restart no meio perde o vínculo, igual toda a memória de conversa hoje).
+//
+// Não usa Realtime (como o freio de mão faz): `handoffs` tem dado real de cliente (nome,
+// telefone, resumo) — abrir SELECT público pra chave anônima do runtime, só pra caber no
+// modelo de Realtime, seria expor isso a qualquer um com a publishable key. Em vez disso,
+// polling numa RPC estreita (`handoffs_status_for_jids`, mesmo padrão secret-gated do
+// `handoffs_insert`) que devolve só jid+status, nunca PII — só pras conversas escaladas que
+// este processo já tem em memória (nunca manda a lista toda, só o que interessa).
+async function checarChamadosDevolvidos() {
+  const jidsEscalados = [...conversas.entries()].filter(([, st]) => st.status === 'escalado').map(([jid]) => jid)
+  if (jidsEscalados.length === 0) return
+  const { ok, statuses, error } = await fetchHandoffStatuses(jidsEscalados)
+  if (!ok) { logger.warn({ error }, 'Falha ao consultar status de handoffs — tenta de novo no próximo poll.'); return }
+  for (const { contact_jid: jid, status } of statuses) {
+    if (!conversas.has(jid)) continue
+    if (status === 'closed') {
+      // "Fechar chamado" = atendimento acabou de vez. Próxima mensagem do cliente é
+      // atendimento NOVO, não retomada — apaga o estado inteiro em vez de só destravar.
+      conversas.delete(jid)
+      logger.info({ jid }, '>>> Chamado fechado na plataforma — atendimento encerrado, próxima mensagem começa do zero.')
+    } else if (status === 'returned_to_agent') {
+      // "Devolver ao agente" — mantém o histórico (contexto não se perde), só destrava.
+      estadoDe(jid).status = 'qualificando'
+      logger.info({ jid }, '>>> Chamado devolvido ao agente na plataforma — Manu volta a responder aqui.')
+    }
+  }
+}
+setInterval(() => { checarChamadosDevolvidos().catch((err) => logger.warn({ err: err.message }, 'Erro no poll de handoffs devolvidos.')) }, 15000)
 
 function foraDoExpediente() {
   const agora = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }))
@@ -308,7 +361,8 @@ async function start() {
             trigger: escalou.trigger,
             motivo: escalou.motivo,
             contactName: escalou.nome,
-            contactPhone: telefoneDoJid(jid),
+            contactPhone: await telefoneResolvido(jid),
+            contactJid: jid,
           }).then((r) => {
             if (r.ok) logger.info({ jid, id: r.id }, '>>> Chamado gravado na fila real.')
             else logger.error({ jid, erro: r.error }, '>>> NÃO gravou na fila real (resposta ao cliente já foi enviada).')

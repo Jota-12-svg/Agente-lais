@@ -102,8 +102,14 @@ _Avoid_: escalonamento, transferência, encaminhamento, handover.
 O registro de uma **escalada** na fila da **plataforma das consultoras** — uma linha da tabela
 `handoffs`. Carrega só o relance para a consultora priorizar e assumir (telefone, nome, o que
 a pessoa quer, para quando, orçamento, novo/cliente, gatilho), nunca a conversa inteira (essa
-fica no WhatsApp). Ao ser **fechado** por uma consultora, sai da fila e fica arquivado com o
-desfecho. Ticket [035](wayfinder/tickets/035-plataforma-central-das-consultoras.md).
+fica no WhatsApp). Três formas de sair da fila (`pending`/`assumed`), sempre com sentido
+diferente pro cliente: **fechado** — atendimento acabou de vez, próxima mensagem do cliente é
+um chamado novo, agente reinicia a qualificação do zero (addendum 2026-09-12 no
+[012](wayfinder/tickets/012-quando-e-como-o-agente-escala.md)); **devolvido ao agente**
+(`returned_to_agent`) — a Manu volta a responder a mesma conversa de onde parou, sem reiniciar
+(ticket [045](wayfinder/tickets/045-devolver-chamado-ao-agente.md)); **devolvido à fila** —
+continua o mesmo chamado, só troca (ou libera) a consultora. Ticket
+[035](wayfinder/tickets/035-plataforma-central-das-consultoras.md).
 _Avoid_: ticket, ocorrência, tarefa, card.
 
 **Rodízio** (`rotation`):

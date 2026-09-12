@@ -36,7 +36,25 @@
     onChanged();
   }
 
-  const phoneDigits = $derived((handoff.contact_phone || '').replace(/[^\d]/g, ''));
+  // 045 (2026-09-12): devolve o controle da conversa pra Manu — ela volta a responder no
+  // WhatsApp a partir do estado que já tinha (não reinicia a qualificação). Sem restrição
+  // (mesma confiança do "Devolver à fila" — a consultora decide na hora, addendum do 012).
+  async function returnToAgent() {
+    busy = true;
+    error = '';
+    const { error: e } = await supabase
+      .from('handoffs')
+      .update({ status: 'returned_to_agent', returned_by: email, returned_at: new Date().toISOString() })
+      .eq('id', handoff.id);
+    if (e) error = 'Não deu para devolver ao agente.';
+    busy = false;
+    onChanged();
+  }
+
+  // "LID:..." é o fallback de quando o WhatsApp não expõe o número de verdade (achado
+  // 2026-09-12, ver agente-runtime/index.js) — não é telefone de verdade, não vira link.
+  const isLidFallback = $derived((handoff.contact_phone || '').startsWith('LID:'));
+  const phoneDigits = $derived(isLidFallback ? '' : (handoff.contact_phone || '').replace(/[^\d]/g, ''));
 </script>
 
 <div class="card">
@@ -55,6 +73,8 @@
     <dd>
       {#if phoneDigits}
         <a href={`https://wa.me/${phoneDigits}`} target="_blank" rel="noreferrer">{handoff.contact_phone}</a>
+      {:else if isLidFallback}
+        <span title="O WhatsApp não expôs o número de verdade deste contato — sem link, não é telefone.">{handoff.contact_phone}</span>
       {:else}—{/if}
     </dd>
     {#if handoff.desired_timeframe}<dt>Para quando</dt><dd>{handoff.desired_timeframe}</dd>{/if}
@@ -79,6 +99,7 @@
       <button class="primary" onclick={assume} disabled={busy}>Assumir</button>
     {:else}
       <button class="ghost" onclick={reopen} disabled={busy}>Devolver à fila</button>
+      <button class="ghost" onclick={returnToAgent} disabled={busy}>Devolver ao agente</button>
       <button class="primary" onclick={() => (closing = true)} disabled={busy}>Finalizar chamado</button>
     {/if}
   </div>

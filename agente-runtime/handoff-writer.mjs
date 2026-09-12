@@ -63,7 +63,7 @@ export function telefoneDoJid(jid) {
  * Grava o chamado na fila de verdade. Nunca lança — quem chama decide o que fazer com
  * {ok, id|error}.
  */
-export async function writeHandoff({ trigger, motivo, contactPhone, contactName, desiredTimeframe, budget, isTest = false }) {
+export async function writeHandoff({ trigger, motivo, contactPhone, contactName, contactJid, desiredTimeframe, budget, isTest = false }) {
   if (!config) return { ok: false, error: 'handoff-writer: config ausente (.env sem SUPABASE_*/HANDOFF_INSERT_SECRET)' };
 
   const triggerValido = TRIGGERS_VALIDOS.has(trigger) ? trigger : 'qualified';
@@ -79,6 +79,10 @@ export async function writeHandoff({ trigger, motivo, contactPhone, contactName,
     p_contact_name: contactName || null,
     p_desired_timeframe: desiredTimeframe || null,
     p_budget: budget || null,
+    // Jid bruto, pro runtime saber depois a qual conversa este chamado corresponde (045/012 —
+    // "devolver ao agente" e "fechar chamado reinicia o atendimento"). Uso interno, nunca
+    // exibido na plataforma — ver contact_phone pro que a consultora vê.
+    p_contact_jid: isTest ? null : (contactJid || null),
   };
 
   try {
@@ -96,5 +100,35 @@ export async function writeHandoff({ trigger, motivo, contactPhone, contactName,
     return { ok: true, id: data };
   } catch (e) {
     return { ok: false, error: e.message };
+  }
+}
+
+/**
+ * Consulta o status atual de chamados pelo jid — RPC `handoffs_status_for_jids` (security
+ * definer, mesmo segredo do handoffs_insert), devolve só {contact_jid, status}, nunca nome,
+ * telefone ou resumo (045/012, "devolver ao agente" e "fechar chamado reinicia"). Nunca lança.
+ */
+export async function fetchHandoffStatuses(jids) {
+  if (!config) return { ok: false, error: 'handoff-writer: config ausente', statuses: [] };
+  if (!jids || jids.length === 0) return { ok: true, statuses: [] };
+
+  const url = `https://${config.SUPABASE_PROJECT_REF}.supabase.co/rest/v1/rpc/handoffs_status_for_jids`;
+  const body = { p_secret: config.HANDOFF_INSERT_SECRET, p_jids: jids };
+
+  try {
+    const r = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        apikey: config.SUPABASE_PUBLISHABLE_KEY,
+        authorization: `Bearer ${config.SUPABASE_PUBLISHABLE_KEY}`,
+      },
+      body: JSON.stringify(body),
+    });
+    const data = await r.json().catch(() => null);
+    if (!r.ok) return { ok: false, error: (data && data.message) || `HTTP ${r.status}`, statuses: [] };
+    return { ok: true, statuses: data || [] };
+  } catch (e) {
+    return { ok: false, error: e.message, statuses: [] };
   }
 }
