@@ -109,6 +109,16 @@ limitação que já era aceita pro provisório inteiro (`estado de conversa em m
 cabeçalho do `agente-runtime/index.js`); o **044** resolve isso de vez ao persistir o estado
 da conversa também.
 
+### Bug achado ao vivo, corrigido na hora — mensagem perdida na corrida com o poll
+
+Primeiro teste real do dono: clicou "Devolver ao agente", a Consuelo mandou outra mensagem
+segundos depois, e a Manu não respondeu. Causa: o poll roda a cada 15s (agora 5s) — uma
+mensagem chegando nesse intervalo, enquanto o chamado ainda estava `escalado` no Map, era
+descartada em silêncio e **nunca reprocessada**; a Manu só voltava a falar na mensagem
+seguinte. Corrigido: guarda a última mensagem recebida enquanto `escalado` (`pendingMessage`),
+e reprocessa ela assim que o poll detecta `returned_to_agent`, em vez de esperar outra
+mensagem chegar.
+
 ### Efeito colateral: telefone resolvido melhor, achado no mesmo pedido
 
 Ver [012 addendum](012-quando-e-como-o-agente-escala.md#addendum-2026-09-12) e o achado de
