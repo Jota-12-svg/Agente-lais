@@ -60,7 +60,9 @@
 <div class="card">
   <div class="rowline">
     <span class="badge {handoff.status}">
-      {handoff.status === 'assumed' ? 'Em atendimento' : 'Esperando'}
+      {#if handoff.status === 'assumed'}Em atendimento
+      {:else if handoff.status === 'returned_to_agent'}Com a Manu
+      {:else}Esperando{/if}
     </span>
     <span class="muted">espera {waitedSince(handoff.created_at)}</span>
   </div>
@@ -90,6 +92,11 @@
       {#if isMine}Você pegou{:else}<strong>{mineLabel}</strong> pegou{/if}
       às {clock(handoff.assumed_at)}.
     </p>
+  {:else if handoff.status === 'returned_to_agent'}
+    <p class="muted" style="margin-top:12px;">
+      {names[handoff.returned_by] || handoff.returned_by} devolveu à Manu às
+      {clock(handoff.returned_at)} — a Manu está respondendo. Pegue de volta quando quiser.
+    </p>
   {/if}
 
   {#if error}<div class="err" style="margin-top:12px;">{error}</div>{/if}
@@ -97,6 +104,12 @@
   <div class="actions">
     {#if handoff.status === 'pending'}
       <button class="primary" onclick={assume} disabled={busy}>Assumir</button>
+    {:else if handoff.status === 'returned_to_agent'}
+      <!-- Achado 2026-09-12 (correção do dono): devolver ao agente NÃO fecha o caso — a
+           consultora usa isso pra ganhar tempo sem deixar o cliente sem resposta, e precisa
+           poder retomar quando quiser. Reusa assume(): mesmos campos de "pegar" de sempre. -->
+      <button class="primary" onclick={assume} disabled={busy}>Assumir de novo</button>
+      <button class="ghost" onclick={() => (closing = true)} disabled={busy}>Finalizar chamado</button>
     {:else}
       <button class="ghost" onclick={reopen} disabled={busy}>Devolver à fila</button>
       <button class="ghost" onclick={returnToAgent} disabled={busy}>Devolver ao agente</button>

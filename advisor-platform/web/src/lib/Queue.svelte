@@ -13,10 +13,13 @@
   let tick = $state(0); // força recálculo do "espera há X" a cada minuto
 
   async function load() {
+    // "returned_to_agent" continua na fila de propósito (achado 2026-09-12, correção do
+    // dono): a consultora usa o botão pra ganhar tempo sem deixar o cliente sem resposta, não
+    // pra encerrar o caso — precisa poder retomar quando quiser, então o chamado não some.
     const { data, error: e } = await supabase
       .from('handoffs')
       .select('*')
-      .in('status', ['pending', 'assumed'])
+      .in('status', ['pending', 'assumed', 'returned_to_agent'])
       .order('created_at', { ascending: true });
     if (e) {
       error = 'Não deu para carregar a fila. Puxe para atualizar.';
@@ -49,9 +52,9 @@
     };
   });
 
-  // Reordena para tirar da tela quem já fechou, mantém pending/assumed por tempo de espera.
+  // Reordena para tirar da tela quem já fechou, mantém pending/assumed/returned_to_agent.
   const visible = $derived(
-    handoffs.filter((h) => h.status === 'pending' || h.status === 'assumed'),
+    handoffs.filter((h) => h.status === 'pending' || h.status === 'assumed' || h.status === 'returned_to_agent'),
   );
 </script>
 

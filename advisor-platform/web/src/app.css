@@ -8,6 +8,7 @@
   --accent-ink: #ffffff;
   --pending: #b8791f;
   --assumed: #3f7d55;
+  --returned: #3f6b7d;
   --danger: #a23b2e;
   --radius: 14px;
   --tap: 48px;
@@ -84,6 +85,7 @@ button:disabled { opacity: 0.5; cursor: default; }
 }
 .badge.pending { color: var(--pending); }
 .badge.assumed { color: var(--assumed); }
+.badge.returned_to_agent { color: var(--returned); }
 
 .rowline { display: flex; gap: 8px; flex-wrap: wrap; align-items: baseline; margin-top: 2px; }
 .muted { color: var(--ink-soft); font-size: 0.9rem; }

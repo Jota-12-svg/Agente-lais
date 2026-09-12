@@ -104,16 +104,19 @@ export async function writeHandoff({ trigger, motivo, contactPhone, contactName,
 }
 
 /**
- * Consulta o status atual de chamados pelo jid — RPC `handoffs_status_for_jids` (security
- * definer, mesmo segredo do handoffs_insert), devolve só {contact_jid, status}, nunca nome,
- * telefone ou resumo (045/012, "devolver ao agente" e "fechar chamado reinicia"). Nunca lança.
+ * Consulta o status atual de chamados pelo id do próprio chamado — RPC `handoffs_status_for_ids`
+ * (security definer, mesmo segredo do handoffs_insert), devolve só {id, status}, nunca nome,
+ * telefone ou resumo (045/012, "devolver ao agente" e "fechar chamado reinicia"). Por id, não
+ * por jid: um mesmo contato pode ter mais de um chamado ao longo do tempo (achado 2026-09-12,
+ * correção do dono — "devolver ao agente" não fecha o caso, a consultora pode reassumir depois,
+ * e aí o mesmo jid tem chamado velho fechado/devolvido e um novo em paralelo). Nunca lança.
  */
-export async function fetchHandoffStatuses(jids) {
+export async function fetchHandoffStatuses(ids) {
   if (!config) return { ok: false, error: 'handoff-writer: config ausente', statuses: [] };
-  if (!jids || jids.length === 0) return { ok: true, statuses: [] };
+  if (!ids || ids.length === 0) return { ok: true, statuses: [] };
 
-  const url = `https://${config.SUPABASE_PROJECT_REF}.supabase.co/rest/v1/rpc/handoffs_status_for_jids`;
-  const body = { p_secret: config.HANDOFF_INSERT_SECRET, p_jids: jids };
+  const url = `https://${config.SUPABASE_PROJECT_REF}.supabase.co/rest/v1/rpc/handoffs_status_for_ids`;
+  const body = { p_secret: config.HANDOFF_INSERT_SECRET, p_ids: ids };
 
   try {
     const r = await fetch(url, {

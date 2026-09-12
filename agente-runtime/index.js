@@ -131,24 +131,33 @@ function estadoDe(jid) {
 // Não usa Realtime (como o freio de mão faz): `handoffs` tem dado real de cliente (nome,
 // telefone, resumo) — abrir SELECT público pra chave anônima do runtime, só pra caber no
 // modelo de Realtime, seria expor isso a qualquer um com a publishable key. Em vez disso,
-// polling numa RPC estreita (`handoffs_status_for_jids`, mesmo padrão secret-gated do
-// `handoffs_insert`) que devolve só jid+status, nunca PII — só pras conversas escaladas que
-// este processo já tem em memória (nunca manda a lista toda, só o que interessa).
+// polling numa RPC estreita (`handoffs_status_for_ids`, mesmo padrão secret-gated do
+// `handoffs_insert`) que devolve só id+status, nunca PII.
+//
+// Correlação por ID do chamado, não por jid (correção do dono, 2026-09-12: "devolver ao
+// agente" NÃO fecha o caso — a consultora reassume quando quiser, então o mesmo jid pode ter
+// um chamado devolvido em paralelo a um novo se ela reassumir e a Manu escalar de novo depois;
+// por jid seria ambíguo). `st.handoffId` é setado ao escalar (ver processarTurno) e fica
+// observado até o chamado fechar de vez — mesmo depois de devolvido/reassumido.
 async function checarChamadosDevolvidos() {
-  const jidsEscalados = [...conversas.entries()].filter(([, st]) => st.status === 'escalado').map(([jid]) => jid)
-  if (jidsEscalados.length === 0) return
-  const { ok, statuses, error } = await fetchHandoffStatuses(jidsEscalados)
+  const observados = [...conversas.entries()].filter(([, st]) => st.handoffId)
+  if (observados.length === 0) return
+  const idParaJid = new Map(observados.map(([jid, st]) => [st.handoffId, jid]))
+  const { ok, statuses, error } = await fetchHandoffStatuses([...idParaJid.keys()])
   if (!ok) { logger.warn({ error }, 'Falha ao consultar status de handoffs — tenta de novo no próximo poll.'); return }
-  for (const { contact_jid: jid, status } of statuses) {
-    if (!conversas.has(jid)) continue
+  for (const { id, status } of statuses) {
+    const jid = idParaJid.get(id)
+    if (!jid || !conversas.has(jid)) continue
+    const st = estadoDe(jid)
     if (status === 'closed') {
       // "Fechar chamado" = atendimento acabou de vez. Próxima mensagem do cliente é
       // atendimento NOVO, não retomada — apaga o estado inteiro em vez de só destravar.
       conversas.delete(jid)
       logger.info({ jid }, '>>> Chamado fechado na plataforma — atendimento encerrado, próxima mensagem começa do zero.')
-    } else if (status === 'returned_to_agent') {
+    } else if (status === 'returned_to_agent' && st.status !== 'qualificando') {
       // "Devolver ao agente" — mantém o histórico (contexto não se perde), só destrava.
-      const st = estadoDe(jid)
+      // Guarda `st.status !== 'qualificando'`: sem isso, reprocessaria a mesma mudança a
+      // cada poll enquanto ninguém reassumir (o status no banco não muda sozinho).
       st.status = 'qualificando'
       logger.info({ jid }, '>>> Chamado devolvido ao agente na plataforma — Manu volta a responder aqui.')
       // Achado real, 2026-09-12: mensagem chegando entre o clique do botão e este poll ficava
@@ -161,6 +170,13 @@ async function checarChamadosDevolvidos() {
         logger.info({ jid }, '>>> Reprocessando mensagem que chegou enquanto o chamado ainda estava com a consultora.')
         processarTurno(jid, pendente.texto, pendente.attachments).catch((err) => logger.error({ jid, err: err.message }, 'Falha ao reprocessar mensagem pendente.'))
       }
+    } else if ((status === 'assumed' || status === 'pending') && st.status === 'qualificando') {
+      // Consultora reassumiu (ou devolveu à fila) um chamado que tinha sido devolvido ao
+      // agente — a Manu estava respondendo de novo, precisa calar de novo (achado 2026-09-12,
+      // correção do dono: "a consultora deve ter a possibilidade de pegar o chamado de novo
+      // quando quiser").
+      st.status = 'escalado'
+      logger.info({ jid, status }, '>>> Consultora retomou o chamado na plataforma — Manu volta a ficar em silêncio aqui.')
     }
   }
 }
@@ -246,8 +262,12 @@ async function processarTurno(jid, texto, attachments) {
         contactPhone: await telefoneResolvido(jid),
         contactJid: jid,
       }).then((r) => {
-        if (r.ok) logger.info({ jid, id: r.id }, '>>> Chamado gravado na fila real.')
-        else logger.error({ jid, erro: r.error }, '>>> NÃO gravou na fila real (resposta ao cliente já foi enviada).')
+        if (r.ok) {
+          st.handoffId = r.id // pro poll saber qual chamado observar (por id, não por jid — 045)
+          logger.info({ jid, id: r.id }, '>>> Chamado gravado na fila real.')
+        } else {
+          logger.error({ jid, erro: r.error }, '>>> NÃO gravou na fila real (resposta ao cliente já foi enviada).')
+        }
       })
     }
   } catch (err) {
