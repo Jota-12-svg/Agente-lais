@@ -184,5 +184,28 @@ Grilling com o dono adiciona uma terceira exceção ao "definitivo" acima — as
   exceção (registrada e depois corrigida na mesma sessão) só permitia devolver antes da
   primeira resposta humana real; o dono pediu para reverter para julgamento livre da
   consultora — ela decide, na hora, se faz sentido devolver, mesmo que já tenha respondido.
-- **Implementação:** ticket novo [045](045-devolver-chamado-ao-agente.md), bloqueado pelo
-  [044](044-construir-runtime-do-agente.md) — motivo no próprio 045.
+- **Implementação:** ticket novo [045](045-devolver-chamado-ao-agente.md). **Atualização, mesma
+  sessão**: o dono pediu pra funcionar já, não esperar o 044 — construído direto em cima do
+  runtime provisório (ver `## Resolução` do 045).
+
+---
+
+## Addendum — 2026-09-12 ("fechar chamado" reinicia o atendimento)
+
+Mesma sessão, pedido separado do dono, sobre o que "Finalizar chamado" (`CloseDialog.svelte`)
+significa pro agente: **o atendimento acabou de vez** — se o cliente escrever de novo depois
+de um chamado fechado, é um **atendimento novo**, não retomada. O agente reinicia a
+qualificação do zero, não "lembra" da conversa anterior.
+
+Isso é **diferente** da janela de retomada de 3 dias do addendum de 2026-08-12/2026-09-02 —
+aquela é sobre o cliente voltar **antes** de qualquer consultora fechar o chamado (a
+conversa ainda está "em aberto" na fila, só esfriando). Aqui é sobre depois de fechado: uma
+vez que a consultora marcou desfecho e encerrou, não existe mais "retomar", só recomeçar.
+Não muda o número dos 3 dias nem a lógica daquele caso — são dois gatilhos diferentes para o
+mesmo destino final (conversa nova), não uma coisa substituindo a outra.
+
+**Implementação:** mesmo mecanismo de poll do 045 (`agente-runtime/index.js`) — ao ver
+`status = 'closed'` num chamado que corresponde a uma conversa que o processo ainda tem em
+memória, apaga o estado inteiro (`conversas.delete(jid)`), não só destrava. Mesma limitação
+do 045: só funciona se o processo não reiniciou entre a escalada e o fechamento (estado em
+memória, ver 044).

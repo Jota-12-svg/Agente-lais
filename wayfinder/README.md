@@ -94,10 +94,22 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 > [018](018-validar-contrato-do-llm.md) (OGG/Opus sem transcodificar). Registrado como lacuna
 > a portar no **044** (não era esquecimento consciente — ver o próprio ticket). Grilling do
 > mesmo pedido abriu o **045** (botão "devolver ao agente" na plataforma) e um addendum no
-> **012** (terceira exceção ao "caminho de volta") — construção do 045 fica bloqueada pelo
-> **044**. **Correção do dono, mesma sessão**: o critério da exceção não é "só antes da
-> consultora responder" — é **sem restrição**, mesma confiança já dada ao "Devolver à fila"
-> de hoje; 012 e 045 atualizados.
+> **012** (terceira exceção ao "caminho de volta"). **Correção do dono, mesma sessão**: o
+> critério da exceção não é "só antes da consultora responder" — é **sem restrição**, mesma
+> confiança já dada ao "Devolver à fila" de hoje; 012 e 045 atualizados.
+>
+> **045 fechado na mesma sessão, mais tarde** — o dono pediu pra construir já, sem esperar o
+> 044 (revertendo a decisão original de esperar). Junto, dois pedidos irmãos: "fechar chamado"
+> agora reinicia o atendimento do zero na próxima mensagem do cliente (addendum novo no 012,
+> distinto da janela de retomada de 3 dias), e o telefone na plataforma deixa de mostrar
+> "LID:..." quando consegue resolver o número de verdade (best-effort — WhatsApp não garante).
+> Mecanismo: `contact_jid` novo em `handoffs` + poll a cada 15s numa RPC secret-gated
+> (`handoffs_status_for_jids`), não Realtime — `handoffs` tem PII, ao contrário de
+> `agent_settings`. **Achado no caminho, tratado na hora**: consultar a definição da função
+> `handoffs_insert` via Management API devolveu o `HANDOFF_INSERT_SECRET` em texto na sessão —
+> rotacionado de novo (segunda vez no dia; primeira foi a da worktree órfã, sessão da manhã),
+> valor novo aplicado nas duas funções (`handoffs_insert` e a nova `handoffs_status_for_jids`)
+> e no Railway, nunca reimpresso depois de gerado.
 >
 > **038 — grilling feito, ticket ainda aberto** (2026-09-10): a **estratégia de rollout** foi
 > grelhada por inteiro com o dono (3 rodadas) e as decisões estão no ticket sob
@@ -188,12 +200,12 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 | 034 | [Redigir o manual do agente para as consultoras](tickets/034-redigir-o-manual-do-agente.md) | task | 036 + estratégia de rollout (névoa) — forma decidida no 033, falta a redação; 014, 011 e 037 saíram do bloqueio (todos fecharam 2026-09-11) |
 | 031 | [Implementar a escrita do chamado do agente na fila (INSERT no Supabase)](tickets/031-implementar-escrita-do-chamado-na-fila.md) | task | runtime do agente (mecanismo de autenticação decidido e testado ao vivo em 2026-09-11 — RPC `security definer` gateada por segredo; falta só o runtime chamar de verdade); `chatModify markRead:false` continua pendente |
 | 036 | [Freio de mão global — desligamento de emergência do agente](tickets/036-freio-de-mao-global.md) | task | **044** — mecanismo, esquema e UI já construídos e testados de ponta a ponta (2026-09-11); falta só o runtime assinar a flag e provar que o agente se cala |
-| 045 | [Botão "Devolver ao agente" nos chamados da plataforma](tickets/045-devolver-chamado-ao-agente.md) | task | **044** — design já fechado no grilling de 2026-09-12 (critério, modelagem do estado); falta o 044 dar ao runtime leitura de `handoffs` e estado persistido antes de construir |
 
 ## Fechados
 
 | # | Ticket | Tipo | Descobertas |
 |---|---|---|---|
+| 045 | [Botão "Devolver ao agente" nos chamados da plataforma](tickets/045-devolver-chamado-ao-agente.md) | task | construído em 2026-09-12 direto no provisório (dono pediu pra não esperar o 044); status novo `returned_to_agent`; correlação por `contact_jid` + poll numa RPC secret-gated (`handoffs_status_for_jids`, sem PII) em vez de Realtime, porque `handoffs` tem dado real de cliente; mesmo mecanismo resolve "fechar chamado reinicia o atendimento" (addendum no 012) e telefone `@lid` resolvido best-effort |
 | 001 | [Inicializar o repositório e proteger os segredos](tickets/001-repositorio-e-protecao-dos-segredos.md) | task | — |
 | 003 | [Conseguir a exportação das conversas das consultoras](tickets/003-exportacao-das-conversas-das-consultoras.md) | task | exportação inviável; substituída pela análise do dono via grilling — desbloqueou 010, 013, 014 |
 | 004 | [Inspecionar a planilha de carteira/mailing de clientes](tickets/004-acesso-a-planilha-e-ao-catalogo.md) | task | dividido; planilha é diretório de arquitetos + mailing, não CRM de consumidor final; lookup "já é cliente" do 010 não se sustenta; catálogo + planilha de arquiteto → 032; desbloqueou 030, 031 |

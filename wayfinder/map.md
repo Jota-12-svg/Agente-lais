@@ -342,6 +342,17 @@ prototipagem, `/prototype`. Em tickets de research, `/research` como subagente.
   chave sobrevive ao corte de setembro/2026 sem ação. Achado à parte, sem relação com o tipo
   da chave: aviso de conta de faturamento pedindo migração para pré-pagamento — abriu o
   [041](tickets/041-billing-pre-pagamento.md).
+- [Botão "Devolver ao agente" nos chamados da plataforma](tickets/045-devolver-chamado-ao-agente.md)
+  — **construído em 2026-09-12, direto em cima do runtime provisório** (o dono pediu pra
+  funcionar já, revertendo a decisão original de esperar o 044). Novo status
+  `returned_to_agent` no enum `handoff_status`; correlação por uma coluna nova (`contact_jid`,
+  jid bruto do WhatsApp) em vez de Realtime — `handoffs` carrega dado real de cliente, abrir
+  `SELECT` público pra chave anônima do runtime exporia isso; em vez disso, RPC estreita
+  secret-gated (`handoffs_status_for_jids`, só devolve jid+status) consultada por poll a cada
+  15s. Mesmo mecanismo resolve o pedido irmão: "fechar chamado" agora reinicia o atendimento do
+  zero na próxima mensagem (addendum no 012, distinto da janela de retomada de 3 dias — aquele
+  é antes de fechar, este é depois). Efeito colateral do mesmo pedido: telefone resolvido
+  best-effort para contato `@lid` (antes mostrava "LID:..." na plataforma).
 - [Testar a conexão self-hosted como dispositivo adicional](tickets/027-testar-self-hosted-no-numero-atual.md)
   — **testado ao vivo, os seis pontos passaram.** Desvio consciente do plano: sem chip de
   teste comprado a tempo (research 043), o dono testou no **próprio número pessoal**, WhatsApp
@@ -382,9 +393,9 @@ Névoa em escopo, ainda sem nitidez para virar ticket:
   verdade quando o runtime do agente existir ([031](tickets/031-implementar-escrita-do-chamado-na-fila.md)
   escreve o chamado). **Continua na névoa:** ver e **corrigir a conversa** do agente dentro da
   plataforma, e o fluxo de "assumir uma conversa em andamento" (retomar o controle no meio).
-  O caminho **inverso** (devolver um chamado assumido de volta pro agente) já tem design
-  fechado no [045](tickets/045-devolver-chamado-ao-agente.md), bloqueado pelo 044 — não é a
-  mesma névoa, mas mora na mesma superfície. Reenquadrou 029/030/031.
+  O caminho **inverso** (devolver um chamado assumido de volta pro agente) **saiu da névoa,
+  construído** em 2026-09-12 — [045](tickets/045-devolver-chamado-ao-agente.md), não é a
+  mesma névoa, mas morava na mesma superfície. Reenquadrou 029/030/031.
 - **LGPD.** Consentimento, retenção e o que pode ser guardado de conversa de cliente.
 - **Estratégia de rollout.** Piloto com uma consultora, horário limitado, fallback quando
   o agente falha. Bloqueia a redação do manual das consultoras

@@ -2,9 +2,9 @@
 id: "045"
 title: Botão "Devolver ao agente" nos chamados da plataforma
 labels: [wayfinder:task]
-status: open
-assignee:
-blocked-by: ["044"]
+status: closed
+assignee: claude-sonnet-5
+blocked-by: []
 ---
 
 > **Origem — grilling com o dono, 2026-09-12**, no mesmo pedido que corrigiu o bug de áudio
@@ -66,3 +66,51 @@ como revisão explícita dela, não como feature solta. Ver addendum de 2026-09-
 grava o novo estado em `handoffs`, e o runtime volta a responder o cliente naquele chamado a
 partir do estado persistido (não do `Map` em memória) — validado com um chamado de teste de
 ponta a ponta.
+
+---
+
+## Resolução
+
+**Construído em 2026-09-12, direto em cima do runtime provisório** — o dono pediu
+explicitamente, na mesma sessão, pra funcionar agora, revertendo a decisão acima de "espera o
+044". Registrado como decisão nova, não como desvio silencioso.
+
+### O que foi implementado
+
+- **Enum**: `returned_to_agent` adicionado a `handoff_status` (migração
+  `20260912120000_devolver_ao_agente_e_contact_jid.sql`), como decidido — estado próprio, não
+  reaproveita `pending`.
+- **Coluna nova, achado no caminho**: `contact_jid` em `handoffs` (jid bruto do WhatsApp,
+  `text`, nullable) — necessária porque o runtime provisório não tem NENHUMA relação com
+  `handoffs` hoje (nem lê, nunca leu). Sem um jid gravado na própria linha, não haveria como
+  saber a qual conversa um chamado corresponde depois de "devolver" ou "fechar". Colunas de
+  auditoria simétricas: `returned_by`, `returned_at`.
+- **Mecanismo de leitura — não é Realtime.** A ideia óbvia (o runtime assinar `postgres_changes`
+  em `handoffs`, mesmo padrão do freio de mão/036) foi descartada: `agent_settings` é um
+  booleano; `handoffs` carrega nome, telefone e resumo do cliente — abrir `SELECT` pra chave
+  anônima do runtime (que não faz login Google) exporia dado real de cliente a qualquer um com
+  a publishable key. Em vez disso: **RPC nova `handoffs_status_for_jids`** (security definer,
+  gateada pelo mesmo `HANDOFF_INSERT_SECRET` do `handoffs_insert`), devolve só
+  `{contact_jid, status}` — nunca PII. O runtime faz **poll a cada 15s**, só com os jids das
+  conversas que ele mesmo tem `status = 'escalado'` em memória (nunca manda a lista toda).
+- **`HandoffCard.svelte`**: botão "Devolver ao agente" ao lado de "Devolver à fila", sem
+  confirmação (mesmo padrão do vizinho) — `update({status: 'returned_to_agent', returned_by,
+  returned_at})`.
+- **`agente-runtime/index.js`**: ao detectar `returned_to_agent` num poll, `estadoDe(jid).status
+  = 'qualificando'` — mantém o histórico da conversa (contexto não se perde), só destrava.
+
+### Limitação aceita conscientemente
+
+Como o runtime provisório guarda `contact_jid` só na tabela (persistido) mas o **vínculo pra
+saber quem está "escalado" agora** ainda é o `Map` em memória de sempre — um restart do
+processo entre a escalada e o clique no botão perde a conversa da memória, e o poll não acha
+mais ninguém pra destravar (o jid simplesmente não aparece mais como `escalado`). Mesma
+limitação que já era aceita pro provisório inteiro (`estado de conversa em memória`, ver
+cabeçalho do `agente-runtime/index.js`); o **044** resolve isso de vez ao persistir o estado
+da conversa também.
+
+### Efeito colateral: telefone resolvido melhor, achado no mesmo pedido
+
+Ver [012 addendum](012-quando-e-como-o-agente-escala.md#addendum-2026-09-12) e o achado de
+"fechar chamado reinicia o atendimento" — três pedidos do dono na mesma sessão, implementados
+juntos porque compartilham a mesma peça de infraestrutura (`contact_jid` + poll).

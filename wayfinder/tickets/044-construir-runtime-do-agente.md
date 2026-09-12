@@ -56,6 +56,21 @@ validadas isoladamente**, mas nunca conectadas de ponta a ponta com WhatsApp de 
 - **Ligar a chamada real ao `handoffs_insert`** com o telefone de WhatsApp de verdade, e
   **tratar idempotência** (não escalar duas vezes o mesmo atendimento se a mensagem de
   gatilho for reprocessada) — a lacuna que o 031 deixou registrada.
+- **"Devolver ao agente" e "fechar chamado reinicia o atendimento" já construídos no
+  provisório** (045/012, 2026-09-12) — pedido do dono pra funcionar antes deste ticket, não
+  esperado. Hoje é **poll numa RPC a cada 15s** (`handoffs_status_for_jids`), correlacionando
+  pelo jid gravado em `handoffs.contact_jid`, só pras conversas que o processo tem em memória
+  — funciona, mas é a mesma dívida técnica do resto do provisório (perde o vínculo se o
+  processo reiniciar entre a escalada e o clique do botão). Com estado de conversa persistido
+  no Supabase (o que este ticket entrega), o caminho correto vira reagir à escrita direto
+  (trigger/Realtime na própria transação), sem poll nem essa janela de perda.
+- **Telefone resolvido best-effort pra contato `@lid`** (mesmo pedido, achado do dia): quando
+  o WhatsApp usa endereçamento indireto (`@lid`, não expõe o número), o provisório tenta
+  `sock.signalRepository.lidMapping.getPNForLID(jid)` — só funciona se o Baileys já viu essa
+  correspondência chegar pela rede (não é garantido, ver
+  [baileys.wiki/concepts/jids](https://baileys.wiki/concepts/jids)); sem resolver, cai no
+  fallback `LID:<id>` de sempre. A versão definitiva não tem como fazer melhor que isso — é
+  limitação do próprio WhatsApp, não do runtime.
 - **Endpoint `/health`** para o watchdog externo (UptimeRobot/Better Stack, escolha de
   ferramenta fica livre — decisão do 042 foi só a categoria).
 - **Assinatura Realtime numa tabela de flag do Supabase**, para o freio de mão
