@@ -274,22 +274,49 @@ app.get('/', (_req, res) => {
   )
 })
 
-app.get('/qr', async (_req, res) => {
-  if (!latestQR) {
-    res.type('text/plain').send(
-      connectionStatus === 'conectado'
-        ? 'Já conectado — não há QR pendente. Se precisar reconectar outro aparelho, desconecte este primeiro.'
-        : 'Nenhum QR disponível ainda. Atualize a página em alguns segundos.',
-    )
-    return
-  }
-  const dataUrl = await qrcode.toDataURL(latestQR)
+// Endpoint só de dados, consultado via polling pela página /qr — existe porque o QR do
+// WhatsApp expira a cada 20-60s (ver connection.update no start()) e uma imagem estática
+// escaneada tarde demais dá exatamente o erro "não é possível conectar o aparelho" no
+// celular, sem gerar log nenhum do lado do servidor (achado real, 2026-09-12).
+app.get('/qr-data', async (_req, res) => {
+  res.set('Cache-Control', 'no-store')
+  res.json({
+    status: connectionStatus,
+    qr: latestQR ? await qrcode.toDataURL(latestQR) : null,
+  })
+})
+
+app.get('/qr', (_req, res) => {
   res.type('html').send(
     `<html><body style="display:flex;flex-direction:column;align-items:center;font-family:sans-serif;padding-top:2rem">
       <h1>Vincular a Manu ao WhatsApp da loja</h1>
-      <img src="${dataUrl}" width="320" height="320" />
-      <p>No celular da loja: Aparelhos vinculados &gt; Vincular aparelho</p>
-      <p style="opacity:.6">A página atualiza sozinha se você recarregar; o QR expira em ~60s e é renovado automaticamente.</p>
+      <div id="qr-box"><p>Carregando QR…</p></div>
+      <p id="msg">No celular da loja: Aparelhos vinculados &gt; Vincular aparelho</p>
+      <p style="opacity:.6">Esta página se atualiza sozinha — o QR do WhatsApp expira a cada
+      20-60s, não precisa recarregar nem escanear correndo.</p>
+      <script>
+        async function tick() {
+          try {
+            const r = await fetch('/qr-data', { cache: 'no-store' })
+            const d = await r.json()
+            const box = document.getElementById('qr-box')
+            const msg = document.getElementById('msg')
+            if (d.status === 'conectado') {
+              box.innerHTML = '<p style="font-size:1.3rem">✅ Conectado!</p>'
+              msg.textContent = 'A Manu já está respondendo neste número.'
+              return // para de perguntar, já terminou
+            }
+            if (d.qr) {
+              box.innerHTML = '<img src="' + d.qr + '" width="320" height="320" />'
+              msg.textContent = 'No celular da loja: Aparelhos vinculados > Vincular aparelho'
+            } else {
+              box.innerHTML = '<p>Gerando QR novo…</p>'
+            }
+          } catch (e) { /* rede falhou nesta rodada — tenta de novo no próximo tick */ }
+          setTimeout(tick, 4000)
+        }
+        tick()
+      </script>
     </body></html>`,
   )
 })
