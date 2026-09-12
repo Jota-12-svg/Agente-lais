@@ -148,12 +148,25 @@ async function checarChamadosDevolvidos() {
       logger.info({ jid }, '>>> Chamado fechado na plataforma — atendimento encerrado, próxima mensagem começa do zero.')
     } else if (status === 'returned_to_agent') {
       // "Devolver ao agente" — mantém o histórico (contexto não se perde), só destrava.
-      estadoDe(jid).status = 'qualificando'
+      const st = estadoDe(jid)
+      st.status = 'qualificando'
       logger.info({ jid }, '>>> Chamado devolvido ao agente na plataforma — Manu volta a responder aqui.')
+      // Achado real, 2026-09-12: mensagem chegando entre o clique do botão e este poll ficava
+      // silenciada pra sempre, ninguém nunca respondia a ela — a pessoa via a Manu "voltar" só
+      // na PRÓXIMA mensagem que mandasse, o que pareceu bug ("não voltou a conversar"). Se tem
+      // pendente, responde ela agora em vez de esperar outra mensagem chegar.
+      if (st.pendingMessage) {
+        const pendente = st.pendingMessage
+        st.pendingMessage = null
+        logger.info({ jid }, '>>> Reprocessando mensagem que chegou enquanto o chamado ainda estava com a consultora.')
+        processarTurno(jid, pendente.texto, pendente.attachments).catch((err) => logger.error({ jid, err: err.message }, 'Falha ao reprocessar mensagem pendente.'))
+      }
     }
   }
 }
-setInterval(() => { checarChamadosDevolvidos().catch((err) => logger.warn({ err: err.message }, 'Erro no poll de handoffs devolvidos.')) }, 15000)
+// 5s (não 15s): reduz a janela de corrida entre "devolver ao agente" e a Manu voltar a
+// responder — o replay do pendingMessage acima já cobre quem caiu na janela mesmo assim.
+setInterval(() => { checarChamadosDevolvidos().catch((err) => logger.warn({ err: err.message }, 'Erro no poll de handoffs devolvidos.')) }, 5000)
 
 function foraDoExpediente() {
   const agora = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }))
@@ -203,6 +216,43 @@ async function askManu(history) {
   const cand = data.candidates?.[0]
   const text = (cand?.content?.parts || []).map((p) => p.text).filter(Boolean).join('').trim()
   return text || '(sem texto na resposta)'
+}
+
+// Um turno completo: histórico → Gemini → envia → trata escalada. Extraído pra função porque
+// dois lugares chamam isso: a chegada normal de mensagem (messages.upsert) e o replay de uma
+// mensagem perdida na corrida entre "devolver ao agente" e o poll (ver checarChamadosDevolvidos
+// mais abaixo — achado real, 2026-09-12: mensagem chegando nos ~15s entre o clique do botão e
+// o próximo poll ficava perdida pra sempre, sem ninguém nunca responder a ela).
+async function processarTurno(jid, texto, attachments) {
+  const st = estadoDe(jid)
+  st.history.push({ role: 'client', text: texto || '', attachments: attachments || [] })
+
+  try {
+    const bruto = await askManu(st.history)
+    const { texto: respostaLimpa, escalou } = extrairEscalada(bruto)
+    st.history.push({ role: 'agent', text: bruto })
+
+    const enviado = await sock.sendMessage(jid, { text: respostaLimpa })
+    if (enviado?.key?.id) st.sentByBridge.add(enviado.key.id)
+    logger.info({ jid, resposta: respostaLimpa }, 'Manu respondeu.')
+
+    if (escalou) {
+      st.status = 'escalado'
+      logger.info({ jid, escalou }, '>>> Escalada detectada — silêncio a partir de agora nesta conversa.')
+      writeHandoff({
+        trigger: escalou.trigger,
+        motivo: escalou.motivo,
+        contactName: escalou.nome,
+        contactPhone: await telefoneResolvido(jid),
+        contactJid: jid,
+      }).then((r) => {
+        if (r.ok) logger.info({ jid, id: r.id }, '>>> Chamado gravado na fila real.')
+        else logger.error({ jid, erro: r.error }, '>>> NÃO gravou na fila real (resposta ao cliente já foi enviada).')
+      })
+    }
+  } catch (err) {
+    logger.error({ jid, err: err.message }, 'Falha ao pedir/enviar resposta — nada foi mandado.')
+  }
 }
 
 // Mesmo parser do run.mjs/manu-live-bridge.mjs (trigger=X;nome=Y;motivo=Z, com fallback).
@@ -323,6 +373,23 @@ async function start() {
       }
 
       if (st.status === 'escalado' || st.status === 'com_consultora') {
+        // Guarda só a última mensagem pra reprocessar se "devolver ao agente" destravar essa
+        // conversa (só faz sentido pra 'escalado' — 'com_consultora' não tem caminho de volta,
+        // 012 é definitivo pra esse caso). Sobrescreve a anterior de propósito: se a pessoa
+        // mandou três mensagens em silêncio, só a última importa pra retomar o fio.
+        if (st.status === 'escalado') {
+          const attachmentsPendentes = []
+          if (audioMsg) {
+            try {
+              const buffer = await downloadMediaMessage(msg, 'buffer', {}, { logger, reuploadRequest: sock.updateMediaMessage })
+              const mimeType = (audioMsg.mimetype || 'audio/ogg').split(';')[0].trim()
+              attachmentsPendentes.push({ mimeType, data: buffer.toString('base64') })
+            } catch (err) {
+              logger.error({ jid, err: err.message }, 'Falha ao baixar áudio de mensagem silenciada — não vira pendente.')
+            }
+          }
+          st.pendingMessage = { texto: texto || '', attachments: attachmentsPendentes }
+        }
         logger.info({ jid, status: st.status }, 'Silêncio — já escalado/com consultora.')
         continue
       }
@@ -343,34 +410,7 @@ async function start() {
       }
 
       logger.info({ jid, texto: texto || '[áudio]' }, 'Mensagem de cliente — pedindo resposta à Manu (Gemini)...')
-      st.history.push({ role: 'client', text: texto || '', attachments })
-
-      try {
-        const bruto = await askManu(st.history)
-        const { texto: respostaLimpa, escalou } = extrairEscalada(bruto)
-        st.history.push({ role: 'agent', text: bruto })
-
-        const enviado = await sock.sendMessage(jid, { text: respostaLimpa })
-        if (enviado?.key?.id) st.sentByBridge.add(enviado.key.id)
-        logger.info({ jid, resposta: respostaLimpa }, 'Manu respondeu.')
-
-        if (escalou) {
-          st.status = 'escalado'
-          logger.info({ jid, escalou }, '>>> Escalada detectada — silêncio a partir de agora nesta conversa.')
-          writeHandoff({
-            trigger: escalou.trigger,
-            motivo: escalou.motivo,
-            contactName: escalou.nome,
-            contactPhone: await telefoneResolvido(jid),
-            contactJid: jid,
-          }).then((r) => {
-            if (r.ok) logger.info({ jid, id: r.id }, '>>> Chamado gravado na fila real.')
-            else logger.error({ jid, erro: r.error }, '>>> NÃO gravou na fila real (resposta ao cliente já foi enviada).')
-          })
-        }
-      } catch (err) {
-        logger.error({ jid, err: err.message }, 'Falha ao pedir/enviar resposta — nada foi mandado.')
-      }
+      await processarTurno(jid, texto, attachments)
     }
   })
 }
