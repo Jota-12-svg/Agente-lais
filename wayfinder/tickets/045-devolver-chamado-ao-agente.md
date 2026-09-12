@@ -119,6 +119,25 @@ seguinte. Corrigido: guarda a última mensagem recebida enquanto `escalado` (`pe
 e reprocessa ela assim que o poll detecta `returned_to_agent`, em vez de esperar outra
 mensagem chegar.
 
+### Correção do dono, mesmo dia — "devolver ao agente" não fecha o caso
+
+Depois de testar, o dono corrigiu uma premissa errada da implementação original: o chamado
+devolvido **não deve sumir da fila**. O uso real do botão é a consultora ganhar tempo sem
+deixar o cliente sem resposta (ela sabe que vai demorar, ou por qualquer outro motivo) — ela
+precisa poder **reassumir quando quiser**, o chamado continua "dela" na fila, só que a Manu
+está respondendo enquanto isso.
+
+- `Queue.svelte` passou a listar `returned_to_agent` junto de `pending`/`assumed`.
+- `HandoffCard.svelte` ganhou um terceiro ramo de UI pra esse status: badge "Com a Manu",
+  quem devolveu e quando, botão **"Assumir de novo"** (reusa `assume()`) + "Finalizar chamado".
+- **Efeito em cadeia no runtime**: como o mesmo jid pode agora ter um chamado devolvido em
+  paralelo a um chamado novo (se a consultora reassumir e a Manu escalar de novo depois), a
+  correlação por `contact_jid` (ambígua nesse cenário) foi trocada por **correlação por id do
+  próprio chamado** — `st.handoffId` guardado ao escalar, RPC `handoffs_status_for_ids` no
+  lugar de `handoffs_status_for_jids`. O poll agora também detecta quando a consultora
+  reassume (status volta a `assumed`/`pending`) e **re-silencia a Manu** nessa hora — sem isso,
+  as duas responderiam ao mesmo tempo depois de uma reassunção.
+
 ### Efeito colateral: telefone resolvido melhor, achado no mesmo pedido
 
 Ver [012 addendum](012-quando-e-como-o-agente-escala.md#addendum-2026-09-12) e o achado de
