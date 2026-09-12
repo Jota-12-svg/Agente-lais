@@ -58,6 +58,12 @@ function loadEnvVar(name) {
 const GEMINI_API_KEY = loadEnvVar('GEMINI_API_KEY')
 const SUPABASE_PROJECT_REF = loadEnvVar('SUPABASE_PROJECT_REF')
 const SUPABASE_PUBLISHABLE_KEY = loadEnvVar('SUPABASE_PUBLISHABLE_KEY')
+// Restrição opcional a um único jid — decisão do dono em 2026-09-12, primeiro dia no número
+// real da loja: validar com um contato de teste antes de abrir pra qualquer cliente. Vazio
+// (não setado) = comportamento normal, responde todo mundo. Mesmo padrão do
+// whatsapp-self-hosted-test/manu-live-bridge.mjs (sessão 14 de 2026-09-11), aplicado aqui ao
+// runtime real em vez de um bridge descartável.
+const ALLOWED_JID = loadEnvVar('ALLOWED_JID') || null
 
 if (!GEMINI_API_KEY) {
   console.error('GEMINI_API_KEY não encontrada — nem em process.env, nem no .env do repo.')
@@ -177,7 +183,11 @@ async function start() {
     if (connection === 'open') {
       connectionStatus = 'conectado'
       latestQR = null
-      logger.info('>>> Runtime conectado — Manu responde clientes reais a partir de agora.')
+      if (ALLOWED_JID) {
+        logger.warn({ ALLOWED_JID }, '>>> Runtime conectado — MODO TESTE: só responde este jid, qualquer outro é ignorado em silêncio.')
+      } else {
+        logger.info('>>> Runtime conectado — Manu responde clientes reais a partir de agora.')
+      }
     }
     if (connection === 'close') {
       connectionStatus = 'desconectado'
@@ -197,6 +207,11 @@ async function start() {
 
       // Grupos e newsletters não são clientes 1:1 — a Manu não responde ali.
       if (jid?.endsWith('@g.us') || jid?.endsWith('@newsletter')) continue
+
+      // Restrição de teste (ver ALLOWED_JID acima) — ignora silenciosamente qualquer outro
+      // contato, sem logar nem tocar em estado. Cliente real nenhum recebe resposta enquanto
+      // isso estiver setado.
+      if (ALLOWED_JID && jid !== ALLOWED_JID) continue
 
       // Histórico recente reenviado ao reconectar (item 3 do 027) não é evento de agora.
       const idadeMs = Date.now() - Number(msg.messageTimestamp) * 1000
