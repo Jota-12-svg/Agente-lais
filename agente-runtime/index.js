@@ -509,4 +509,18 @@ app.get('/qr', (_req, res) => {
 
 app.get('/health', (_req, res) => res.json({ status: connectionStatus, agentEnabled }))
 
+// Endpoint TEMPORÁRIO, 2026-09-12 — lista os grupos que a conta já participa (nome + jid),
+// direto do WhatsApp, sem precisar de mensagem nova pra descobrir o jid de um grupo (achado:
+// sock.groupFetchAllParticipating() resolve isso na hora). Remover depois de usar — mesma
+// falta de autenticação do /qr, mas sem link divulgado é baixo risco pra uso pontual.
+app.get('/groups', async (_req, res) => {
+  if (!sock) return res.status(503).json({ error: 'socket ainda não conectado' })
+  try {
+    const grupos = await sock.groupFetchAllParticipating()
+    res.json(Object.values(grupos).map((g) => ({ jid: g.id, nome: g.subject, participantes: g.participants?.length })))
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+})
+
 app.listen(PORT, () => logger.info({ port: PORT }, 'Servidor HTTP no ar'))
