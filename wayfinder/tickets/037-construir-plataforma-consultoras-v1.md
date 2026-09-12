@@ -105,7 +105,7 @@ rodar o deploy de verdade, corrigir o que quebrou no caminho, e validar.
   valor seguro (`false`); a plataforma roda em produção, não localmente, então não precisa do
   ajuste que a linha `true` fazia para teste local.
 - **Allow-list: 3 dos 4 e-mails reais gravados** — Joslaine e Gabriela confirmadas; **Pamella
-  (`pamella_elling@outlook.com`) e a Lais ainda faltam.** A Pamella usa Outlook, e o Google
+  (e-mail pessoal dela, Outlook) e a Lais ainda faltam.** A Pamella usa Outlook, e o Google
   recusou ela como usuária de teste do OAuth porque o endereço não tem Conta do Google ativa
   vinculada — ela precisa criar uma (pode ser com o próprio e-mail Outlook, não precisa de Gmail
   novo) antes de conseguir logar. O e-mail da Lais nunca chegou a ser passado nesta sessão.
@@ -135,15 +135,15 @@ rodar o deploy de verdade, corrigir o que quebrou no caminho, e validar.
 
 **Addendum (mesmo dia, depois do teste):** o dono pediu acesso próprio, permanente — a
 allow-list agora tem **5 e-mails**, não os 4 originais do 035/037 (3 consultoras + dona):
-`joaovictormarchi76@gmail.com` (o dono do projeto, João Victor) entrou como acesso de
+o e-mail do dono do projeto (João Victor) entrou como acesso de
 dono/dev, além das 4 pessoas do negócio. Achado ao verificar: a Pamella (Outlook) **já estava**
 na tabela `advisor_allowlist` desde a inserção original da sessão — a recusa dela é só na
 lista de test users do OAuth do Google, que é uma trava separada e continua pendente.
 
 **Pendências que não bloqueiam o fechamento deste ticket, mas ficam registradas:**
 
-1. **A Pamella segue de fora** — confirmado de novo (mesma sessão): o Google recusa
-   `pamella_elling@outlook.com` como test user porque o endereço não tem Conta do Google, do
+1. **A Pamella segue de fora** — confirmado de novo (mesma sessão): o Google recusa o
+   e-mail Outlook dela como test user porque o endereço não tem Conta do Google, do
    Google Workspace ou do Cloud Identity associada. Não é algo resolvível por API/console —
    só a própria Pamella cria a conta (precisa confirmar um código no Outlook dela; ver
    `accounts.google.com/signup` → "Usar meu endereço de e-mail atual"). Assim que ela fizer

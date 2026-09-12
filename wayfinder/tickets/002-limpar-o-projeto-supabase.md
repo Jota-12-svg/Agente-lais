@@ -39,7 +39,7 @@ existia, o que foi apagado e quais credenciais mudaram.
 Levantado via **Management API do Supabase** (`SUPABASE_ACCESS_TOKEN`, endpoint
 `database/query`), em modo só-leitura — nenhum `drop`/`delete` foi executado. Projeto
 `ewxmjbvaolfiafhghxbn`, região `us-east-1`, criado em 2026-08-01, nome no dashboard ainda é
-o genérico `joaovictormarchi76@gmail.com's Project` (não ficou marca de projeto anterior no
+o genérico `<e-mail do dono>'s Project` (não ficou marca de projeto anterior no
 nome).
 
 ### Schemas e tabelas
