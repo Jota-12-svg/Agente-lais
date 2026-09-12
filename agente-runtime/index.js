@@ -21,7 +21,7 @@
 //   - Áudio de entrada (nota de voz do cliente): baixa via Baileys e manda como `inlineData`
 //     pro Gemini, mesmo padrão validado no 018 — achado e corrigido em 2026-09-12, ver 044.
 
-import { readFileSync, existsSync } from 'node:fs'
+import { readFileSync, existsSync, rmSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import express from 'express'
@@ -205,7 +205,19 @@ async function start() {
       connectionStatus = 'desconectado'
       const statusCode = lastDisconnect?.error?.output?.statusCode
       if (statusCode === DisconnectReason.loggedOut) {
-        logger.error('Sessão deslogada pelo WhatsApp — precisa vincular de novo em /qr.')
+        // Achado real, 2026-09-12: aqui só logava e parava — nunca gerava QR novo de novo,
+        // então /qr ficava preso em "Gerando QR novo…" pra sempre (o processo seguia vivo,
+        // /health respondia, mas o socket nunca era recriado). A credencial velha (inválida,
+        // rejeitada pelo WhatsApp) precisa sumir do AUTH_DIR antes de tentar de novo, senão
+        // useMultiFileAuthState recarrega a mesma credencial morta e o WhatsApp desloga de
+        // novo, em loop silencioso.
+        logger.error('Sessão deslogada pelo WhatsApp — limpando credenciais antigas e gerando QR novo em /qr.')
+        try {
+          rmSync(AUTH_DIR, { recursive: true, force: true })
+        } catch (err) {
+          logger.error({ err: err.message }, 'Falha ao limpar AUTH_DIR — QR novo pode não aparecer.')
+        }
+        setTimeout(start, 1000)
         return
       }
       logger.warn({ statusCode }, 'Conexão fechada, reconectando em 3s...')
