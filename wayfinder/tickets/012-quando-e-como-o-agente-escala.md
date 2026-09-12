@@ -169,3 +169,23 @@ retomado pelo ticket [035](035-plataforma-central-das-consultoras.md): decisão 
 **comportamento** definido aqui — o agente produz fila e não roteia, dona anexada sem trava,
 aviso nunca por WhatsApp ativo — continua intacto; muda só onde a fila mora. Ver o
 reenquadramento de 029/030/031 no próprio 035.
+
+---
+
+## Addendum — 2026-09-12 (terceira exceção ao "caminho de volta")
+
+Grilling com o dono adiciona uma terceira exceção ao "definitivo" acima — as duas exceções de
+2026-08-12 (janela de retomada, reinício total) continuam valendo sem mudança:
+
+- **Devolução manual, só antes da consultora ter respondido de fato.** Uma consultora pode
+  assumir um chamado por engano, ou perceber que é um caso simples que a Manu resolve sozinha,
+  e devolvê-lo ao agente — **mas só se ela ainda não escreveu nada para o cliente** naquele
+  chamado. Depois da primeira resposta humana de verdade, vale o "definitivo" original sem
+  exceção: não há botão nem comando que traga o agente de volta.
+- **Por quê esse critério, e não "a consultora decide na hora"**: preserva o espírito original
+  do "definitivo" — uma vez que o cliente teve contato humano real, a troca de volta pra um
+  agente automatizado seria perceptível e ruim pra experiência. O caso que motivou a exceção
+  (assumiu por engano/sem necessidade) não tem esse problema, porque o cliente nunca chegou a
+  saber que uma pessoa entrou na conversa.
+- **Implementação:** ticket novo [045](045-devolver-chamado-ao-agente.md), bloqueado pelo
+  [044](044-construir-runtime-do-agente.md) — motivo no próprio 045.

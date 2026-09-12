@@ -382,7 +382,9 @@ Névoa em escopo, ainda sem nitidez para virar ticket:
   verdade quando o runtime do agente existir ([031](tickets/031-implementar-escrita-do-chamado-na-fila.md)
   escreve o chamado). **Continua na névoa:** ver e **corrigir a conversa** do agente dentro da
   plataforma, e o fluxo de "assumir uma conversa em andamento" (retomar o controle no meio).
-  Reenquadrou 029/030/031.
+  O caminho **inverso** (devolver um chamado assumido de volta pro agente) já tem design
+  fechado no [045](tickets/045-devolver-chamado-ao-agente.md), bloqueado pelo 044 — não é a
+  mesma névoa, mas mora na mesma superfície. Reenquadrou 029/030/031.
 - **LGPD.** Consentimento, retenção e o que pode ser guardado de conversa de cliente.
 - **Estratégia de rollout.** Piloto com uma consultora, horário limitado, fallback quando
   o agente falha. Bloqueia a redação do manual das consultoras

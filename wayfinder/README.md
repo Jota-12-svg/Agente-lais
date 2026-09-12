@@ -85,6 +85,18 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 > (fora do horário de atendimento, plano de reverter em mente, mesmo cuidado do item 5 do 027).
 > Sem isso o runtime fica "conectando" indefinidamente, sem responder ninguém de verdade.
 >
+> **2026-09-12, sessão seguinte: bug de áudio corrigido, novo ticket 045 aberto.** O runtime
+> (`agente-runtime/index.js` e `manu-live-bridge.mjs`) só extraía texto de
+> `conversation`/`extendedTextMessage` — nota de voz do cliente caía num `if (!texto) continue`
+> e era descartada em silêncio, contrariando o comportamento já fechado no
+> [014](014-como-o-agente-soa.md). Corrigido: baixa o buffer via `downloadMediaMessage`
+> (Baileys) e manda como `inlineData` pro Gemini, mesmo contrato validado no
+> [018](018-validar-contrato-do-llm.md) (OGG/Opus sem transcodificar). Registrado como lacuna
+> a portar no **044** (não era esquecimento consciente — ver o próprio ticket). Grilling do
+> mesmo pedido abriu o **045** (botão "devolver ao agente" na plataforma) e um addendum no
+> **012** (terceira exceção ao "caminho de volta", só antes da consultora ter respondido de
+> fato) — construção do 045 fica bloqueada pelo **044**.
+>
 > **038 — grilling feito, ticket ainda aberto** (2026-09-10): a **estratégia de rollout** foi
 > grelhada por inteiro com o dono (3 rodadas) e as decisões estão no ticket sob
 > `## Decisões do grilling`. Piloto = agente 24/7 + as três consultoras desde o dia 1 (sem
@@ -174,6 +186,7 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 | 034 | [Redigir o manual do agente para as consultoras](tickets/034-redigir-o-manual-do-agente.md) | task | 036 + estratégia de rollout (névoa) — forma decidida no 033, falta a redação; 014, 011 e 037 saíram do bloqueio (todos fecharam 2026-09-11) |
 | 031 | [Implementar a escrita do chamado do agente na fila (INSERT no Supabase)](tickets/031-implementar-escrita-do-chamado-na-fila.md) | task | runtime do agente (mecanismo de autenticação decidido e testado ao vivo em 2026-09-11 — RPC `security definer` gateada por segredo; falta só o runtime chamar de verdade); `chatModify markRead:false` continua pendente |
 | 036 | [Freio de mão global — desligamento de emergência do agente](tickets/036-freio-de-mao-global.md) | task | **044** — mecanismo, esquema e UI já construídos e testados de ponta a ponta (2026-09-11); falta só o runtime assinar a flag e provar que o agente se cala |
+| 045 | [Botão "Devolver ao agente" nos chamados da plataforma](tickets/045-devolver-chamado-ao-agente.md) | task | **044** — design já fechado no grilling de 2026-09-12 (critério, modelagem do estado); falta o 044 dar ao runtime leitura de `handoffs` e estado persistido antes de construir |
 
 ## Fechados
 
