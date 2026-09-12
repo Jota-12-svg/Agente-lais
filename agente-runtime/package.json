@@ -1,0 +1,19 @@
+{
+  "name": "agente-runtime",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Runtime provisório do agente (Manu) — conecta ao WhatsApp de verdade via Baileys, responde clientes reais via Gemini, escala pra fila real (031) e assina o freio de mão (036). PROVISÓRIO: auth em disco (não Supabase), estado de conversa em memória, sem idempotência — o ticket 044 formaliza a versão definitiva.",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.4",
+    "@whiskeysockets/baileys": "^6.7.24",
+    "express": "^4.19.2",
+    "pino": "^9.3.2",
+    "pino-pretty": "^11.2.2",
+    "qrcode": "^1.5.4"
+  }
+}
