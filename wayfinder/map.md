@@ -427,9 +427,11 @@ prototipagem, `/prototype`. Em tickets de research, `/research` como subagente.
   toda (re)conexão agora escuta o histórico reenviado pelo WhatsApp (`messaging-history.set`)
   e recupera qualquer `fromMe` humano dentro da janela de 3 dias já fixada em 012/013,
   inclusive sobrepondo um atendimento `encerrado`; desambiguação (mensagem antiga é da própria
-  Manu, ou de uma consultora) via tabela nova `agent_sent_messages`. Rede de segurança
-  imediata no `system-prompt.md` enquanto isso não é validado ao vivo. **Pendente**: aplicar a
-  migration em produção e o teste real de reconexão — ver ticket, ainda `in-progress`.
+  Manu, ou de uma consultora) via tabela nova `agent_sent_messages`, **já aplicada em
+  produção** (migration rodada via SQL Editor, segredo validado de propósito com `ERROR
+  28000: forbidden`). Rede de segurança imediata no `system-prompt.md` enquanto isso não é
+  validado ao vivo. **Pendente**: só o teste real de reconexão — ver ticket, ainda
+  `in-progress`.
 
 ## Not yet specified
 

@@ -98,7 +98,15 @@ do incidente, inspeção local da lib Baileys (`6.7.24`) instalada só para leit
 - Checklist manual de reconciliação a cada reconexão — não escala pra quando o agente
   reconecta sozinho fora de uma sessão.
 
-**Pendente:** aplicar a migration em produção (mesmos bloqueios de permissão já documentados
-em 046/038 podem se repetir) e a validação ao vivo do item 4 — depende de alguém escanear o QR
+**Migration aplicada em produção em 2026-09-14**, via SQL Editor (mesmo caminho do 046 —
+`db push`/CLI seguiram fora do alcance desta worktree, sem bloqueio de permissão desta vez).
+Confirmado por leitura direta, não só pela mensagem de sucesso: as 3 colunas de
+`agent_sent_messages` batem no `information_schema`, as duas RPCs existem com `EXECUTE`
+concedido a `anon`, e uma chamada de propósito com segredo errado devolveu `ERROR 28000:
+forbidden` — o mesmo padrão de prova usado no 046 pro `engagement_secret`.
+
+**Pendente:** só a validação ao vivo do item 4 — uma reconexão real do runtime com uma
+mensagem `fromMe` de teste chegando via histórico reenviado. Depende de alguém escanear o QR
 de novo no número da loja, o que também é pré-requisito para o próprio agente voltar a
 responder qualquer cliente (`/health` mostrando `"conectando"` desde as 20:43 UTC de hoje).
+Ticket segue `in-progress` até esse teste acontecer.
