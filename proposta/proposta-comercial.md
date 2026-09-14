@@ -47,6 +47,3 @@ Ao final do mês, avaliamos juntos três pontos:
 - não houve nenhum episódio em que o agente afirmou algo que não deveria, como preço ou
   disponibilidade de um produto;
 - a equipe prefere trabalhar com o agente do que sem ele.
-
-Se a resposta for positiva nos três pontos, a mensalidade de R$ 800,00 passa a valer a partir
-do segundo mês. Se não for, encerramos ali, sem custo e sem compromisso.
