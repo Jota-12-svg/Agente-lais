@@ -3,7 +3,7 @@ id: "046"
 title: Endurecer o runtime do agente — estado persistido, idempotência e deploy automático
 labels: [wayfinder:task]
 status: in-progress
-assignee: sessão-grilling-046
+assignee: sessão-idempotencia-deploy-046
 blocked-by: []
 ---
 
