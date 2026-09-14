@@ -405,6 +405,18 @@ prototipagem, `/prototype`. Em tickets de research, `/research` como subagente.
   no caminho que **`main` nunca tinha recebido PR** desde a fase de pesquisa do projeto (todo
   o trabalho real vivia só em `wayfinder/atendimento-hoje`); corrigido com o dono, PR #1
   (aberto desde 2026-08-10) squash-mergeado trazendo `main` em dia.
+- **Agente liberado para clientes reais** — 2026-09-14, decisão explícita do dono. Removida
+  a variável `ALLOWED_JID` do serviço `agente-runtime` em produção (Railway) e forçado um
+  redeploy; log de boot confirmou `>>> Runtime conectado — Manu responde clientes reais a
+  partir de agora.` e `/health` respondeu `{"status":"conectado","agentEnabled":true}`.
+  Verificado antes de mexer, via `railway logs`, que o número já conectado era o **da loja**
+  (não o pessoal do dono, como os handovers de 09-12 registravam — reconexão física, fora de
+  qualquer sessão, nunca chegou a ser documentada em git). Feito com **dois itens do gate de
+  entrada do [038](tickets/038-estrategia-de-rollout.md) ainda abertos** (item 8, extração
+  estruturada da qualificação; item 9, Parte A do manual entregue + demo ao vivo) e o
+  [036](tickets/036-freio-de-mao-global.md) só parcialmente comprovado (falta o teste com
+  mensagem real) — decisão consciente do dono, registrada aqui e nos tickets 036/038, não
+  decisão tomada por conta própria.
 
 ## Not yet specified
 
@@ -441,13 +453,6 @@ Névoa em escopo, ainda sem nitidez para virar ticket:
   construído** em 2026-09-12 — [045](tickets/045-devolver-chamado-ao-agente.md), não é a
   mesma névoa, mas morava na mesma superfície. Reenquadrou 029/030/031.
 - **LGPD.** Consentimento, retenção e o que pode ser guardado de conversa de cliente.
-- **Estratégia de rollout.** Piloto com uma consultora, horário limitado, fallback quando
-  o agente falha. Bloqueia a redação do manual das consultoras
-  ([034](tickets/034-redigir-o-manual-do-agente.md)): define o canal de aviso de erro, o
-  momento de entrega de cada parte e o piloto que dispara a checagem de manutenção.
-  **Virou o ticket [038](tickets/038-estrategia-de-rollout.md)** (grilling, aberto
-  2026-09-10; forma decidida, ticket segue aberto por pendências de runtime/037) — quando
-  fechar, some desta lista.
 - **Migração da planilha compartilhada.** Se os clientes saem da planilha para o Supabase,
   ou se os dois coexistem.
 

@@ -128,3 +128,19 @@ A função **não está implantada de verdade** ainda (falta conta Resend do don
 si já funciona e já avisa via Realtime na plataforma, testado ao vivo (ver "Progresso
 2026-09-14" acima). Não muda nada do critério "Resolvido quando" deste ticket — só documenta
 onde mora o aviso, que era pergunta aberta no 038 original.
+
+## Agente liberado para clientes reais (2026-09-14) — eleva a urgência deste ticket
+
+Pedido do dono: `ALLOWED_JID` removido do `agente-runtime` em produção — o Manu agora
+responde qualquer contato no número real da loja, não só o grupo de teste. Avisado antes de
+agir que este ticket ainda não tem a prova final (mensagem real chegando com o freio
+desligado); o dono decidiu prosseguir mesmo assim (ver addendum no
+[038](038-estrategia-de-rollout.md)).
+
+**O que isso muda:** o cenário que faltava provar deixa de ser hipotético — agora é sobre
+clientes de verdade da loja, não sobre o grupo "Teste Agente". O "Resolvido quando" deste
+ticket continua de pé, mas com peso maior: até a mensagem real de teste acontecer, o único
+mecanismo comprovado de calar o agente numa alucinação em série é o botão em si, cujo efeito
+sobre mensagem **em trânsito no momento exato do desligamento** segue sem confirmação prática.
+Recomendação registrada aqui: fazer esse teste (desligar e mandar uma mensagem real) o quanto
+antes, em vez de esperar acontecer sem querer.
