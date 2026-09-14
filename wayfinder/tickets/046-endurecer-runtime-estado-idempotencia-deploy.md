@@ -2,7 +2,7 @@
 id: "046"
 title: Endurecer o runtime do agente — estado persistido, idempotência e deploy automático
 labels: [wayfinder:task]
-status: in-progress
+status: closed
 assignee: sessão-idempotencia-deploy-046
 blocked-by: []
 ---
@@ -173,3 +173,92 @@ depois (`delete ... returning id`, mesmo `id` confirmado no retorno) — produç
 **Item 1 do 046 está fechado.** Itens 2 (idempotência) e 3 (deploy automático) **não foram
 tocados** — seguem como próxima fatia, sem bloqueio do item 1. O ticket como um todo segue
 `in-progress` até esses dois fecharem também.
+
+## Item 2 — idempotência na escalada (2026-09-14, mesma sessão do fechamento do 038)
+
+Lido `processarTurno` inteiro antes de mexer. O bug real: duas chamadas concorrentes pro
+mesmo jid (cliente manda mensagens em rajada — cada uma vira seu próprio evento
+`messages.upsert`) podiam escalar duas vezes. Entre `await askManu(...)` e
+`st.status = 'escalado'` não há nenhum outro `await` — a checagem-e-escrita é atômica no
+event loop single-thread do Node — mas o código **não checava** `st.status` antes de
+escrever, só setava. Se a segunda chamada terminasse o próprio `await askManu` depois da
+primeira já ter escalado, ela escalava de novo, escrevendo um segundo chamado na fila pro
+mesmo atendimento.
+
+**Fix**: `if (escalou && st.status !== 'escalado')` em vez de só `if (escalou)`
+(`agente-runtime/index.js`, `processarTurno`). Quem chega primeiro nessa linha "vence"; quem
+chega depois já vê `st.status === 'escalado'` e pula o bloco — sem escrever de novo.
+
+**Validado com reprodução isolada** (não dá pra mandar mensagem real de WhatsApp em rajada
+sob demanda): script à parte simulando duas chamadas concorrentes com o mesmo padrão de
+`await` do código real (a segunda "termina" antes da primeira, cenário de corrida de
+verdade) — sem a guarda, duplicava (2 chamados); com a guarda, só 1. `node --check` limpo.
+
+**Defesa em profundidade no banco (constraint por `engagement_id`) considerada e descartada
+nesta leva**: `handoffs.engagement_id` existe (FK do item 1), mas achado ao investigar —
+**confirmado vazio (`NULL`) em produção, em todas as linhas**. O `handoffs_insert` nunca
+recebeu/populou esse campo. Corrigir isso exigiria mexer na função (não versionada em
+migration, criada via painel) que já vazou o segredo em texto duas vezes via
+`pg_get_functiondef` (duas rotações de emergência registradas no projeto) — fora de escopo
+e risco desnecessário pra este ticket. Fica registrado como achado solto, não pendência
+deste item: a guarda em memória cobre o cenário real descrito no ticket (mensagens
+reprocessadas dentro do mesmo processo vivo); só não cobre duplicata entre processos
+diferentes rodando ao mesmo tempo, cenário que não deveria acontecer com o Railway rodando
+uma réplica só.
+
+**Item 2 fechado.**
+
+## Item 3 — deploy automático via GitHub (2026-09-14, mesma sessão)
+
+**Achado que mudou o escopo real do item**: ao conectar o serviço `agente-runtime` do
+Railway ao GitHub, o primeiro deploy de teste falhou — `main` estava parado desde o commit
+`e874f04` (fase de pesquisa do projeto, **antes até da pasta `agente-runtime/` existir**).
+Confirmado (`git ls-tree origin/main -- agente-runtime/`, vazio): nada do trabalho real dos
+últimos dias — inclusive tudo que roda em produção hoje — jamais foi mergeado em `main` por
+PR, ao contrário do que o próprio CLAUDE.md descreve como o fluxo. Existia até um PR (#1)
+aberto desde 2026-08-10 trazendo exatamente essa atualização, nunca mergeado.
+
+Perguntado ao dono como proceder — escolhido atualizar `main` agora. PR #1 revisado/editado
+(título e corpo) e **squash-mergeado** (`5e424ed`, fast-forward puro, sem conflito — `main`
+era ancestral direto de `wayfinder/atendimento-hoje`, nunca tinha divergido). Branch
+`wayfinder/atendimento-hoje` mantida (não é uma branch curta de feature — é a branch de
+trabalho corrente do dia, ainda em uso por sessões paralelas).
+
+**Implementado** (Railway GraphQL API, via `railway api` — a CLI (`railway service source
+connect`) só cobre repo+branch, sem root directory de monorepo):
+- `serviceInstanceDeploy`/`source connect`: serviço `agente-runtime` ligado ao repo
+  `Jota-12-svg/Agente-lais`, branch `main`.
+- `serviceInstanceUpdate`: `rootDirectory: /agente-runtime`,
+  `watchPatterns: ["agente-runtime/**"]` — só redisploya quando algo dentro da pasta do
+  runtime muda, não o monorepo inteiro.
+
+**Validado de ponta a ponta, depois do merge do main**: `serviceInstanceDeploy` disparado
+pro commit mais novo de `main` — build `SUCCESS`, `/health` confirma `conectado`, log do
+boot mostra o volume persistente montando normalmente (sem pedir QR de novo — auth
+sobrevive ao novo caminho de deploy também) e "Atendimentos abertos reidratados do
+Supabase" (item 1 continua funcionando no deploy via GitHub). Confirma o critério "Resolvido
+quando" do ticket: "um push no repositório dispara deploy... sem comando manual" — a partir
+de agora, um merge em `main` faz isso sozinho; `railway up` manual não é mais necessário
+(mas continua funcionando, se precisar).
+
+**Item 3 fechado.**
+
+**046 como um todo: fechado — itens 1, 2 e 3 completos.**
+
+## Resolução
+
+**Fechado em 2026-09-14.** Os três itens (estado persistido, idempotência, deploy
+automático) completos e validados ao vivo em produção — ver as seções acima para cada um.
+
+**Efeito colateral relevante, fora do escopo original do ticket**: ao trabalhar no item 3,
+achado que `main` nunca tinha recebido PR desde a fase de pesquisa do projeto — todo o
+trabalho real vivia só em `wayfinder/atendimento-hoje`. Corrigido com o dono (PR #1,
+squash-merge `5e424ed`) — `main` agora reflete o estado real do repositório, condição
+necessária pra push-to-deploy funcionar. Isso não muda o fluxo de trabalho descrito no
+CLAUDE.md (branches curtas → PR → squash em `main`); só corrige o fato de que, na prática,
+esse fluxo não vinha sendo fechado (PRs abertos, nunca mergeados).
+
+**Consequência natural do 044** (poll de 5s virar reação direta a Realtime na escrita de
+`handoffs`) **não foi feita** — registrada no ticket como "vale fazer se o esforço for
+pequeno, mas não é critério de fechamento"; permanece de fora, sem abrir ticket novo (não
+é dívida, é escopo que nunca entrou).

@@ -393,6 +393,18 @@ prototipagem, `/prototype`. Em tickets de research, `/research` como subagente.
   Achado no fechamento: o rótulo de prioridade que o 037 exigia (erro de preço/disponibilidade
   é mais urgente) tinha ficado de fora da implementação original — corrigido antes de fechar.
   Desbloqueia o [034](tickets/034-redigir-o-manual-do-agente.md) (só falta o 036 agora).
+- [Endurecer o runtime do agente — estado, idempotência e deploy automático](tickets/046-endurecer-runtime-estado-idempotencia-deploy.md)
+  — **fechado em 2026-09-14**, os três itens completos e validados ao vivo. **Estado**:
+  esquema `engagements` no Supabase (histórico em JSONB, uma linha por atendimento com índice
+  único parcial, segredo no Vault em vez de hardcoded) — restart não perde mais conversa em
+  andamento. **Idempotência**: guarda em memória (`st.status !== 'escalado'`) evita duas
+  escaladas concorrentes duplicarem o chamado na fila; reforço no banco descartado — achado
+  que `handoffs.engagement_id` nunca foi populado pelo `handoffs_insert`, e mexer nessa função
+  (não versionada, já vazou segredo 2x) fica fora de escopo. **Deploy automático**: serviço
+  `agente-runtime` do Railway ligado ao GitHub (branch `main`, raiz `/agente-runtime`) — achado
+  no caminho que **`main` nunca tinha recebido PR** desde a fase de pesquisa do projeto (todo
+  o trabalho real vivia só em `wayfinder/atendimento-hoje`); corrigido com o dono, PR #1
+  (aberto desde 2026-08-10) squash-mergeado trazendo `main` em dia.
 
 ## Not yet specified
 
@@ -404,15 +416,13 @@ Névoa em escopo, ainda sem nitidez para virar ticket:
   qualificação, o `advisor_verdict` da consultora é o sinal de maior peso, e desfecho de
   negócio negativo é neutro. Falta a forma do mecanismo — depende de ver conversas reais e
   de a superfície do 035 existir para o `advisor_verdict` acumular.
-- **Modelo de dados no Supabase.** Esquema de clientes, conversas, produtos e aprendizado. O
-  ticket 010 já fixou os campos que a qualificação extrai e que o Supabase é a memória interna
-  do agente (todo atendimento, inclusive os perdidos); o ticket **035 fixou a tabela
-  `handoffs`** (a fila de chamados escalados que as consultoras enxergam — distinta da memória
-  do agente, ligada a ela por `engagement_id`). Falta o esquema da memória (`engagements`),
-  como o catálogo é representado, e a relação entre os dois. **Vira parte do escopo do
-  [046](tickets/046-endurecer-runtime-estado-idempotencia-deploy.md)** (2026-09-14): o runtime
-  hoje guarda a conversa em memória, não sobrevive a restart — persistir isso exige fechar
-  este esquema primeiro.
+- **Modelo de dados no Supabase — parcialmente resolvido.** O esquema da memória do agente
+  (`engagements`) fechou no [046](tickets/046-endurecer-runtime-estado-idempotencia-deploy.md)
+  (item 1, 2026-09-14) — ver `Decisions so far`. Falta ainda: como o catálogo de produtos é
+  representado (fase 2, sem material à vista desde que o 032 fechou sem buscar planilhas
+  reais); qualificação estruturada (nome/orçamento/prazo como campos, não só texto livre no
+  histórico JSONB) segue como pendência aberta, item 8 do gate de entrada do
+  [038](tickets/038-estrategia-de-rollout.md).
 - **Fluxo do arquiteto.** O agente recebe uma planilha com dezenas de itens — o que ele faz
   com ela é um segundo fluxo inteiro, não uma variação do primeiro. Na fase 1 ele escala
   imediato, sem coleta (010); o ticket [032](tickets/032-catalogo-do-maino-e-planilha-de-arquiteto.md)
