@@ -29,12 +29,13 @@
 //   - Silêncio por conversa (009/012): se uma mensagem chegar de outro dispositivo seu
 //     (fromMe, não eco da própria Manu), aquela conversa entra em silêncio.
 //   - Handoff sobrevive a reconexão (047, 2026-09-14): achado real em produção — se a
-//     consultora escreve enquanto o processo não está conectado, o `fromMe` acima nunca
-//     chega, e a Manu trata a próxima mensagem do cliente como atendimento novo. Toda
-//     (re)conexão agora escuta o histórico que o Baileys reenvia (`messaging-history.set`) e
-//     recupera esse sinal perdido, dentro da janela de 3 dias do 012/013 — ver
-//     `tratarHistoricoReenviado`. Desambiguação (mensagem antiga é da própria Manu, ou de uma
-//     consultora) via tabela nova `agent_sent_messages` (`agent-sent-messages-writer.mjs`).
+//     consultora escreve enquanto o processo não está conectado, o `fromMe` acima chegava
+//     tarde demais (ou nunca), porque o filtro de "mensagem velha" (15s, pensado pra não
+//     re-responder cliente) descartava a mensagem replay-de-offline do Baileys antes da
+//     checagem de `fromMe`. Corrigido tratando `fromMe` antes desse filtro, com janela própria
+//     de 3 dias (mesma de 012/013). Desambiguação (mensagem antiga é da própria Manu, ou de
+//     uma consultora) via tabela nova `agent_sent_messages` (`agent-sent-messages-writer.mjs`),
+//     necessária porque `sentByBridge` (memória) não sobrevive a um restart.
 //   - Escalada grava na fila real (031) com o telefone de verdade do cliente.
 //   - Áudio de entrada (nota de voz do cliente): baixa via Baileys e manda como `inlineData`
 //     pro Gemini, mesmo padrão validado no 018 — achado e corrigido em 2026-09-12, ver 044.
@@ -187,58 +188,26 @@ async function rehidratarEngajamentos() {
   logger.info({ total: engagements.length }, '>>> Atendimentos abertos reidratados do Supabase — restart não perdeu conversa em andamento.')
 }
 
-// ---- Backfill de handoff perdido em reconexão (047, 2026-09-14) ----
+// ---- Handoff sobrevive a reconexão (047, 2026-09-14) ----
 // Mesma janela de "contato perdido" já fixada em 012/013 — reaproveitada aqui, não é um
 // número novo. Mensagem `fromMe` mais velha que isso não tem mais uso: se ninguém mais
 // escreveu por 3 dias, o atendimento já é tratado como esfriado/novo em outros lugares do
-// sistema, não faz sentido este backfill reabrir handoff mais velho que isso.
-const JANELA_HANDOFF_MS = 3 * 24 * 60 * 60 * 1000
-
-// Chamado a cada `messaging-history.set` (toda conexão/reconexão do socket, não só o boot do
-// processo — start() já roda de novo em cada uma). `messages` é o histórico que o WhatsApp
-// reenviou; aqui só interessam mensagens `fromMe` (o mesmo sinal que já silencia o agente em
-// tempo real, ver o handler de `messages.upsert`) dentro da janela acima.
+// sistema, não faz sentido reabrir handoff mais velho que isso.
 //
-// A mesma restrição de teste do `messages.upsert` (grupo/`@newsletter` ignorados, `ALLOWED_JID`
-// quando setado) se aplica aqui — backfill não deve criar estado pra jid que o resto do
-// pipeline nunca processaria.
-async function tratarHistoricoReenviado(messages) {
-  const agora = Date.now()
-  const candidatos = (messages || []).filter((m) => {
-    const jid = m.key?.remoteJid
-    if (!m.key?.fromMe || !jid || !m.key?.id) return false
-    if (jid.endsWith('@g.us') || jid.endsWith('@newsletter')) return false
-    if (ALLOWED_JID && jid !== ALLOWED_JID) return false
-    const idadeMs = agora - Number(m.messageTimestamp) * 1000
-    return Number.isFinite(idadeMs) && idadeMs <= JANELA_HANDOFF_MS
-  })
-  if (candidatos.length === 0) return
-
-  // Desambiguação (047): uma mensagem `fromMe` histórica pode ser da própria Manu (não conta)
-  // ou de uma consultora humana (conta) — só a tabela `agent_sent_messages` sabe diferenciar
-  // depois de um restart (a memória de `sentByBridge` some com o processo).
-  const ids = candidatos.map((m) => m.key.id)
-  const { ok, known, error } = await filterKnownSent(ids)
-  if (!ok) { logger.warn({ error }, '>>> 047: falha ao consultar mensagens conhecidas — backfill pulado nesta reconexão.'); return }
-
-  const jidsHumanos = new Set(candidatos.filter((m) => !known.has(m.key.id)).map((m) => m.key.remoteJid))
-  if (jidsHumanos.size === 0) return
-
-  for (const jid of jidsHumanos) {
-    const st = estadoDe(jid)
-    // 'escalado'/'com_consultora' já silenciam o agente — nada a fazer. Cobre tanto
-    // 'qualificando' (jid nunca visto, ou reidratado em qualificação) quanto o caso de um
-    // atendimento anterior 'encerrado' (a reidratação no boot nunca carrega esse status pra
-    // memória — engagements_list_open só devolve `status <> 'encerrado'` — então pro processo
-    // em memória os dois casos já chegam aqui como o mesmo `st` recém-criado). Decisão do 047:
-    // consultora que escreveu depois do fechamento está com o caso na mão de novo — não deixa
-    // a Manu recomeçar a qualificação por cima disso.
-    if (st.status === 'com_consultora' || st.status === 'escalado') continue
-    st.status = 'com_consultora'
-    logger.warn({ jid }, '>>> 047: handoff perdido recuperado do histórico reenviado na reconexão — Manu em silêncio aqui.')
-    persistirEngajamento(jid).catch((err) => logger.warn({ jid, err: err.message }, 'Falha ao persistir handoff recuperado (047).'))
-  }
-}
+// Tentativa descartada, registrada pra quem mexer aqui de novo não repetir: a primeira versão
+// deste fix escutava `messaging-history.set` (evento de histórico completo que o Baileys
+// reenvia numa reconexão). Não funciona nesta configuração — esse evento só é processado se
+// `shouldSyncHistoryMessage` mandar (`Socket/index.js` do Baileys), que por padrão só retorna
+// `true` quando `syncFullHistory: true` está setado, e não está (de propósito: baixar histórico
+// completo de conversa pra decidir isso seria um escopo de dado bem maior que o necessário,
+// questão de LGPD que o mapa nem chegou a decidir). Testado ao vivo (log real): o evento nunca
+// disparou. O caminho de verdade é mais simples e já existe: mensagem enviada enquanto o
+// aparelho estava offline chega pelo `messages.upsert` normal de qualquer forma (Baileys marca
+// `offline: true` no node e entrega via `type: 'append'`, ver `Socket/messages-recv.js`) — só
+// que o filtro de "mensagem velha, não é evento de agora" (15s, linha abaixo) descarta ela antes
+// de chegar na checagem de `fromMe`. A correção real é no handler de `messages.upsert`: `fromMe`
+// é tratado ANTES desse filtro, com esta janela de 3 dias em vez de 15s.
+const JANELA_HANDOFF_MS = 3 * 24 * 60 * 60 * 1000
 
 // ---- Reagir a mudanças de handoffs feitas pela plataforma (045/012, 2026-09-12) ----
 // Construído direto em cima do runtime provisório, por decisão do dono na sessão — o 045
@@ -375,7 +344,8 @@ async function processarTurno(jid, texto, attachments) {
     if (enviado?.key?.id) {
       st.sentByBridge.add(enviado.key.id)
       // 047: sobrevive ao restart, diferente de sentByBridge (só memória) — é o que deixa o
-      // backfill de handoff (tratarHistoricoReenviado) saber que esta mensagem é da Manu.
+      // handler de `fromMe` em `messages.upsert` saber que uma mensagem antiga é da própria
+      // Manu, não de uma consultora, mesmo depois de o processo cair e subir de novo.
       recordSentMessage(enviado.key.id, jid).catch((err) => logger.warn({ jid, err: err.message }, 'Falha ao registrar mensagem enviada (047).'))
     }
     logger.info({ jid, resposta: respostaLimpa }, 'Manu respondeu.')
@@ -462,12 +432,6 @@ async function start() {
 
   sock.ev.on('creds.update', saveCreds)
 
-  // 047: histórico reenviado pelo WhatsApp nesta (re)conexão — é daqui que vem o sinal de
-  // handoff que se perderia se a consultora escreveu enquanto o processo estava fora do ar.
-  sock.ev.on('messaging-history.set', ({ messages }) => {
-    tratarHistoricoReenviado(messages).catch((err) => logger.error({ err: err.message }, '>>> 047: falha ao processar histórico reenviado.'))
-  })
-
   sock.ev.on('connection.update', ({ connection, lastDisconnect, qr }) => {
     if (qr) {
       latestQR = qr
@@ -536,21 +500,37 @@ async function start() {
         continue
       }
 
-      // Histórico recente reenviado ao reconectar (item 3 do 027) não é evento de agora.
-      const idadeMs = Date.now() - Number(msg.messageTimestamp) * 1000
-      if (!Number.isFinite(idadeMs) || idadeMs > 15000) continue
-
       const st = estadoDe(jid)
 
+      // Silêncio por conversa (009/012), endurecido pelo 047: `fromMe` é tratado ANTES do
+      // filtro de "mensagem velha" abaixo, com janela própria de 3 dias em vez de 15s — é
+      // exatamente essa diferença que resolve o achado real de 2026-09-14 (consultora escreve
+      // com o processo fora do ar, mensagem chega via replay de offline do Baileys quando
+      // reconecta, `messageTimestamp` já tem minutos/horas — o filtro de 15s descartava ela
+      // antes de chegar aqui, e o handoff se perdia pra sempre).
       if (msg.key.fromMe) {
+        if (!msg.key.id) continue
         if (st.sentByBridge.has(msg.key.id)) { st.sentByBridge.delete(msg.key.id); continue }
-        if (st.status !== 'com_consultora') {
+        const idadeFromMeMs = Date.now() - Number(msg.messageTimestamp) * 1000
+        if (Number.isFinite(idadeFromMeMs) && idadeFromMeMs > JANELA_HANDOFF_MS) continue // 047: mais velha que a janela de 012/013, sem uso
+        // 047: `sentByBridge` acima é só memória desta sessão — não sobrevive a um restart.
+        // `agent_sent_messages` sobrevive, é o que permite reconhecer mensagem antiga da
+        // própria Manu (enviada antes de o processo cair) sem confundir com uma consultora.
+        const { ok, known, error } = await filterKnownSent([msg.key.id])
+        if (!ok) { logger.warn({ jid, error }, '>>> 047: falha ao consultar mensagens conhecidas — tratando como handoff por segurança.') }
+        if (ok && known.has(msg.key.id)) continue // é a própria Manu, mensagem antiga sua
+        if (st.status !== 'com_consultora' && st.status !== 'escalado') {
           st.status = 'com_consultora'
           persistirEngajamento(jid).catch((err) => logger.warn({ jid, err: err.message }, 'Falha ao persistir consultora assumindo por outro aparelho.'))
-          logger.info({ jid }, '>>> Consultora assumiu esta conversa (envio direto de outro aparelho) — Manu em silêncio aqui.')
+          logger.info({ jid }, '>>> Consultora assumiu esta conversa (envio direto de outro aparelho, possivelmente recuperado de reconexão — 047) — Manu em silêncio aqui.')
         }
         continue
       }
+
+      // Histórico recente reenviado ao reconectar (item 3 do 027) não é evento de agora — só
+      // pra mensagem de CLIENTE (não re-responder o que já foi respondido antes de cair).
+      const idadeMs = Date.now() - Number(msg.messageTimestamp) * 1000
+      if (!Number.isFinite(idadeMs) || idadeMs > 15000) continue
 
       const texto = msg.message?.conversation || msg.message?.extendedTextMessage?.text
       const audioMsg = msg.message?.audioMessage

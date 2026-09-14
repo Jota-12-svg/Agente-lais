@@ -110,3 +110,38 @@ mensagem `fromMe` de teste chegando via histórico reenviado. Depende de alguém
 de novo no número da loja, o que também é pré-requisito para o próprio agente voltar a
 responder qualquer cliente (`/health` mostrando `"conectando"` desde as 20:43 UTC de hoje).
 Ticket segue `in-progress` até esse teste acontecer.
+
+---
+
+## Addendum — 2026-09-14, mesmo dia (validação ao vivo corrigiu o mecanismo da decisão 2)
+
+**A decisão 2 acima estava errada na escolha do evento.** Testado ao vivo (dono conectou o
+próprio celular pessoal num contato de teste, com `ALLOWED_JID` restrito a ele, forçou logout
+completo e reescaneou o QR — reconexão de verdade, não simulada): `messaging-history.set`
+**nunca disparou**. Investigado no código da lib instalada localmente
+(`@whiskeysockets/baileys@6.7.24`): esse evento só é processado quando `shouldSyncHistoryMessage`
+manda (`Socket/index.js`), que por padrão só retorna `true` se `syncFullHistory: true` estiver
+setado — e não está, nem deveria estar só pra isso (baixar histórico completo de conversa é um
+escopo de dado bem maior que o necessário, questão de LGPD que o mapa não decidiu).
+
+**O mecanismo certo é mais simples e já estava parcialmente construído**: mensagem enviada
+enquanto o aparelho estava offline chega pelo `messages.upsert` normal de qualquer forma — o
+Baileys marca `offline: true` no node do lado do servidor e entrega via `type: 'append'`
+(`Socket/messages-recv.js`), pelo MESMO handler que já trata `fromMe` em tempo real (009/012).
+O bug nunca foi "o sinal não chega" — é que o filtro de "mensagem velha, não é evento de agora"
+(15s, pensado só pra não re-responder cliente) descartava a mensagem antes da checagem de
+`fromMe`, porque os dois casos passavam pelo mesmo `continue`.
+
+**Correção aplicada**: `fromMe` agora é tratado ANTES desse filtro de 15s, com a janela própria
+de 3 dias (item 2 da decisão original, número mantido) usando a MESMA tabela
+`agent_sent_messages` (item 3, sem mudança) pra desambiguar. A função `tratarHistoricoReenviado`
+e o listener de `messaging-history.set` foram removidos — código morto que nunca executaria
+nesta configuração. `fetchMessageHistory` como fallback (seção "O que fica de fora") também
+deixa de fazer sentido como próximo passo — o caminho que funciona já está em produção.
+
+Reprodução isolada (`test-fromme-window.mjs`, 6 casos: replay de 40min, dentro/fora da janela
+de 3 dias, eco da própria sessão, mensagem antiga da própria Manu via tabela persistida, sem
+id) rodada antes do redeploy — todos os casos bateram o esperado.
+
+**Validação ao vivo do item 4 (pendência): em andamento**, mesma sessão — aguardando o
+resultado do teste real na conversa de teste depois deste redeploy corrigido.
