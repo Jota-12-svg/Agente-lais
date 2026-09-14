@@ -1,4 +1,4 @@
-# Research — Como levar o agente ao WhatsApp da Lais Casa
+# Research — Como levar o agente ao WhatsApp da Lais Aliski Casa
 
 Ticket: [005](../tickets/005-caminho-de-integracao-com-o-whatsapp.md) · Investigado em 2026-08-10
 
@@ -18,7 +18,7 @@ Isso é verdade apenas no **caminho de migração direta**. A documentação da 
 >
 > — [Migrate an existing WhatsApp number to a Business Account](https://developers.facebook.com/docs/whatsapp/cloud-api/get-started/migrate-existing-whatsapp-number-to-a-business-account)
 
-Esse caminho se chama **Coexistence**. Ele é o caminho certo para a Lais Casa, e reformula a
+Esse caminho se chama **Coexistence**. Ele é o caminho certo para a Lais Aliski Casa, e reformula a
 decisão inteira: o dilema real não é "migrar ou número paralelo", é **por qual parceiro
 fazer o onboarding**.
 
@@ -116,7 +116,7 @@ especialmente no Brasil.
 > os trataria como fato. O que **é** fato, e não depende delas, é que o uso viola os termos
 > da Meta e que o banimento é uma decisão unilateral dela.
 
-Para a Lais Casa isso é decisivo por um motivo que não é técnico: **o WhatsApp não é um canal
+Para a Lais Aliski Casa isso é decisivo por um motivo que não é técnico: **o WhatsApp não é um canal
 da loja, é o canal**. Perder o número é perder a operação de vendas inteira, junto com o
 histórico de relacionamento das consultoras com clientes de até R$ 50 mil. Economizar
 algumas dezenas de reais por mês contra esse risco não fecha a conta — ainda mais quando a

@@ -1,0 +1,206 @@
+:root {
+  --bg: #f6f1ea;
+  --surface: #ffffff;
+  --ink: #241f1a;
+  --ink-soft: #6b6157;
+  --line: #e4dbcd;
+  --accent: #9c6b3f;
+  --accent-ink: #ffffff;
+  --pending: #b8791f;
+  --assumed: #3f7d55;
+  --returned: #3f6b7d;
+  --danger: #a23b2e;
+  --radius: 14px;
+  --tap: 48px;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  -webkit-text-size-adjust: 100%;
+}
+
+body { padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
+
+#app {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 16px 14px 48px;
+}
+
+h1 { font-size: 1.3rem; margin: 0; }
+h2 { font-size: 1.05rem; margin: 0 0 4px; }
+p { margin: 0; line-height: 1.45; }
+
+button {
+  font: inherit;
+  min-height: var(--tap);
+  padding: 12px 18px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+}
+button:active { transform: translateY(1px); }
+button.primary {
+  background: var(--accent);
+  color: var(--accent-ink);
+  border-color: var(--accent);
+  font-weight: 600;
+}
+button.ghost { background: transparent; }
+button.wide { width: 100%; }
+button:disabled { opacity: 0.5; cursor: default; }
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.topbar .who { font-size: 0.85rem; color: var(--ink-soft); text-align: right; }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 14px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+
+.badge {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+}
+.badge.pending { color: var(--pending); }
+.badge.assumed { color: var(--assumed); }
+.badge.returned_to_agent { color: var(--returned); }
+.badge.priority { color: var(--danger); }
+
+.rowline { display: flex; gap: 8px; flex-wrap: wrap; align-items: baseline; margin-top: 2px; }
+.muted { color: var(--ink-soft); font-size: 0.9rem; }
+.summary { font-size: 1.05rem; margin: 8px 0; }
+
+dl.facts { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; margin: 10px 0 0; font-size: 0.92rem; }
+dl.facts dt { color: var(--ink-soft); }
+dl.facts dd { margin: 0; }
+
+.actions { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+.actions button { flex: 1 1 auto; }
+
+.center { text-align: center; padding: 48px 16px; color: var(--ink-soft); }
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(20,16,12,0.45);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 10;
+}
+.sheet {
+  background: var(--surface);
+  width: 100%;
+  max-width: 640px;
+  border-radius: 18px 18px 0 0;
+  padding: 20px 18px calc(20px + env(safe-area-inset-bottom));
+  max-height: 90vh;
+  overflow-y: auto;
+}
+@media (min-width: 560px) {
+  .overlay { align-items: center; }
+  .sheet { border-radius: 18px; }
+}
+
+fieldset { border: 0; padding: 0; margin: 16px 0 0; }
+fieldset legend { font-weight: 600; margin-bottom: 8px; padding: 0; }
+.opt {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: var(--tap);
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  margin-bottom: 8px;
+}
+.opt input { width: 22px; height: 22px; accent-color: var(--accent); }
+textarea, input[type="text"] {
+  font: inherit;
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+textarea { min-height: 76px; resize: vertical; }
+input[type="text"] { min-height: var(--tap); }
+
+.err {
+  background: #fdecea;
+  color: var(--danger);
+  border: 1px solid #f2c9c3;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 0.9rem;
+  margin-bottom: 12px;
+}
+
+/* Freio de mão global (kill switch) — ticket 036 */
+.ks-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+  margin-bottom: 12px;
+}
+.ks-bar.off {
+  border-color: var(--danger);
+  background: #fdecea;
+}
+.ks-state { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; font-weight: 600; }
+.ks-dot {
+  width: 9px; height: 9px; border-radius: 999px;
+  background: var(--assumed);
+  box-shadow: 0 0 0 3px rgba(63,125,85,0.18);
+}
+.ks-bar.off .ks-dot { background: var(--danger); box-shadow: 0 0 0 3px rgba(162,59,46,0.18); }
+.ks-btn {
+  min-height: 40px;
+  padding: 8px 14px;
+  border-radius: 9px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border: 1px solid var(--danger);
+  color: var(--danger);
+  background: transparent;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.ks-btn.off { background: var(--danger); color: #fff; }
+.ks-btn.on { border-color: var(--assumed); color: #fff; background: var(--assumed); }
+
+.ks-alert {
+  background: var(--danger);
+  color: #fff;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  margin-bottom: 14px;
+}

@@ -1,0 +1,750 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Manu · teste ao vivo</title>
+<style>
+  :root {
+    --ground: #e7e9e0;
+    --panel: #ffffff;
+    --sunk: #f0f1ea;
+    --ink: #23271f;
+    --ink-soft: #5b6053;
+    --ink-faint: #8a8e7e;
+    --accent: #3f6b53;
+    --accent-ink: #2c4c3b;
+    --agent-bubble: #ffffff;
+    --agent-edge: #e0e0d4;
+    --client-bubble: #d7ecd2;
+    --client-edge: #c2ddba;
+    --hairline: #d7d8cc;
+    --danger: #a3412e;
+    --font: "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ground: #14160f;
+      --panel: #1f2219;
+      --sunk: #191c14;
+      --ink: #e9e9df;
+      --ink-soft: #a4a795;
+      --ink-faint: #7c8070;
+      --accent: #8fc0a0;
+      --accent-ink: #a9d3b7;
+      --agent-bubble: #262a20;
+      --agent-edge: #363b2d;
+      --client-bubble: #2f4133;
+      --client-edge: #3f5443;
+      --hairline: #363a2c;
+      --danger: #e0805f;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--font);
+    font-size: 15px;
+    line-height: 1.5;
+    display: flex;
+    justify-content: center;
+  }
+  .app {
+    width: 100%;
+    max-width: 560px;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    background: var(--panel);
+    border-left: 1px solid var(--hairline);
+    border-right: 1px solid var(--hairline);
+  }
+
+  header {
+    padding: 0.7rem 0.9rem;
+    background: var(--accent);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    flex: none;
+  }
+  @media (prefers-color-scheme: dark) { header { color: #10160f; } }
+  .avatar {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: rgba(255,255,255,.22);
+    display: grid; place-items: center;
+    font-weight: 700; font-size: 1rem;
+    flex: none;
+  }
+  .who h1 { margin: 0; font-size: 1rem; font-weight: 600; }
+  .who p { margin: 0; font-size: 0.72rem; opacity: .85; }
+
+  .toolbar {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.5rem 0.9rem;
+    background: var(--sunk);
+    border-bottom: 1px solid var(--hairline);
+    font-size: 0.78rem;
+    flex: none;
+    flex-wrap: wrap;
+  }
+  .toolbar label { display: flex; align-items: center; gap: 0.35rem; cursor: pointer; color: var(--ink-soft); }
+  .toolbar select { font: inherit; font-size: 0.74rem; background: var(--panel); color: var(--ink); border: 1px solid var(--hairline); border-radius: 5px; padding: 0.1rem 0.2rem; }
+  .toolbar button {
+    margin-left: auto;
+    font: inherit;
+    font-size: 0.76rem;
+    color: var(--danger);
+    background: none;
+    border: 1px solid currentColor;
+    border-radius: 6px;
+    padding: 0.15rem 0.55rem;
+    cursor: pointer;
+  }
+  .toolbar a { color: var(--accent-ink); }
+
+  .costbar {
+    padding: 0.35rem 0.9rem;
+    background: var(--sunk);
+    border-bottom: 1px solid var(--hairline);
+    font-size: 0.74rem;
+    color: var(--ink-faint);
+    font-family: var(--mono);
+    flex: none;
+  }
+  .costbar span { color: var(--ink-soft); font-weight: 600; }
+
+  .stream {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem 0.85rem 1.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    background:
+      radial-gradient(circle at 20% 10%, color-mix(in srgb, var(--accent) 5%, transparent), transparent 40%),
+      var(--sunk);
+  }
+  .msg {
+    max-width: 82%;
+    padding: 0.45rem 0.65rem 0.5rem;
+    border-radius: 10px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-size: 0.92rem;
+    box-shadow: 0 1px 1px rgba(0,0,0,.05);
+  }
+  .msg.agent {
+    align-self: flex-start;
+    background: var(--agent-bubble);
+    border: 1px solid var(--agent-edge);
+    border-bottom-left-radius: 3px;
+  }
+  .msg.client {
+    align-self: flex-end;
+    background: var(--client-bubble);
+    border: 1px solid var(--client-edge);
+    border-bottom-right-radius: 3px;
+  }
+  .msg.error {
+    align-self: center;
+    background: transparent;
+    border: 1px dashed var(--danger);
+    color: var(--danger);
+    font-size: 0.8rem;
+    max-width: 92%;
+  }
+  .meta-line {
+    align-self: flex-start;
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    color: var(--ink-faint);
+    margin: -0.1rem 0 0.3rem 0.2rem;
+  }
+  .typing {
+    align-self: flex-start;
+    font-size: 0.8rem;
+    color: var(--ink-faint);
+    font-style: italic;
+    padding: 0.3rem 0.2rem;
+  }
+  .hint {
+    align-self: center;
+    text-align: center;
+    color: var(--ink-faint);
+    font-size: 0.8rem;
+    max-width: 80%;
+    margin: auto 0;
+    padding: 1rem 0;
+  }
+
+  form {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.6rem 0.7rem;
+    background: var(--sunk);
+    border-top: 1px solid var(--hairline);
+    flex: none;
+  }
+  textarea {
+    flex: 1;
+    resize: none;
+    font: inherit;
+    padding: 0.5rem 0.7rem;
+    border-radius: 18px;
+    border: 1px solid var(--hairline);
+    background: var(--panel);
+    color: var(--ink);
+    max-height: 120px;
+  }
+  textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+  form button {
+    flex: none;
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    border: none;
+    background: var(--accent);
+    color: #fff;
+    font-size: 1.1rem;
+    cursor: pointer;
+  }
+  @media (prefers-color-scheme: dark) { form button { color: #10160f; } }
+  form button:disabled { opacity: .5; cursor: default; }
+
+  .iconbtn {
+    background: var(--panel) !important;
+    color: var(--ink-soft) !important;
+    border: 1px solid var(--hairline) !important;
+    font-size: 1.15rem;
+  }
+  .iconbtn.recording {
+    background: var(--danger) !important;
+    color: #fff !important;
+    border-color: var(--danger) !important;
+    animation: pulse 1s ease-in-out infinite;
+  }
+  @keyframes pulse { 50% { opacity: .55; } }
+  @media (prefers-reduced-motion: reduce) { .iconbtn.recording { animation: none; } }
+
+  .attach-tray {
+    display: flex; flex-wrap: wrap; gap: 0.4rem;
+    padding: 0.5rem 0.7rem 0;
+    background: var(--sunk);
+    flex: none;
+  }
+  .chip {
+    display: flex; align-items: center; gap: 0.4rem;
+    background: var(--panel);
+    border: 1px solid var(--hairline);
+    border-radius: 8px;
+    padding: 0.25rem 0.4rem;
+    font-size: 0.78rem;
+    max-width: 200px;
+  }
+  .chip img { width: 32px; height: 32px; object-fit: cover; border-radius: 4px; flex: none; }
+  .chip span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .chip button {
+    flex: none; width: 18px; height: 18px; border-radius: 50%;
+    border: none; background: var(--hairline); color: var(--ink);
+    font-size: 0.7rem; line-height: 1; cursor: pointer; padding: 0;
+  }
+
+  .msg img { max-width: 220px; border-radius: 8px; display: block; margin-bottom: 0.3rem; }
+  .msg audio { max-width: 240px; display: block; margin-bottom: 0.3rem; }
+
+  .msg .who {
+    display: block;
+    font-family: var(--mono); font-size: 0.62rem; font-weight: 600;
+    letter-spacing: 0.05em; text-transform: uppercase;
+    margin-bottom: 0.2rem;
+  }
+  /* consultora humana assumindo */
+  .msg.advisor {
+    align-self: flex-start;
+    background: var(--client-bubble);
+    border: 1px solid var(--client-edge);
+    border-left: 3px solid #b6893c;
+    border-bottom-left-radius: 3px;
+  }
+  .msg.advisor .who { color: #9a6b28; }
+  @media (prefers-color-scheme: dark) { .msg.advisor .who { color: #d6a860; } }
+
+  .divider {
+    align-self: center; text-align: center;
+    font-family: var(--mono); font-size: 0.68rem;
+    color: var(--ink-faint);
+    padding: 0.35rem 0.8rem; margin: 0.3rem 0;
+    border-top: 1px solid var(--hairline);
+    border-bottom: 1px solid var(--hairline);
+    max-width: 92%;
+  }
+  .divider.warn { color: var(--danger); border-color: var(--danger); }
+  .silent {
+    align-self: center; text-align: center;
+    font-size: 0.8rem; font-style: italic;
+    color: var(--ink-faint);
+    max-width: 88%; padding: 0.3rem 0;
+  }
+
+  .state-chip {
+    font-family: var(--mono); font-size: 0.7rem;
+    padding: 0.35rem 0.9rem;
+    background: var(--sunk);
+    border-bottom: 1px solid var(--hairline);
+    color: var(--ink-soft);
+    flex: none;
+  }
+  .state-chip b { color: var(--ink); }
+  .state-chip.escalado b { color: #9a6b28; }
+  .state-chip.com_consultora b { color: #3f6b53; }
+
+  .sender {
+    display: flex; align-items: center; gap: 0.5rem;
+    padding: 0.4rem 0.7rem;
+    background: var(--sunk);
+    border-top: 1px solid var(--hairline);
+    font-size: 0.76rem; color: var(--ink-soft);
+    flex: none; flex-wrap: wrap;
+  }
+  .sender .seg { display: flex; border: 1px solid var(--hairline); border-radius: 6px; overflow: hidden; }
+  .sender .seg button {
+    font: inherit; font-size: 0.76rem;
+    background: var(--panel); color: var(--ink-soft);
+    border: none; padding: 0.2rem 0.6rem; cursor: pointer;
+  }
+  .sender .seg button.on { background: var(--accent); color: #fff; }
+  @media (prefers-color-scheme: dark) { .sender .seg button.on { color: #10160f; } }
+  .sender label { display: flex; align-items: center; gap: 0.3rem; cursor: pointer; }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="avatar">M</div>
+    <div class="who">
+      <h1>Manu</h1>
+      <p id="sub">assistente da Lais Aliski Casa · protótipo</p>
+    </div>
+  </header>
+
+  <div class="toolbar">
+    <label><input type="checkbox" id="fora"> fora do horário</label>
+    <label title="usa cachedContents com o system prompt estático"><input type="checkbox" id="cache" checked> cache de prefixo</label>
+    <label title="ticket 009 / research 019: mensagem de um dispositivo não suportado (WhatsApp p/ Windows) não gera evento — o agente não vê"><input type="checkbox" id="blind"> ponto cego</label>
+    <label>modelo
+      <select id="model">
+        <option value="gemini-3.5-flash-lite">3.5-flash-lite</option>
+        <option value="gemini-3.6-flash">3.6-flash</option>
+        <option value="gemini-3.7-flash">3.7-flash</option>
+      </select>
+    </label>
+    <a href="/system-prompt" target="_blank" rel="noopener">instruções</a>
+    <a href="/custos" target="_blank" rel="noopener">custos</a>
+    <button id="reset" type="button">Reiniciar</button>
+  </div>
+  <div class="costbar" id="costbar" hidden>
+    <span id="cost-session">R$ 0,00</span> sessão ·
+    <span id="cost-conv">R$ 0,00</span> conversa ·
+    <span id="cost-calls">0</span> resp. ·
+    <span id="cost-rate" title="preço usado na estimativa">—</span>
+  </div>
+  <div class="state-chip" id="statechip">estado: <b>qualificando</b> — a Manu atende</div>
+
+  <div class="stream" id="stream">
+    <p class="hint">Você é o <b>cliente</b> — texto, <b>imagem</b> (📎) ou <b>áudio</b> gravado (🎤). Para testar a passagem do atendimento, troque para <b>Consultora</b> na barra de baixo: assim que ela fala, a Manu para de responder.</p>
+  </div>
+
+  <div class="sender">
+    enviar como
+    <span class="seg">
+      <button type="button" id="asClient" class="on">Cliente</button>
+      <button type="button" id="asAdvisor">Consultora</button>
+    </span>
+    <label id="retomadaWrap" hidden><input type="checkbox" id="retomada"> retomada (cliente volta dias depois)</label>
+  </div>
+  <div class="attach-tray" id="tray" hidden></div>
+  <form id="form">
+    <input type="file" id="file" accept="image/*,audio/*" hidden multiple>
+    <button type="button" id="attachbtn" class="iconbtn" title="anexar imagem ou áudio" aria-label="Anexar">📎</button>
+    <button type="button" id="recbtn" class="iconbtn" title="gravar áudio" aria-label="Gravar áudio">🎤</button>
+    <textarea id="input" rows="1" placeholder="Escreva como cliente…" autocomplete="off"></textarea>
+    <button id="sendbtn" type="submit" aria-label="Enviar">➤</button>
+  </form>
+</div>
+
+<script>
+  const stream = document.getElementById('stream');
+  const form = document.getElementById('form');
+  const input = document.getElementById('input');
+  const sendbtn = document.getElementById('sendbtn');
+  const foraChk = document.getElementById('fora');
+  const cacheChk = document.getElementById('cache');
+  const sub = document.getElementById('sub');
+  const fileInput = document.getElementById('file');
+  const attachBtn = document.getElementById('attachbtn');
+  const recBtn = document.getElementById('recbtn');
+  const tray = document.getElementById('tray');
+  const blindChk = document.getElementById('blind');
+  const statechip = document.getElementById('statechip');
+  const asClientBtn = document.getElementById('asClient');
+  const asAdvisorBtn = document.getElementById('asAdvisor');
+  const retomadaChk = document.getElementById('retomada');
+  const retomadaWrap = document.getElementById('retomadaWrap');
+
+  let pending = [];  // anexos aguardando envio: [{mimeType, data(base64), name}]
+  let history = [];   // [{role:'client'|'agent'|'advisor', text, attachments?}]
+  let busy = false;
+  let sender = 'client';      // quem está enviando agora
+  let hstate = 'qualificando'; // estado do handoff no cliente
+  let conversationId = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()));
+  let convBrl = 0;
+
+  const costbar = document.getElementById('costbar');
+  const modelSel = document.getElementById('model');
+  const brl = (n) => 'R$ ' + n.toFixed(n < 0.1 ? 4 : 2).replace('.', ',');
+  function updateCostbar(session, rate) {
+    costbar.hidden = false;
+    if (session) {
+      document.getElementById('cost-session').textContent = brl(session.brl);
+      document.getElementById('cost-calls').textContent = session.calls;
+    }
+    if (rate) {
+      document.getElementById('cost-rate').textContent = `$${rate.input}/$${rate.output} por 1M`;
+    }
+    document.getElementById('cost-conv').textContent = brl(convBrl);
+  }
+
+  fetch('/health').then(r => r.json()).then(h => {
+    sub.textContent = h.ok
+      ? `assistente da Lais Aliski Casa · thinking ${h.thinking}` + (h.calibracao && h.calibracao !== 1 ? ` · custo ×${h.calibracao}` : '')
+      : 'SEM CHAVE — veja o console do servidor';
+    if (h.model && modelSel.querySelector(`option[value="${h.model}"]`)) modelSel.value = h.model;
+  }).catch(() => {});
+
+  function clearHint() {
+    const h = stream.querySelector('.hint');
+    if (h) h.remove();
+  }
+
+  function bubble(role, text, attachments) {
+    clearHint();
+    const el = document.createElement('div');
+    el.className = 'msg ' + role;
+    if (role === 'advisor') {
+      const w = document.createElement('span');
+      w.className = 'who';
+      w.textContent = 'Consultora';
+      el.appendChild(w);
+    }
+    for (const a of attachments || []) {
+      if (a.mimeType && a.mimeType.startsWith('image/')) {
+        const img = document.createElement('img');
+        img.src = 'data:' + a.mimeType + ';base64,' + a.data;
+        img.alt = a.name || 'imagem';
+        el.appendChild(img);
+      } else if (a.mimeType && a.mimeType.startsWith('audio/')) {
+        const au = document.createElement('audio');
+        au.controls = true;
+        au.src = 'data:' + a.mimeType + ';base64,' + a.data;
+        el.appendChild(au);
+      }
+    }
+    if (text) {
+      const t = document.createElement('div');
+      t.textContent = text;
+      el.appendChild(t);
+    }
+    stream.appendChild(el);
+    stream.scrollTop = stream.scrollHeight;
+    return el;
+  }
+
+  function metaLine(text) {
+    const el = document.createElement('div');
+    el.className = 'meta-line';
+    el.textContent = text;
+    stream.appendChild(el);
+    stream.scrollTop = stream.scrollHeight;
+  }
+
+  function divider(text, warn) {
+    const el = document.createElement('div');
+    el.className = 'divider' + (warn ? ' warn' : '');
+    el.textContent = text;
+    stream.appendChild(el);
+    stream.scrollTop = stream.scrollHeight;
+  }
+  function silentLine(text) {
+    const el = document.createElement('div');
+    el.className = 'silent';
+    el.textContent = text;
+    stream.appendChild(el);
+    stream.scrollTop = stream.scrollHeight;
+  }
+
+  const STATE_LABEL = {
+    qualificando: 'qualificando</b> — a Manu atende',
+    escalado: 'escalado</b> — a Manu passou; aguardando a consultora',
+    com_consultora: 'com a consultora</b> — a Manu não responde',
+  };
+  function setState(s) {
+    if (!s || s === hstate) { retomadaWrap.hidden = hstate === 'qualificando'; return; }
+    hstate = s;
+    statechip.className = 'state-chip ' + s;
+    statechip.innerHTML = 'estado: <b>' + (STATE_LABEL[s] || s + '</b>');
+    retomadaWrap.hidden = s === 'qualificando';
+    if (s === 'qualificando') retomadaChk.checked = false;
+  }
+
+  async function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+  async function send(text, attachments) {
+    attachments = attachments || [];
+    if (busy || (!text.trim() && !attachments.length)) return;
+    const who = sender;
+    busy = true;
+    sendbtn.disabled = true;
+
+    bubble(who === 'advisor' ? 'advisor' : 'client', text, attachments);
+    history.push({ role: who === 'advisor' ? 'advisor' : 'client', text, attachments });
+
+    // --- consultora enviando ---
+    if (who === 'advisor') {
+      try {
+        const r = await fetch('/chat', {
+          method: 'POST', headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ history, conversationId, as: 'advisor', blindSpot: blindChk.checked }),
+        });
+        const data = await r.json();
+        if (data.blindSpot) divider('⚠ ' + data.nota, true);
+        else { divider('— a consultora assumiu · a Manu não responde mais —'); setState(data.status); }
+      } catch (err) {
+        bubble('error', 'falha de rede: ' + err.message);
+      } finally {
+        busy = false; sendbtn.disabled = false; input.focus();
+      }
+      return;
+    }
+
+    const typing = document.createElement('div');
+    typing.className = 'typing';
+    typing.textContent = 'Manu está digitando…';
+    stream.appendChild(typing);
+    stream.scrollTop = stream.scrollHeight;
+
+    try {
+      const r = await fetch('/chat', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ history, foraDoExpediente: foraChk.checked, conversationId, model: modelSel.value, cache: cacheChk.checked, retomada: retomadaChk.checked }),
+      });
+      const data = await r.json();
+      typing.remove();
+
+      if (data.error) {
+        bubble('error', 'erro do servidor: ' + data.error);
+      } else if (data.silent) {
+        silentLine('a Manu está em silêncio — ' + data.nota);
+      } else if (data.retomada) {
+        bubble('agent', data.text);
+        history.push({ role: 'agent', text: data.text });
+        metaLine('janela de retomada · ' + data.nota);
+        retomadaChk.checked = false;
+      } else {
+        const parts = data.text.split(/^\s*---\s*$/m).map(s => s.trim()).filter(Boolean);
+        for (let i = 0; i < parts.length; i++) {
+          if (i > 0) {
+            const t2 = document.createElement('div');
+            t2.className = 'typing';
+            t2.textContent = 'Manu está digitando…';
+            stream.appendChild(t2);
+            stream.scrollTop = stream.scrollHeight;
+            await sleep(650);
+            t2.remove();
+          }
+          bubble('agent', parts[i]);
+        }
+        history.push({ role: 'agent', text: data.text });
+        const u = data.usage || {};
+        const cost = data.cost || {};
+        if (cost.brl != null) convBrl += cost.brl;
+        const cachedTok = u.cachedContentTokenCount || 0;
+        metaLine(
+          `${data.ms}ms · ${data.model}` +
+          (attachments.length ? ` · 📎${attachments.length}` : '') +
+          (u.promptTokenCount != null ? ` · in ${u.promptTokenCount} / out ${u.candidatesTokenCount ?? '?'}` : '') +
+          (cachedTok ? ` · cache ${cachedTok}` : '') +
+          (u.thoughtsTokenCount ? ` / think ${u.thoughtsTokenCount}` : '') +
+          (cost.usd != null ? ` · ~${'$' + cost.usd.toFixed(5)} · ~${brl(cost.brl)}` : '') +
+          (data.finishReason && data.finishReason !== 'STOP' ? ` · ${data.finishReason}` : '')
+        );
+        if (data.cache && data.cache.pedido && !data.cache.usado) {
+          metaLine('⚠ cache pedido mas não usado: ' + (data.cache.erro || 'motivo desconhecido'));
+        }
+        updateCostbar(data.session, cost.rate);
+        if (data.escalou) {
+          divider('— a Manu escalou: ' + data.escalou.motivo + ' · aguardando a consultora —');
+        }
+        setState(data.status);
+      }
+    } catch (err) {
+      typing.remove();
+      bubble('error', 'falha de rede: ' + err.message);
+    } finally {
+      busy = false;
+      sendbtn.disabled = false;
+      input.focus();
+    }
+  }
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const t = input.value;
+    const atts = pending;
+    input.value = '';
+    input.style.height = 'auto';
+    pending = [];
+    renderTray();
+    send(t, atts);
+  });
+
+  // ---- quem envia: cliente ou consultora ----
+  function setSender(s) {
+    sender = s;
+    asClientBtn.classList.toggle('on', s === 'client');
+    asAdvisorBtn.classList.toggle('on', s === 'advisor');
+    input.placeholder = s === 'advisor'
+      ? 'Escreva como consultora (a Pamella, a Gabi ou a Joslaine)…'
+      : 'Escreva como cliente…';
+    attachBtn.style.display = recBtn.style.display = s === 'advisor' ? 'none' : '';
+  }
+  asClientBtn.addEventListener('click', () => setSender('client'));
+  asAdvisorBtn.addEventListener('click', () => setSender('advisor'));
+
+  // ---- anexos (imagem / áudio) ----
+  function renderTray() {
+    tray.innerHTML = '';
+    tray.hidden = pending.length === 0;
+    pending.forEach((a, i) => {
+      const chip = document.createElement('div');
+      chip.className = 'chip';
+      if (a.mimeType.startsWith('image/')) {
+        const img = document.createElement('img');
+        img.src = 'data:' + a.mimeType + ';base64,' + a.data;
+        chip.appendChild(img);
+      } else {
+        const ic = document.createElement('span');
+        ic.textContent = '🎙️';
+        chip.appendChild(ic);
+      }
+      const nm = document.createElement('span');
+      nm.textContent = a.name || a.mimeType;
+      chip.appendChild(nm);
+      const x = document.createElement('button');
+      x.type = 'button';
+      x.textContent = '✕';
+      x.addEventListener('click', () => { pending.splice(i, 1); renderTray(); });
+      chip.appendChild(x);
+      tray.appendChild(chip);
+    });
+  }
+
+  function fileToB64(file) {
+    return new Promise((resolve, reject) => {
+      const fr = new FileReader();
+      fr.onload = () => resolve(String(fr.result).split(',')[1]);
+      fr.onerror = reject;
+      fr.readAsDataURL(file);
+    });
+  }
+
+  async function addFile(file) {
+    if (file.size > 15 * 1024 * 1024) { alert('arquivo grande demais (máx ~15 MB): ' + file.name); return; }
+    let mime = file.type;
+    if (!mime) {
+      if (/\.(jpe?g)$/i.test(file.name)) mime = 'image/jpeg';
+      else if (/\.png$/i.test(file.name)) mime = 'image/png';
+      else if (/\.webp$/i.test(file.name)) mime = 'image/webp';
+      else if (/\.(heic|heif)$/i.test(file.name)) mime = 'image/heic';
+      else if (/\.(m4a|mp4)$/i.test(file.name)) mime = 'audio/mp4';
+      else if (/\.mp3$/i.test(file.name)) mime = 'audio/mpeg';
+      else if (/\.ogg$/i.test(file.name)) mime = 'audio/ogg';
+      else if (/\.wav$/i.test(file.name)) mime = 'audio/wav';
+    }
+    if (!mime || !/^(image|audio)\//.test(mime)) { alert('só imagem ou áudio: ' + file.name); return; }
+    const data = await fileToB64(file);
+    pending.push({ mimeType: mime, data, name: file.name });
+    renderTray();
+  }
+
+  attachBtn.addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', async () => {
+    for (const f of Array.from(fileInput.files)) await addFile(f);
+    fileInput.value = '';
+  });
+
+  // ---- gravação de áudio (nota de voz) ----
+  let recorder = null, recChunks = [];
+  recBtn.addEventListener('click', async () => {
+    if (recorder && recorder.state === 'recording') { recorder.stop(); return; }
+    try {
+      const mic = await navigator.mediaDevices.getUserMedia({ audio: true });
+      recorder = new MediaRecorder(mic);
+      recChunks = [];
+      recorder.ondataavailable = (e) => { if (e.data.size) recChunks.push(e.data); };
+      recorder.onstop = () => {
+        mic.getTracks().forEach(t => t.stop());
+        recBtn.classList.remove('recording');
+        recBtn.textContent = '🎤';
+        const type = (recorder.mimeType || 'audio/webm').split(';')[0];
+        const blob = new Blob(recChunks, { type });
+        const fr = new FileReader();
+        fr.onload = () => {
+          pending.push({ mimeType: type, data: String(fr.result).split(',')[1], name: 'gravação' });
+          renderTray();
+        };
+        fr.readAsDataURL(blob);
+      };
+      recorder.start();
+      recBtn.classList.add('recording');
+      recBtn.textContent = '⏹';
+    } catch (err) {
+      alert('não consegui acessar o microfone: ' + err.message);
+    }
+  });
+
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      form.requestSubmit();
+    }
+  });
+  input.addEventListener('input', () => {
+    input.style.height = 'auto';
+    input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+  });
+
+  document.getElementById('reset').addEventListener('click', () => {
+    history = [];
+    pending = [];
+    renderTray();
+    conversationId = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()));
+    convBrl = 0;
+    hstate = null; setState('qualificando');
+    setSender('client');
+    updateCostbar();
+    stream.innerHTML = '<p class="hint">Conversa reiniciada. Você é o <b>cliente</b> — texto, imagem (📎) ou áudio (🎤). Troque para <b>Consultora</b> na barra de baixo para simular a passagem do atendimento.</p>';
+    input.focus();
+  });
+
+  input.focus();
+</script>
+</body>
+</html>

@@ -19,7 +19,7 @@ O research deve levantar:
 
 1. **Autenticação para ler a agenda de várias pessoas.** OAuth por consultora (cada uma
    autoriza uma vez) versus conta de serviço com delegação de domínio — que exige Google
-   Workspace, não Gmail comum. Descobrir qual o caso da Lais Casa é parte do ticket.
+   Workspace, não Gmail comum. Descobrir qual o caso da Lais Aliski Casa é parte do ticket.
 2. **Free/busy.** Como consultar disponibilidade sem ler o conteúdo dos eventos —
    privacidade importa, o agente não precisa saber que a consultora vai ao médico.
 3. **Criar e alterar evento** em nome da consultora: convite ao cliente, fuso horário,
@@ -86,3 +86,22 @@ time inteiro cabe em **uma requisição por conversa**. Cota é irrelevante nest
 se alguém a mantiver atualizada. Se a consultora combina uma visita por WhatsApp e não
 registra em lugar nenhum, um sistema próprio erra tanto quanto um Google Calendar vazio. Isso
 é problema de processo, não de ferramenta.
+
+---
+
+## Addendum — respostas do ticket 020 (2026-08-11, resposta 1 de 4)
+
+Ticket já fechado; registrado aqui como addendum, sem alterar a Resolução acima. É uma
+resposta em quatro — tratar como amostra.
+
+- **Usa Google Agenda:** "Sim, e registramos todos os compromissos" — resposta favorável ao
+  caminho com integração.
+- **E-mail de trabalho:** **@gmail.com** — confirma **Gmail comum**, não Workspace. Se a
+  agenda se confirmar confiável, o caminho é o de **compartilhamento `freeBusyReader` com uma
+  conta única do projeto**, e não conta de serviço com delegação de domínio.
+
+**Falta a pergunta 18b** (mostrar a agenda da semana que vem) — não foi feita ou não foi
+respondida nesta rodada. Sem ela, o critério de confiabilidade que a Resolução do
+[009](009-como-funciona-o-atendimento-hoje.md) exige — "a tela, não a resposta verbal" —
+continua sem confirmação. É a peça que falta para decidir se o agente agenda de verdade ou só
+registra a intenção.
