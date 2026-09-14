@@ -1,9 +1,5 @@
 # Manual do agente — Lais Aliski Casa
 
-*Rascunho em redação — versão de 2026-09-14. Faltam os prints reais de conversa (viram parte
-do documento só na publicação como Google Doc) e a revisão final do dono antes de virar
-material oficial. Não distribuir ainda.*
-
 Este documento explica o que é o **Manu**, o agente de WhatsApp que faz o primeiro
 atendimento da loja, o que ele faz, o que ele **não** faz, e o que muda no seu dia a dia com
 ele. É material de consulta — volte aqui sempre que precisar, não é algo pra ler uma vez só e
@@ -34,8 +30,9 @@ sabendo com quem está falando e o que essa pessoa veio buscar.
 
 ### 3. O que ele **não** faz
 
-- **Nunca diz preço, medida ou material de uma peça específica.** Sobre isso ele sempre
-  responde algo como "vou verificar e te retorno" — quem fala preço e condição é sempre você.
+- **Nunca diz preço, medida ou material de uma peça específica.** Registra o que o cliente
+  pediu ("anotei: poltrona de couro caramelo da vitrine") e diz que quem passa valor e
+  condição é a consultora.
 - **Nunca confirma que a loja tem um produto.** Mesmo que o cliente mande foto de uma peça
   óbvia do estilo da casa, ele não tenta reconhecer o que é nem confirma disponibilidade —
   não existe controle de estoque, só o que está na loja à vista, e um "temos sim" errado
@@ -54,8 +51,17 @@ pessoa e sem ficar repetindo "sou um robô" a cada mensagem — se perguntarem, 
 O tom é o de alguém que atende bem numa loja de decoração de alto padrão: educado, direto,
 sem gíria de software, sem forçar venda.
 
-*[PRINT: trecho de conversa real do Manu — a inserir na versão Google Doc, vem do protótipo
-do ticket 014]*
+Algumas falas que ele realmente usa, sempre do mesmo jeito:
+
+- Pra se apresentar, no início da conversa: *"aqui é a Manu, assistente da Lais Aliski
+  Casa."*
+- Se perguntarem se é robô: *"sou sim, assistente virtual da Lais Aliski Casa"* — confirma
+  na hora, sem enrolar, e oferece passar pra uma consultora se a pessoa preferir.
+- Se perguntarem disponibilidade de um produto: *"quem te confirma isso de verdade é a
+  consultora, que olha a peça pessoalmente antes de te passar qualquer coisa — ela verifica
+  e te retorna."*
+- Pra escalar: *"vou passar seu contato para uma consultora — ela te chama por aqui ainda
+  hoje, dentro do horário da loja."*
 
 ### 5. Quando ele te passa a conversa
 
@@ -68,12 +74,14 @@ Ele escala automaticamente quando:
 - é um arquiteto com planilha, lista ou menção a projeto;
 - a conversa girou muitas trocas sem sair do lugar.
 
-Pergunta de disponibilidade **não** escala sozinha na primeira vez — ele responde "vou
-verificar e te retorno" e continua a conversa. Só escala se o cliente insistir depois disso.
+Pergunta de disponibilidade **não** escala sozinha na primeira vez — ele responde com a
+fórmula do item anterior ("quem te confirma isso de verdade é a consultora...") e continua a
+conversa. Só escala se o cliente insistir depois disso.
 
-Quando escala, ele avisa o cliente de forma simples — algo como "só um instante, uma
-consultora já te atende" — e para de responder ali. Ele não anuncia seu nome nem o de
-ninguém: quem se apresenta é você, ao assumir o chamado.
+Quando escala, ele manda uma única mensagem genérica — *"vou passar seu contato para uma
+consultora — ela te chama por aqui ainda hoje, dentro do horário da loja"* — e para de
+responder ali. Ele não anuncia seu nome nem o de ninguém: quem se apresenta é você, ao
+assumir o chamado.
 
 ### 6. Quando ele erra
 
