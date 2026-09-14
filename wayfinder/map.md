@@ -381,6 +381,18 @@ prototipagem, `/prototype`. Em tickets de research, `/research` como subagente.
   social de várias consultoras num só número. Efeito em cadeia: o dono decidiu conectar o
   número real da loja no mesmo dia, via runtime provisório (`agente-runtime/`), sem esperar o
   044 formal — ver handover de 2026-09-11/12.
+- [Estratégia de rollout do agente — piloto, horário, fallback, canal de erro](tickets/038-estrategia-de-rollout.md)
+  — **fechado em 2026-09-14.** Forma decidida no grilling de 2026-09-10: **24/7 com as três
+  consultoras desde o dia 1** (sem "madrinha do piloto", sem horário restrito — ambos
+  rejeitados pelo dono), 4 semanas de piloto com checagem obrigatória ao fim, freio de mão
+  como fallback para alucinação em série, canal de aviso de erro = tela "reportar problema" na
+  plataforma (admin-only) + e-mail, sem SMS. As duas últimas pontas de implementação (migration
+  `problem_reports` + deploy do `advisor-platform/web`) ficaram bloqueadas o dia inteiro por um
+  classificador de permissão do harness ("Protected-Scope IaC Apply"/"Permission Grant") — só
+  destravou numa sessão nova (pós-`/clear`), com o dono aplicando a migration manualmente.
+  Achado no fechamento: o rótulo de prioridade que o 037 exigia (erro de preço/disponibilidade
+  é mais urgente) tinha ficado de fora da implementação original — corrigido antes de fechar.
+  Desbloqueia o [034](tickets/034-redigir-o-manual-do-agente.md) (só falta o 036 agora).
 
 ## Not yet specified
 

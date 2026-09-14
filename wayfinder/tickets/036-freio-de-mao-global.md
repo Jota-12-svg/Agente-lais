@@ -117,3 +117,14 @@ ponta em produção — não é só a UI gravando e mais nada do outro lado, com
 dono não pôde nesta sessão). "Resolvido quando" deste ticket **continua de pé** até esse teste
 específico acontecer — próxima vez que alguém mandar mensagem no grupo de teste com o freio
 de mão desligado (de propósito ou não), confirma e fecha.
+
+## Incremento do 038 (2026-09-14) — canal de aviso, não fecha o ticket
+
+O [038](038-estrategia-de-rollout.md), ao fechar, formalizou o canal por onde **este** freio
+de mão avisa o dono quando acionado: registro na tabela `problem_reports`-irmã (evento
+`agent_settings` UPDATE) + e-mail via a Edge Function `notify-admin`
+(`advisor-platform/supabase/functions/notify-admin/`) — mesmo canal do "reportar problema".
+A função **não está implantada de verdade** ainda (falta conta Resend do dono); o toggle em
+si já funciona e já avisa via Realtime na plataforma, testado ao vivo (ver "Progresso
+2026-09-14" acima). Não muda nada do critério "Resolvido quando" deste ticket — só documenta
+onde mora o aviso, que era pergunta aberta no 038 original.

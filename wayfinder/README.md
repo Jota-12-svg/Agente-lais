@@ -18,7 +18,6 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 |---|---|---|
 | 046 | [Endurecer o runtime do agente — estado persistido, idempotência e deploy automático](tickets/046-endurecer-runtime-estado-idempotencia-deploy.md) | task · **in-progress** — **item 1 fechado** (2026-09-14): esquema `engagements` em produção, validado ao vivo (restart não perde conversa, linha reidratada do Supabase); itens 2 (idempotência) e 3 (deploy automático) seguem sem tocar |
 | 021 | [Instagram como porta de entrada para o WhatsApp](tickets/021-instagram-porta-de-entrada.md) | task |
-| 038 | [Estratégia de rollout do agente — piloto, horário, fallback, canal de erro](tickets/038-estrategia-de-rollout.md) | grilling · **in-progress** |
 | 039 | [Laço de contexto — o contexto do agente evoluindo com os atendimentos](tickets/039-laco-de-contexto-do-agente.md) | grilling · trazido da reconciliação do 014; não urgente, refinamento contínuo |
 
 > **041 fechado** (2026-09-14): o dono decidiu conscientemente **não** converter pra
@@ -119,15 +118,14 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 > valor novo aplicado nas duas funções (`handoffs_insert` e a nova `handoffs_status_for_jids`)
 > e no Railway, nunca reimpresso depois de gerado.
 >
-> **038 — grilling feito, ticket ainda aberto** (2026-09-10): a **estratégia de rollout** foi
-> grelhada por inteiro com o dono (3 rodadas) e as decisões estão no ticket sob
-> `## Decisões do grilling`. Piloto = agente 24/7 + as três consultoras desde o dia 1 (sem
-> madrinha, sem horário restrito — **reverte o "piloto com uma consultora" da névoa**),
-> 4 semanas + checagem; canal de erro = "reportar problema" na plataforma (037); fallback via
-> watchdog→dono e freio de mão. **Segue `in-progress` por decisão do dono** — falta amarrar o
-> watchdog/SMS (← runtime) e o incremento no 037. **Gate de entrada:** itens 4 (011) e 5 (014)
-> já fecharam (2026-09-11); só o item 3 (027) segue aberto. **Não propagado ao map/036/037/034
-> até fechar.**
+> **038 fechado** (2026-09-14, ver linha na tabela de Fechados abaixo). Grilling do
+> 2026-09-10: piloto = agente 24/7 + as três consultoras desde o dia 1 (sem madrinha, sem
+> horário restrito — **reverte o "piloto com uma consultora" da névoa**), 4 semanas +
+> checagem; canal de erro = "reportar problema" na plataforma (037) + e-mail, sem SMS;
+> fallback via watchdog→dono (042) e freio de mão (036). As duas últimas pontas de
+> implementação (migration + deploy) ficaram bloqueadas o dia inteiro por um classificador de
+> permissão do harness, destravadas numa sessão nova pós-`/clear`, com o dono aplicando a
+> migration manualmente.
 >
 > **031 avançado, ainda aberto** (2026-09-11): o mecanismo de autenticação do `INSERT` na fila
 > foi decidido (grilling) e **testado ao vivo** — RPC Postgres `security definer` gateada por
@@ -205,7 +203,7 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 | # | Ticket | Tipo | Espera |
 |---|---|---|---|
 | 019 | [De quais dispositivos a consultora pode responder sem cegar o agente](tickets/019-companion-windows-ponto-cego.md) | task | **em pausa** — premissa (Coexistence) não é mais o caminho; ver 016 |
-| 034 | [Redigir o manual do agente para as consultoras](tickets/034-redigir-o-manual-do-agente.md) | task | 036 + estratégia de rollout (névoa) — forma decidida no 033, falta a redação; 014, 011 e 037 saíram do bloqueio (todos fecharam 2026-09-11) |
+| 034 | [Redigir o manual do agente para as consultoras](tickets/034-redigir-o-manual-do-agente.md) | task | só falta o **036** agora — forma decidida no 033, falta a redação; 014, 011, 037 e 038 saíram do bloqueio (038 fechou 2026-09-14) |
 | 031 | [Implementar a escrita do chamado do agente na fila (INSERT no Supabase)](tickets/031-implementar-escrita-do-chamado-na-fila.md) | task | o runtime real já chama `handoffs_insert` com telefone verdadeiro (testado ao vivo) — falta só a **idempotência** (→ 046) e `chatModify markRead:false` (solto, não depende do 046) |
 | 036 | [Freio de mão global — desligamento de emergência do agente](tickets/036-freio-de-mao-global.md) | task | **044** — mecanismo, esquema e UI já construídos e testados de ponta a ponta (2026-09-11); falta só o runtime assinar a flag e provar que o agente se cala |
 
@@ -213,6 +211,7 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 
 | # | Ticket | Tipo | Descobertas |
 |---|---|---|---|
+| 038 | [Estratégia de rollout do agente — piloto, horário, fallback, canal de erro](tickets/038-estrategia-de-rollout.md) | grilling | fechado 2026-09-14: piloto 24/7 + as três consultoras desde o dia 1, 4 semanas + checagem, canal de erro = "reportar problema" na plataforma (admin-only) + e-mail sem SMS; migration `problem_reports` aplicada em produção e `advisor-platform/web` deployado (bloqueio do harness destravou só em sessão nova pós-`/clear`); rótulo de prioridade que o 037 exigia (erro de preço/disponibilidade) tinha ficado de fora — corrigido no fechamento; desbloqueia 034 (só falta o 036 agora) |
 | 045 | [Botão "Devolver ao agente" nos chamados da plataforma](tickets/045-devolver-chamado-ao-agente.md) | task | construído em 2026-09-12 direto no provisório (dono pediu pra não esperar o 044); status novo `returned_to_agent`; correlação por `contact_jid` + poll numa RPC secret-gated (`handoffs_status_for_jids`, sem PII) em vez de Realtime, porque `handoffs` tem dado real de cliente; mesmo mecanismo resolve "fechar chamado reinicia o atendimento" (addendum no 012) e telefone `@lid` resolvido best-effort |
 | 044 | [Construir o runtime do agente — v1](tickets/044-construir-runtime-do-agente.md) | task | fechado adotando o provisório (`agente-runtime/`) como v1 — critério "Resolvido quando" já cumprido ao vivo em produção (09-11/12); adapter de auth Supabase virou Volume Railway (equivalente aceito); estado de conversa em Supabase, idempotência e deploy via GitHub adiados para o **046** (esquema de `engagements` ainda não decidido); desbloqueia item 7 do gate do 038 |
 | 041 | [Colocar a conta de faturamento do Gemini em pré-pagamento antes que o serviço pare](tickets/041-billing-pre-pagamento.md) | task | dono decidiu conscientemente manter pós-pagamento — Tier 1, Google migrando contas de Postpay pra Prepay (rollout de março/2026), troca é via de mão única e exige comprar crédito; confirmado direto na tela da Google que não afeta rate limit nem `serviceTier: standard` (LGPD); risco aceito de "interrupção no serviço" se não converter, troca reativa se acontecer |

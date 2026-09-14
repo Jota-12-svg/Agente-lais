@@ -14,6 +14,8 @@ blocked-by: ["036"]
 > **011 fechou em 2026-09-11** (grilling) — sai do `blocked-by`. Segue bloqueado por 036, 037
 > e pela estratégia de rollout (038, ainda `in-progress`, não em `blocked-by` porque nasceu
 > como névoa do mapa, não como ticket, quando este foi aberto).
+> **038 fechou em 2026-09-14** — sai do bloqueio em prosa. Só falta o **036** (freio de mão
+> global) agora.
 
 ## Question
 
@@ -52,9 +54,6 @@ começar, é um addendum no 033, não uma escolha nova aqui.
 - **[037](037-construir-plataforma-consultoras-v1.md)** — a Parte B ensina a operar a
   plataforma das consultoras (assumir, fechar, marcar veredito) e é ilustrada com prints
   dela. O manual não descreve uma interface que ainda não existe e pode mudar no build.
-- **Estratégia de rollout** (névoa do mapa, sem ticket) — define o canal pelo qual a
-  consultora avisa que o agente errou, o momento de entrega de cada parte, e o piloto que
-  dispara a checagem de manutenção.
 
 ### Entradas úteis, não bloqueantes
 

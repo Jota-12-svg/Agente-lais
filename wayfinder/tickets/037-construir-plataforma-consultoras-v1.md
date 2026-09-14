@@ -18,6 +18,15 @@ blocked-by: ["035"]
 > produto/disponibilidade é mais urgente que outros tipos de erro, dentro do mesmo canal
 > (não é campo/canal novo, é um rótulo). Registrar junto do incremento que o 038 já previu
 > aqui quando ele fechar.
+>
+> **038 fechou em 2026-09-14** — o incremento "reportar problema" + tela admin-only foi
+> incorporado (migration `problem_reports`, `ReportProblem.svelte`/`ProblemHistory.svelte`,
+> Edge Function `notify-admin`). O rótulo de prioridade **exigido acima tinha ficado de fora**
+> da primeira leva — achado e corrigido antes do 038 fechar (`product_claim` na tabela, ver
+> `## Resolução` do 038). SMS **não** entrou (decisão do 038: sem fornecedor contratado,
+> e-mail cobre o caso). `notify-admin` segue não implantada de verdade (mesmo estado do
+> `notify-handoff` desde este ticket — falta conta Resend); não reabre este ticket, que já
+> estava fechado desde 2026-09-11.
 
 ## Question
 
