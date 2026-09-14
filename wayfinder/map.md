@@ -353,6 +353,16 @@ prototipagem, `/prototype`. Em tickets de research, `/research` como subagente.
   zero na próxima mensagem (addendum no 012, distinto da janela de retomada de 3 dias — aquele
   é antes de fechar, este é depois). Efeito colateral do mesmo pedido: telefone resolvido
   best-effort para contato `@lid` (antes mostrava "LID:..." na plataforma).
+- [Construir o runtime do agente — v1](tickets/044-construir-runtime-do-agente.md) —
+  **fechado adotando o runtime provisório (`agente-runtime/`) como a v1**, em vez do build
+  formal que o ticket descrevia item a item: o critério "Resolvido quando" já tinha sido
+  cumprido ao vivo em produção (WhatsApp real → Gemini → chamado real na fila → `/health`),
+  validado em 2026-09-11/12. Três entregas ficaram de fora de propósito — estado de conversa
+  em Supabase (esbarra no esquema de `engagements`, ainda não decidido), idempotência na
+  escalada, deploy via GitHub — e viraram o ticket
+  [046](tickets/046-endurecer-runtime-estado-idempotencia-deploy.md). Desbloqueia o item 7 do
+  gate de entrada do [038](tickets/038-estrategia-de-rollout.md); o [031](tickets/031-implementar-escrita-do-chamado-na-fila.md)
+  segue aberto, agora bloqueado só pela idempotência do 046.
 - [Testar a conexão self-hosted como dispositivo adicional](tickets/027-testar-self-hosted-no-numero-atual.md)
   — **testado ao vivo, os seis pontos passaram.** Desvio consciente do plano: sem chip de
   teste comprado a tempo (research 043), o dono testou no **próprio número pessoal**, WhatsApp
@@ -378,7 +388,10 @@ Névoa em escopo, ainda sem nitidez para virar ticket:
   do agente (todo atendimento, inclusive os perdidos); o ticket **035 fixou a tabela
   `handoffs`** (a fila de chamados escalados que as consultoras enxergam — distinta da memória
   do agente, ligada a ela por `engagement_id`). Falta o esquema da memória (`engagements`),
-  como o catálogo é representado, e a relação entre os dois.
+  como o catálogo é representado, e a relação entre os dois. **Vira parte do escopo do
+  [046](tickets/046-endurecer-runtime-estado-idempotencia-deploy.md)** (2026-09-14): o runtime
+  hoje guarda a conversa em memória, não sobrevive a restart — persistir isso exige fechar
+  este esquema primeiro.
 - **Fluxo do arquiteto.** O agente recebe uma planilha com dezenas de itens — o que ele faz
   com ela é um segundo fluxo inteiro, não uma variação do primeiro. Na fase 1 ele escala
   imediato, sem coleta (010); o ticket [032](tickets/032-catalogo-do-maino-e-planilha-de-arquiteto.md)

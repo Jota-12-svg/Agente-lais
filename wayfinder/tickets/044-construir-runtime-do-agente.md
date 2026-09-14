@@ -2,7 +2,7 @@
 id: "044"
 title: Construir o runtime do agente — v1
 labels: [wayfinder:task]
-status: open
+status: closed
 assignee: Claude
 blocked-by: []
 ---
@@ -103,3 +103,55 @@ de teste (do 027, quando disponível) ou simulada (enquanto 027 não conclui) ch
 responder usando o Gemini, uma escalada gerar um chamado real na fila da plataforma com o
 telefone certo, e o `/health` responder — fechando (ou deixando prontos para fechar) 031 e o
 item 7 do gate de entrada do [038](038-estrategia-de-rollout.md).
+
+## Resolução
+
+**Fechado em 2026-09-14, adotando o runtime provisório (`agente-runtime/`) como a v1 —
+decisão pragmática, não o build formal que o texto acima descrevia item a item.** O provisório
+foi construído fora deste ticket, em 2026-09-11/12 (efeito em cadeia do 027: o dono decidiu ir
+direto ao número real da loja no mesmo dia), mas **cumpre o critério "Resolvido quando" acima
+ao pé da letra**, validado ao vivo em produção:
+
+- Processo rodando no Railway (`agente-runtime-production.up.railway.app`), mesmo projeto da
+  plataforma, como o 042 decidiu.
+- Mensagem real mandada (número pessoal do dono, decisão dele — o número da loja segue
+  deslogado) chegou, a Manu respondeu usando `gemini-3.6-flash` via HTTP cru (018).
+- Escalada gerou chamado real em `handoffs`, com telefone verdadeiro (não placeholder),
+  aparecendo sozinho na fila da plataforma via Realtime.
+- `/health` responde; freio de mão (036) lido e assinado via Realtime; "devolver ao
+  agente"/"fechar chamado" (045) e áudio de entrada, todos testados ao vivo — ver handovers de
+  2026-09-11 e 2026-09-12 para o detalhe sessão a sessão.
+
+### O que da lista original ficou de fora, de propósito
+
+Comparado item a item com "O que este ticket constrói" acima, três entregas **não** foram
+feitas e não bloqueiam este fechamento — foram deliberadamente adiadas para o
+[046](046-endurecer-runtime-estado-idempotencia-deploy.md), aberto agora:
+
+1. **Adapter de auth do Baileys → Supabase.** Não construído — em vez disso, o provisório usa
+   `useMultiFileAuthState` (disco) sobre um **Volume persistente do Railway** (`/data/auth`).
+   Na prática resolve o mesmo problema que o adapter resolveria (redeploy não pede QR de novo,
+   confirmado em vários redeploys de 09-12) — troca de arquitetura aceita, não pendência.
+2. **Estado de conversa em Supabase, não em memória.** Continua em `Map` no processo — não
+   sobrevive a um restart no meio de uma qualificação. **Não fechado aqui de propósito**: a
+   tabela que guardaria essa memória (`engagements`) é uma decisão de modelo de dados que
+   `map.md` ainda lista em "Not yet specified" — inventar o esquema dentro do fechamento deste
+   ticket seria decidir arquitetura nova sem passar pelo grilling que este projeto exige para
+   isso. Vira o item principal do 046.
+3. **Idempotência na escalada** e **deploy via GitHub push-to-deploy** (hoje é `railway up`
+   manual) — também adiados para o 046; nenhum dos dois aconteceu no caminho crítico validado
+   acima.
+
+### Efeito em cadeia nos tickets vizinhos
+
+- **[031](031-implementar-escrita-do-chamado-na-fila.md) segue `open`, não fecha aqui** — seu
+  próprio critério exige idempotência ("sem duplicar em caso de retry"), que o 046 herda. Mas
+  a nota de bloqueio "falta só o runtime chamar de verdade" **já não é verdade**: o runtime
+  real (`agente-runtime/handoff-writer.mjs`) chama `handoffs_insert` com telefone real,
+  testado ao vivo — só a idempotência falta.
+- **[036](036-freio-de-mao-global.md)**: o lado do runtime (assinar a flag via Realtime) já
+  está implementado e rodando — não é mérito deste ticket fechar o 036 (escopo é
+  esquema+UI, já construídos em 09-11 segundo o README), só registro que a integração que o
+  036 esperava do runtime já aconteceu.
+- **[038](038-estrategia-de-rollout.md)**, item 7 do gate de entrada: destravado por este
+  fechamento.

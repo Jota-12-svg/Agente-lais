@@ -16,21 +16,16 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 
 | # | Ticket | Tipo |
 |---|---|---|
-| 044 | [Construir o runtime do agente — v1](tickets/044-construir-runtime-do-agente.md) | task · **reivindicado, prioridade** — última peça de código que falta pro agente existir de verdade |
+| 046 | [Endurecer o runtime do agente — estado persistido, idempotência e deploy automático](tickets/046-endurecer-runtime-estado-idempotencia-deploy.md) | task · aberto ao fechar o 044; item 1 (esquema de `engagements`) é decisão de grilling antes de codificar |
 | 021 | [Instagram como porta de entrada para o WhatsApp](tickets/021-instagram-porta-de-entrada.md) | task |
 | 041 | [Colocar a conta de faturamento do Gemini em pré-pagamento antes que o serviço pare](tickets/041-billing-pre-pagamento.md) | task · achado do 040, aviso ativo no painel |
 | 038 | [Estratégia de rollout do agente — piloto, horário, fallback, canal de erro](tickets/038-estrategia-de-rollout.md) | grilling · **in-progress** |
 | 039 | [Laço de contexto — o contexto do agente evoluindo com os atendimentos](tickets/039-laco-de-contexto-do-agente.md) | grilling · trazido da reconciliação do 014; não urgente, refinamento contínuo |
 
-> **044 aberto e reivindicado** (2026-09-11): construção do runtime do agente — junta as três
-> peças já validadas separadamente (conversa com a Manu do `prototipo-tom-014/`, escrita na
-> fila do [031](tickets/031-implementar-escrita-do-chamado-na-fila.md), conexão Baileys do
-> harness do [027](tickets/027-testar-self-hosted-no-numero-atual.md)) num processo de
-> produção único, seguindo as seis decisões já fechadas no 042. **É a peça que falta para o
-> agente atender de verdade** — nada mais no mapa bloqueia isto. Não depende do 027 concluir
-> (pode ser construído e testado contra o número/chip de teste que o 027 está validando, ou
-> sem WhatsApp real, como o 031 foi testado); só o *ir ao ar no número real da loja* espera o
-> veredito do 027.
+> **044 fechado** (2026-09-14): adotado o runtime provisório (`agente-runtime/`) como a v1 —
+> o critério "Resolvido quando" já tinha sido cumprido ao vivo em produção (09-11/12). Três
+> entregas do desenho original (estado de conversa em Supabase, idempotência, deploy via
+> GitHub) viraram o **046**, aberto agora, sem `assignee`. Ver `## Resolução` no ticket.
 >
 > **042 fechado** (2026-09-11, grilling): a **última névoa grande de arquitetura do mapa**
 > fechou. Runtime = processo único (WhatsApp + qualificação + Gemini), novo serviço no mesmo
@@ -198,7 +193,7 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 |---|---|---|---|
 | 019 | [De quais dispositivos a consultora pode responder sem cegar o agente](tickets/019-companion-windows-ponto-cego.md) | task | **em pausa** — premissa (Coexistence) não é mais o caminho; ver 016 |
 | 034 | [Redigir o manual do agente para as consultoras](tickets/034-redigir-o-manual-do-agente.md) | task | 036 + estratégia de rollout (névoa) — forma decidida no 033, falta a redação; 014, 011 e 037 saíram do bloqueio (todos fecharam 2026-09-11) |
-| 031 | [Implementar a escrita do chamado do agente na fila (INSERT no Supabase)](tickets/031-implementar-escrita-do-chamado-na-fila.md) | task | runtime do agente (mecanismo de autenticação decidido e testado ao vivo em 2026-09-11 — RPC `security definer` gateada por segredo; falta só o runtime chamar de verdade); `chatModify markRead:false` continua pendente |
+| 031 | [Implementar a escrita do chamado do agente na fila (INSERT no Supabase)](tickets/031-implementar-escrita-do-chamado-na-fila.md) | task | o runtime real já chama `handoffs_insert` com telefone verdadeiro (testado ao vivo) — falta só a **idempotência** (→ 046) e `chatModify markRead:false` (solto, não depende do 046) |
 | 036 | [Freio de mão global — desligamento de emergência do agente](tickets/036-freio-de-mao-global.md) | task | **044** — mecanismo, esquema e UI já construídos e testados de ponta a ponta (2026-09-11); falta só o runtime assinar a flag e provar que o agente se cala |
 
 ## Fechados
@@ -206,6 +201,7 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 | # | Ticket | Tipo | Descobertas |
 |---|---|---|---|
 | 045 | [Botão "Devolver ao agente" nos chamados da plataforma](tickets/045-devolver-chamado-ao-agente.md) | task | construído em 2026-09-12 direto no provisório (dono pediu pra não esperar o 044); status novo `returned_to_agent`; correlação por `contact_jid` + poll numa RPC secret-gated (`handoffs_status_for_jids`, sem PII) em vez de Realtime, porque `handoffs` tem dado real de cliente; mesmo mecanismo resolve "fechar chamado reinicia o atendimento" (addendum no 012) e telefone `@lid` resolvido best-effort |
+| 044 | [Construir o runtime do agente — v1](tickets/044-construir-runtime-do-agente.md) | task | fechado adotando o provisório (`agente-runtime/`) como v1 — critério "Resolvido quando" já cumprido ao vivo em produção (09-11/12); adapter de auth Supabase virou Volume Railway (equivalente aceito); estado de conversa em Supabase, idempotência e deploy via GitHub adiados para o **046** (esquema de `engagements` ainda não decidido); desbloqueia item 7 do gate do 038 |
 | 001 | [Inicializar o repositório e proteger os segredos](tickets/001-repositorio-e-protecao-dos-segredos.md) | task | — |
 | 003 | [Conseguir a exportação das conversas das consultoras](tickets/003-exportacao-das-conversas-das-consultoras.md) | task | exportação inviável; substituída pela análise do dono via grilling — desbloqueou 010, 013, 014 |
 | 004 | [Inspecionar a planilha de carteira/mailing de clientes](tickets/004-acesso-a-planilha-e-ao-catalogo.md) | task | dividido; planilha é diretório de arquitetos + mailing, não CRM de consumidor final; lookup "já é cliente" do 010 não se sustenta; catálogo + planilha de arquiteto → 032; desbloqueou 030, 031 |

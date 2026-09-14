@@ -4,7 +4,7 @@ title: Implementar a escrita do chamado do agente na fila (INSERT no Supabase)
 labels: [wayfinder:task]
 status: open
 assignee: claude-sonnet-5
-blocked-by: ["035"]
+blocked-by: ["046"]
 ---
 
 > **Mecanismo de autenticação decidido e testado ao vivo em 2026-09-11** (grilling + deploy
@@ -141,3 +141,12 @@ terceira resposta melhor que as duas:
 **Ainda falta pro 031 fechar de verdade:** o runtime do agente (névoa do mapa) chamar este
 mesmo `handoff-writer.mjs` (ou algo equivalente) a partir do WhatsApp real, com o telefone
 verdadeiro no lugar do placeholder, e resolver idempotência.
+
+> **Atualização 2026-09-14, ao fechar o [044](044-construir-runtime-do-agente.md):** a
+> primeira metade já aconteceu — `agente-runtime/handoff-writer.mjs` chama este mesmo caminho
+> a partir do WhatsApp real, telefone verdadeiro, testado ao vivo em produção (09-11/12). **Só
+> falta a idempotência**, que virou o item 2 do [046](046-endurecer-runtime-estado-idempotencia-deploy.md).
+> Este ticket segue `open`, bloqueado por esse item — fecha junto com (ou logo depois d)o 046.
+> Conferido também: `chatModify({ markRead: false }, jid)` (sinal secundário decidido no 035
+> §5) **não está implementado** em `agente-runtime/index.js` — não depende do 046, fica como
+> item solto deste ticket a fazer junto do resto.
