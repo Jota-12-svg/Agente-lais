@@ -18,10 +18,16 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 |---|---|---|
 | 046 | [Endurecer o runtime do agente — estado persistido, idempotência e deploy automático](tickets/046-endurecer-runtime-estado-idempotencia-deploy.md) | task · aberto ao fechar o 044; item 1 (esquema de `engagements`) é decisão de grilling antes de codificar |
 | 021 | [Instagram como porta de entrada para o WhatsApp](tickets/021-instagram-porta-de-entrada.md) | task |
-| 041 | [Colocar a conta de faturamento do Gemini em pré-pagamento antes que o serviço pare](tickets/041-billing-pre-pagamento.md) | task · achado do 040, aviso ativo no painel |
 | 038 | [Estratégia de rollout do agente — piloto, horário, fallback, canal de erro](tickets/038-estrategia-de-rollout.md) | grilling · **in-progress** |
 | 039 | [Laço de contexto — o contexto do agente evoluindo com os atendimentos](tickets/039-laco-de-contexto-do-agente.md) | grilling · trazido da reconciliação do 014; não urgente, refinamento contínuo |
 
+> **041 fechado** (2026-09-14): o dono decidiu conscientemente **não** converter pra
+> pré-pagamento agora — investigado antes (só leitura, nada confirmado): a troca é via de mão
+> única, exige comprar crédito, mas **não afeta** rate limit nem o `serviceTier: standard`
+> (LGPD, 017/018). Risco aceito: se faltar conversão, a Google avisa "interrupções no
+> serviço" — na prática o Gemini pode parar de responder a Manu; troca reativa se acontecer.
+> Ver `## Resolução` no ticket.
+>
 > **044 fechado** (2026-09-14): adotado o runtime provisório (`agente-runtime/`) como a v1 —
 > o critério "Resolvido quando" já tinha sido cumprido ao vivo em produção (09-11/12). Três
 > entregas do desenho original (estado de conversa em Supabase, idempotência, deploy via
@@ -202,6 +208,7 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 |---|---|---|---|
 | 045 | [Botão "Devolver ao agente" nos chamados da plataforma](tickets/045-devolver-chamado-ao-agente.md) | task | construído em 2026-09-12 direto no provisório (dono pediu pra não esperar o 044); status novo `returned_to_agent`; correlação por `contact_jid` + poll numa RPC secret-gated (`handoffs_status_for_jids`, sem PII) em vez de Realtime, porque `handoffs` tem dado real de cliente; mesmo mecanismo resolve "fechar chamado reinicia o atendimento" (addendum no 012) e telefone `@lid` resolvido best-effort |
 | 044 | [Construir o runtime do agente — v1](tickets/044-construir-runtime-do-agente.md) | task | fechado adotando o provisório (`agente-runtime/`) como v1 — critério "Resolvido quando" já cumprido ao vivo em produção (09-11/12); adapter de auth Supabase virou Volume Railway (equivalente aceito); estado de conversa em Supabase, idempotência e deploy via GitHub adiados para o **046** (esquema de `engagements` ainda não decidido); desbloqueia item 7 do gate do 038 |
+| 041 | [Colocar a conta de faturamento do Gemini em pré-pagamento antes que o serviço pare](tickets/041-billing-pre-pagamento.md) | task | dono decidiu conscientemente manter pós-pagamento — Tier 1, Google migrando contas de Postpay pra Prepay (rollout de março/2026), troca é via de mão única e exige comprar crédito; confirmado direto na tela da Google que não afeta rate limit nem `serviceTier: standard` (LGPD); risco aceito de "interrupção no serviço" se não converter, troca reativa se acontecer |
 | 001 | [Inicializar o repositório e proteger os segredos](tickets/001-repositorio-e-protecao-dos-segredos.md) | task | — |
 | 003 | [Conseguir a exportação das conversas das consultoras](tickets/003-exportacao-das-conversas-das-consultoras.md) | task | exportação inviável; substituída pela análise do dono via grilling — desbloqueou 010, 013, 014 |
 | 004 | [Inspecionar a planilha de carteira/mailing de clientes](tickets/004-acesso-a-planilha-e-ao-catalogo.md) | task | dividido; planilha é diretório de arquitetos + mailing, não CRM de consumidor final; lookup "já é cliente" do 010 não se sustenta; catálogo + planilha de arquiteto → 032; desbloqueou 030, 031 |

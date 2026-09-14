@@ -353,6 +353,15 @@ prototipagem, `/prototype`. Em tickets de research, `/research` como subagente.
   zero na próxima mensagem (addendum no 012, distinto da janela de retomada de 3 dias — aquele
   é antes de fechar, este é depois). Efeito colateral do mesmo pedido: telefone resolvido
   best-effort para contato `@lid` (antes mostrava "LID:..." na plataforma).
+- [Colocar a conta de faturamento do Gemini em pré-pagamento antes que o serviço pare](tickets/041-billing-pre-pagamento.md)
+  — **fechado com decisão consciente de não converter agora.** A Google está migrando contas
+  de pós-pagamento pra pré-pagamento (rollout de março/2026); a conta do projeto é Tier 1
+  (baixo histórico de pagamento), alvo típico dessa migração — o banner "Ação necessária" já
+  está ativo. Investigado antes da decisão: a troca é via de mão única, exige comprar crédito
+  não reembolsável, mas **confirmado direto na tela da Google** que não afeta rate limit nem o
+  `serviceTier: standard` que o 017/018 validaram pra LGPD. Risco aceito: se não converter, a
+  Google avisa "interrupções no serviço" (o Gemini pode parar de responder a Manu); dono opta
+  por trocar reativamente se o problema aparecer, não preventivamente.
 - [Construir o runtime do agente — v1](tickets/044-construir-runtime-do-agente.md) —
   **fechado adotando o runtime provisório (`agente-runtime/`) como a v1**, em vez do build
   formal que o ticket descrevia item a item: o critério "Resolvido quando" já tinha sido
