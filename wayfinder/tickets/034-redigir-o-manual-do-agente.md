@@ -2,8 +2,8 @@
 id: "034"
 title: Redigir o manual do agente para as consultoras
 labels: [wayfinder:task]
-status: open
-assignee:
+status: in-progress
+assignee: Claude
 blocked-by: ["036"]
 ---
 
@@ -16,6 +16,14 @@ blocked-by: ["036"]
 > como névoa do mapa, não como ticket, quando este foi aberto).
 > **038 fechou em 2026-09-14** — sai do bloqueio em prosa. Só falta o **036** (freio de mão
 > global) agora.
+> **Redação iniciada em 2026-09-14 por decisão do dono**, antes do fechamento formal do 036.
+> `blocked-by` continua listando 036 porque a barra formal do ticket ("resolvido quando existir
+> um jeito **comprovado**") ainda não foi cumprida — falta só o teste com mensagem real de
+> WhatsApp chegando enquanto `agent_enabled = false` (ver `## Progresso 2026-09-14` no 036).
+> A feature em si já existe e funciona (testada ao vivo via update direto no banco), o que
+> justifica escrever a seção do freio de mão com conteúdo real, não hipotético. **034 não fecha
+> antes do 036 fechar** — a redação avança, mas a "Resolução" deste ticket só entra quando o
+> 036 também estiver `closed`.
 
 ## Question
 
