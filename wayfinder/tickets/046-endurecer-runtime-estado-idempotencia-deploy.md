@@ -149,20 +149,27 @@ corrompia parênteses/aspas (o Monaco auto-fecha bracket e desalinha com texto j
 contornado com `window.monaco.editor.getEditors()[0].setValue(...)`, conferido por
 comprimento de string exato contra o arquivo fonte antes de cada `Run`.
 
-### Pendente — passo final, precisa de ação humana
+### Item 1 — validado ao vivo em produção (2026-09-14, mesma sessão)
 
-Só falta ligar o segredo já criado no Vault ao runtime — isso **não pode** ser automatizado
-sem o valor passar pela sessão (o próprio ponto do Vault é não deixar isso acontecer):
+O dono revelou o valor do Vault (`Integrations → Vault → Secrets`, ícone de olho) e colou em
+`ENGAGEMENT_SECRET` no Railway. Achado no caminho: **a variável ficou como "1 Change" pendente
+até clicar em "Deploy" explicitamente** — um `railway up` rodado antes desse clique usa o
+conjunto de variáveis antigo (o runtime subiu logando `engagement-writer: config ausente`,
+confirmado nos logs, até a variável ser de fato aplicada e um segundo deploy rodar).
 
-1. **Revelar o valor**: `Integrations → Vault → Secrets` no painel Supabase (ícone de olho na
-   linha `engagement_secret`) — ou `select decrypted_secret from vault.decrypted_secrets where
-   name = 'engagement_secret';` no SQL Editor.
-2. **Colar em `ENGAGEMENT_SECRET`** na variável de ambiente do serviço Railway
-   `agente-runtime` — mesmo padrão do `HANDOFF_INSERT_SECRET`.
-3. **Deploy do `agente-runtime`** (`railway up ./agente-runtime --path-as-root --service
-   agente-runtime -c`).
-4. **Validar ao vivo**: mandar mensagem de teste, `railway restart` no meio da qualificação,
-   confirmar que a conversa retoma sem perder contexto (é o critério de "resolvido" do item 1).
+**Validação do critério "resolvido" do item 1** — sem depender de mandar mensagem real de
+WhatsApp: inserida uma linha de teste direto em `engagements` (`contact_jid =
+'teste-046-validacao@s.whatsapp.net'`, `status = 'qualificando'`), rodado `railway restart
+--service agente-runtime --yes`, e o log do boot seguinte mostrou:
 
-Itens 2 (idempotência) e 3 (deploy automático) deste ticket **não foram tocados** — seguem
-como próxima fatia, sem bloqueio do item 1.
+```
+[15:45:46] INFO (25): >>> Atendimentos abertos reidratados do Supabase — restart não perdeu conversa em andamento.
+    total: 1
+```
+
+**Confirmado: um restart não perde mais uma conversa em andamento.** Linha de teste apagada
+depois (`delete ... returning id`, mesmo `id` confirmado no retorno) — produção sem resíduo.
+
+**Item 1 do 046 está fechado.** Itens 2 (idempotência) e 3 (deploy automático) **não foram
+tocados** — seguem como próxima fatia, sem bloqueio do item 1. O ticket como um todo segue
+`in-progress` até esses dois fecharem também.
