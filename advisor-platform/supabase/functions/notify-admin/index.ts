@@ -18,6 +18,7 @@ interface ProblemReportRecord {
   reported_by: string;
   contact_reference: string | null;
   description: string;
+  product_claim: boolean;
 }
 
 interface AgentSettingsRecord {
@@ -54,20 +55,29 @@ function buildProblemEmail(r: ProblemReportRecord, platformUrl: string) {
     .map(([k, v]) => `<tr><td style="color:#6b6157;padding:2px 12px 2px 0">${k}</td><td>${escapeHtml(String(v))}</td></tr>`)
     .join("");
 
+  // product_claim: erro de afirmação de preço/disponibilidade — a restrição dura nº 1 do
+  // CLAUDE.md — é mais urgente que os demais tipos de problema reportado (037, via 011).
+  const subjectPrefix = r.product_claim ? "URGENTE — " : "";
+  const priorityBanner = r.product_claim
+    ? `<p style="margin:0 0 12px;color:#a23b2e;font-weight:600">Envolve preço ou disponibilidade de produto</p>`
+    : "";
+
   const html = `
     <div style="font-family:system-ui,sans-serif;max-width:520px">
       <h2 style="margin:0 0 4px">Problema reportado</h2>
+      ${priorityBanner}
       <table style="border-collapse:collapse;font-size:14px">${lines}</table>
       <p style="margin:12px 0 0;white-space:pre-wrap">${escapeHtml(r.description)}</p>
       <p style="margin:20px 0 0">
         <a href="${platformUrl}" style="background:#9c6b3f;color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none">Ver histórico na plataforma</a>
       </p>
     </div>`;
-  const text = `Problema reportado\n` +
+  const text = (r.product_claim ? `ENVOLVE PREÇO OU DISPONIBILIDADE DE PRODUTO\n\n` : "") +
+    `Problema reportado\n` +
     rows.filter(([, v]) => v).map(([k, v]) => `${k}: ${v}`).join("\n") +
     `\n\n${r.description}\n\nVer histórico: ${platformUrl}`;
 
-  return { subject: "Problema reportado na plataforma", html, text };
+  return { subject: `${subjectPrefix}Problema reportado na plataforma`, html, text };
 }
 
 function buildKillSwitchEmail(r: AgentSettingsRecord, platformUrl: string) {

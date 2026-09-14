@@ -55,6 +55,7 @@
         <div class="rowline">
           <strong>{names[r.reported_by] || r.reported_by}</strong>
           <span class="muted">{dateTime(r.created_at)}</span>
+          {#if r.product_claim}<span class="badge priority">preço/disponibilidade</span>{/if}
         </div>
         {#if r.contact_reference}<p class="muted" style="margin-top:4px;">{r.contact_reference}</p>{/if}
         <p style="margin-top:8px;">{r.description}</p>

@@ -10,6 +10,7 @@
   let open = $state(false);
   let contactReference = $state('');
   let description = $state('');
+  let productClaim = $state(false);
   let busy = $state(false);
   let error = $state('');
   let sent = $state(false);
@@ -25,6 +26,7 @@
       reported_by: email,
       contact_reference: contactReference.trim() || null,
       description: description.trim(),
+      product_claim: productClaim,
     });
     busy = false;
     if (e) {
@@ -38,6 +40,7 @@
     open = false;
     contactReference = '';
     description = '';
+    productClaim = false;
     error = '';
     sent = false;
   }
@@ -73,6 +76,13 @@
             bind:value={description}
             placeholder="Ex: disse que a loja tinha o vaso azul disponível — a gente não afirma isso pro cliente"
           ></textarea>
+        </fieldset>
+
+        <fieldset>
+          <label class="opt">
+            <input type="checkbox" bind:checked={productClaim} />
+            O agente afirmou preço ou disponibilidade de um produto
+          </label>
         </fieldset>
 
         <div class="actions" style="margin-top:20px;">

@@ -69,6 +69,7 @@ let problemReports = [
   {
     id: 'pr1', created_at: ago(37), reported_by: 'pamella@demo.local',
     contact_reference: 'Rafael Siqueira', description: 'O agente disse que a mesa de 8 lugares estava disponível — a gente não afirma isso.',
+    product_claim: true,
   },
 ];
 
