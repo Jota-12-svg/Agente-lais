@@ -50,13 +50,3 @@ Ao final do mês, avaliamos juntos três pontos:
 
 Se a resposta for positiva nos três pontos, a mensalidade de R$ 800,00 passa a valer a partir
 do segundo mês. Se não for, encerramos ali, sem custo e sem compromisso.
-
-## Próximos passos
-
-- Alinhar esse escopo com você e com a equipe.
-- Marcar uma demonstração ao vivo do agente antes de o teste começar.
-- Combinar a data de início.
-
----
-
-João Victor
