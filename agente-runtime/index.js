@@ -28,6 +28,13 @@
 //     `agent_enabled = false`, o runtime não responde ninguém, em nenhuma conversa.
 //   - Silêncio por conversa (009/012): se uma mensagem chegar de outro dispositivo seu
 //     (fromMe, não eco da própria Manu), aquela conversa entra em silêncio.
+//   - Handoff sobrevive a reconexão (047, 2026-09-14): achado real em produção — se a
+//     consultora escreve enquanto o processo não está conectado, o `fromMe` acima nunca
+//     chega, e a Manu trata a próxima mensagem do cliente como atendimento novo. Toda
+//     (re)conexão agora escuta o histórico que o Baileys reenvia (`messaging-history.set`) e
+//     recupera esse sinal perdido, dentro da janela de 3 dias do 012/013 — ver
+//     `tratarHistoricoReenviado`. Desambiguação (mensagem antiga é da própria Manu, ou de uma
+//     consultora) via tabela nova `agent_sent_messages` (`agent-sent-messages-writer.mjs`).
 //   - Escalada grava na fila real (031) com o telefone de verdade do cliente.
 //   - Áudio de entrada (nota de voz do cliente): baixa via Baileys e manda como `inlineData`
 //     pro Gemini, mesmo padrão validado no 018 — achado e corrigido em 2026-09-12, ver 044.
@@ -47,6 +54,7 @@ import { createClient } from '@supabase/supabase-js'
 import { default as makeWASocket, useMultiFileAuthState, fetchLatestBaileysVersion, DisconnectReason, downloadMediaMessage } from '@whiskeysockets/baileys'
 import { writeHandoff, handoffWriterDisponivel, telefoneDoJid, fetchHandoffStatuses } from './handoff-writer.mjs'
 import { upsertEngagement, listOpenEngagements } from './engagement-writer.mjs'
+import { recordSentMessage, filterKnownSent } from './agent-sent-messages-writer.mjs'
 
 // Achado real, 2026-09-12: contato @lid (endereçamento indireto do WhatsApp, não expõe o
 // número) fazia a plataforma mostrar "LID:..." em vez de telefone de verdade — a consultora
@@ -177,6 +185,59 @@ async function rehidratarEngajamentos() {
     })
   }
   logger.info({ total: engagements.length }, '>>> Atendimentos abertos reidratados do Supabase — restart não perdeu conversa em andamento.')
+}
+
+// ---- Backfill de handoff perdido em reconexão (047, 2026-09-14) ----
+// Mesma janela de "contato perdido" já fixada em 012/013 — reaproveitada aqui, não é um
+// número novo. Mensagem `fromMe` mais velha que isso não tem mais uso: se ninguém mais
+// escreveu por 3 dias, o atendimento já é tratado como esfriado/novo em outros lugares do
+// sistema, não faz sentido este backfill reabrir handoff mais velho que isso.
+const JANELA_HANDOFF_MS = 3 * 24 * 60 * 60 * 1000
+
+// Chamado a cada `messaging-history.set` (toda conexão/reconexão do socket, não só o boot do
+// processo — start() já roda de novo em cada uma). `messages` é o histórico que o WhatsApp
+// reenviou; aqui só interessam mensagens `fromMe` (o mesmo sinal que já silencia o agente em
+// tempo real, ver o handler de `messages.upsert`) dentro da janela acima.
+//
+// A mesma restrição de teste do `messages.upsert` (grupo/`@newsletter` ignorados, `ALLOWED_JID`
+// quando setado) se aplica aqui — backfill não deve criar estado pra jid que o resto do
+// pipeline nunca processaria.
+async function tratarHistoricoReenviado(messages) {
+  const agora = Date.now()
+  const candidatos = (messages || []).filter((m) => {
+    const jid = m.key?.remoteJid
+    if (!m.key?.fromMe || !jid || !m.key?.id) return false
+    if (jid.endsWith('@g.us') || jid.endsWith('@newsletter')) return false
+    if (ALLOWED_JID && jid !== ALLOWED_JID) return false
+    const idadeMs = agora - Number(m.messageTimestamp) * 1000
+    return Number.isFinite(idadeMs) && idadeMs <= JANELA_HANDOFF_MS
+  })
+  if (candidatos.length === 0) return
+
+  // Desambiguação (047): uma mensagem `fromMe` histórica pode ser da própria Manu (não conta)
+  // ou de uma consultora humana (conta) — só a tabela `agent_sent_messages` sabe diferenciar
+  // depois de um restart (a memória de `sentByBridge` some com o processo).
+  const ids = candidatos.map((m) => m.key.id)
+  const { ok, known, error } = await filterKnownSent(ids)
+  if (!ok) { logger.warn({ error }, '>>> 047: falha ao consultar mensagens conhecidas — backfill pulado nesta reconexão.'); return }
+
+  const jidsHumanos = new Set(candidatos.filter((m) => !known.has(m.key.id)).map((m) => m.key.remoteJid))
+  if (jidsHumanos.size === 0) return
+
+  for (const jid of jidsHumanos) {
+    const st = estadoDe(jid)
+    // 'escalado'/'com_consultora' já silenciam o agente — nada a fazer. Cobre tanto
+    // 'qualificando' (jid nunca visto, ou reidratado em qualificação) quanto o caso de um
+    // atendimento anterior 'encerrado' (a reidratação no boot nunca carrega esse status pra
+    // memória — engagements_list_open só devolve `status <> 'encerrado'` — então pro processo
+    // em memória os dois casos já chegam aqui como o mesmo `st` recém-criado). Decisão do 047:
+    // consultora que escreveu depois do fechamento está com o caso na mão de novo — não deixa
+    // a Manu recomeçar a qualificação por cima disso.
+    if (st.status === 'com_consultora' || st.status === 'escalado') continue
+    st.status = 'com_consultora'
+    logger.warn({ jid }, '>>> 047: handoff perdido recuperado do histórico reenviado na reconexão — Manu em silêncio aqui.')
+    persistirEngajamento(jid).catch((err) => logger.warn({ jid, err: err.message }, 'Falha ao persistir handoff recuperado (047).'))
+  }
 }
 
 // ---- Reagir a mudanças de handoffs feitas pela plataforma (045/012, 2026-09-12) ----
@@ -311,7 +372,12 @@ async function processarTurno(jid, texto, attachments) {
     st.history.push({ role: 'agent', text: bruto })
 
     const enviado = await sock.sendMessage(jid, { text: respostaLimpa })
-    if (enviado?.key?.id) st.sentByBridge.add(enviado.key.id)
+    if (enviado?.key?.id) {
+      st.sentByBridge.add(enviado.key.id)
+      // 047: sobrevive ao restart, diferente de sentByBridge (só memória) — é o que deixa o
+      // backfill de handoff (tratarHistoricoReenviado) saber que esta mensagem é da Manu.
+      recordSentMessage(enviado.key.id, jid).catch((err) => logger.warn({ jid, err: err.message }, 'Falha ao registrar mensagem enviada (047).'))
+    }
     logger.info({ jid, resposta: respostaLimpa }, 'Manu respondeu.')
 
     // Idempotência (046 item 2): entre o `await askManu` acima e aqui não há mais nenhum
@@ -395,6 +461,12 @@ async function start() {
   })
 
   sock.ev.on('creds.update', saveCreds)
+
+  // 047: histórico reenviado pelo WhatsApp nesta (re)conexão — é daqui que vem o sinal de
+  // handoff que se perderia se a consultora escreveu enquanto o processo estava fora do ar.
+  sock.ev.on('messaging-history.set', ({ messages }) => {
+    tratarHistoricoReenviado(messages).catch((err) => logger.error({ err: err.message }, '>>> 047: falha ao processar histórico reenviado.'))
+  })
 
   sock.ev.on('connection.update', ({ connection, lastDisconnect, qr }) => {
     if (qr) {

@@ -417,6 +417,19 @@ prototipagem, `/prototype`. Em tickets de research, `/research` como subagente.
   [036](tickets/036-freio-de-mao-global.md) só parcialmente comprovado (falta o teste com
   mensagem real) — decisão consciente do dono, registrada aqui e nos tickets 036/038, não
   decisão tomada por conta própria.
+- **Handoff não sobrevive a reconexão do runtime — achado real em produção e corrigido**
+  ([047](tickets/047-handoff-sobrevive-reconexao.md), 2026-09-14). A detecção de que uma
+  consultora já assumiu uma conversa (009/012) só existia como efeito colateral de observar
+  `fromMe` **enquanto o processo estava conectado**; se ela escreveu com o runtime fora do ar
+  (ou durante uma das reconexões frequentes do Baileys), o sinal se perdia pra sempre e a
+  Manu recomeçava a qualificação do zero em cima de uma conversa já humana — foi o que
+  aconteceu com um cliente real hoje, confirmado linha a linha nos logs do Railway. Correção:
+  toda (re)conexão agora escuta o histórico reenviado pelo WhatsApp (`messaging-history.set`)
+  e recupera qualquer `fromMe` humano dentro da janela de 3 dias já fixada em 012/013,
+  inclusive sobrepondo um atendimento `encerrado`; desambiguação (mensagem antiga é da própria
+  Manu, ou de uma consultora) via tabela nova `agent_sent_messages`. Rede de segurança
+  imediata no `system-prompt.md` enquanto isso não é validado ao vivo. **Pendente**: aplicar a
+  migration em produção e o teste real de reconexão — ver ticket, ainda `in-progress`.
 
 ## Not yet specified
 
