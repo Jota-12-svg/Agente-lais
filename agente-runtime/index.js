@@ -7,12 +7,15 @@
 // O QUE FALTA para ser a versão do 044 (registrado, não escondido):
 //   - Auth do Baileys em disco (useMultiFileAuthState), não Supabase — todo redeploy sem
 //     volume persistente pede o QR de novo. Precisa de um Volume montado em /data no Railway.
-//   - Estado de conversa em memória (Map), não Supabase — perde tudo se o processo reiniciar
-//     no meio de uma qualificação.
 //   - Sem idempotência na escalada (mensagem de gatilho reprocessada pode escalar 2x).
 //   - Sem SMS/Telegram no watchdog — só o /health, pra quem configurar depois.
+//   - Deploy manual via `railway up`, não push-to-deploy via GitHub.
+//   (as três últimas seguem escopo do ticket 046 — itens 2 e 3, o item 1 já fechou abaixo)
 //
 // O QUE JÁ TEM, ligado de verdade:
+//   - Estado de conversa persistido no Supabase (tabela `engagements`, ticket 046, item 1,
+//     2026-09-14): um restart não perde mais conversa em andamento — reidrata no boot
+//     (rehidratarEngajamentos) e persiste depois de cada turno (persistirEngajamento).
 //   - Freio de mão global (036): assina `agent_settings` via Supabase Realtime — se
 //     `agent_enabled = false`, o runtime não responde ninguém, em nenhuma conversa.
 //   - Silêncio por conversa (009/012): se uma mensagem chegar de outro dispositivo seu
@@ -35,6 +38,7 @@ import qrcode from 'qrcode'
 import { createClient } from '@supabase/supabase-js'
 import { default as makeWASocket, useMultiFileAuthState, fetchLatestBaileysVersion, DisconnectReason, downloadMediaMessage } from '@whiskeysockets/baileys'
 import { writeHandoff, handoffWriterDisponivel, telefoneDoJid, fetchHandoffStatuses } from './handoff-writer.mjs'
+import { upsertEngagement, listOpenEngagements } from './engagement-writer.mjs'
 
 // Achado real, 2026-09-12: contato @lid (endereçamento indireto do WhatsApp, não expõe o
 // número) fazia a plataforma mostrar "LID:..." em vez de telefone de verdade — a consultora
@@ -115,11 +119,56 @@ if (SUPABASE_PROJECT_REF && SUPABASE_PUBLISHABLE_KEY) {
 }
 
 // ---- Estado por conversa (jid → {history, status, sentByBridge}) ----
-// status: 'qualificando' | 'escalado' | 'com_consultora'. Tudo em memória — some num restart.
+// status: 'qualificando' | 'escalado' | 'com_consultora'. Vive em memória, mas agora também é
+// persistido em Supabase (046) — some num restart só se a persistência falhar.
 const conversas = new Map()
 function estadoDe(jid) {
   if (!conversas.has(jid)) conversas.set(jid, { history: [], status: 'qualificando', sentByBridge: new Set() })
   return conversas.get(jid)
+}
+
+// ---- Persistência da memória (046) — fire-and-forget depois de cada mudança relevante ----
+// Nunca bloqueia a resposta ao cliente (já foi mandada antes de chamar isto); falha aqui só
+// perde a persistência daquele turno, não a conversa em si (segue rodando em memória, como
+// sempre rodou até aqui).
+async function persistirEngajamento(jid) {
+  const st = estadoDe(jid)
+  const phone = await telefoneResolvido(jid)
+  const r = await upsertEngagement({
+    jid,
+    phone,
+    name: st.contactName || null,
+    status: st.status,
+    history: st.history,
+    handoffId: st.handoffId,
+  })
+  if (r.ok) st.engagementId = r.id
+  else logger.warn({ jid, erro: r.error }, '>>> Falha ao persistir atendimento (memória em Supabase) — segue só em memória.')
+}
+
+// ---- Reidratação no boot (046) — só na primeira vez, nunca de novo numa reconexão de socket
+// (start() é chamado de novo em toda reconexão do Baileys; sem essa trava, reidrataria por
+// cima de estado em memória mais fresco que o que está no Supabase) ----
+let rehidratado = false
+async function rehidratarEngajamentos() {
+  if (rehidratado) return
+  rehidratado = true
+  const { ok, engagements, error } = await listOpenEngagements()
+  if (!ok) {
+    logger.warn({ error }, '>>> Falha ao reidratar atendimentos abertos do Supabase — começando com memória vazia (mesmo comportamento de antes do 046).')
+    return
+  }
+  for (const e of engagements) {
+    conversas.set(e.contact_jid, {
+      history: e.history || [],
+      status: e.status,
+      sentByBridge: new Set(),
+      handoffId: e.handoff_id || undefined,
+      contactName: e.contact_name || null,
+      engagementId: e.id,
+    })
+  }
+  logger.info({ total: engagements.length }, '>>> Atendimentos abertos reidratados do Supabase — restart não perdeu conversa em andamento.')
 }
 
 // ---- Reagir a mudanças de handoffs feitas pela plataforma (045/012, 2026-09-12) ----
@@ -151,7 +200,10 @@ async function checarChamadosDevolvidos() {
     const st = estadoDe(jid)
     if (status === 'closed') {
       // "Fechar chamado" = atendimento acabou de vez. Próxima mensagem do cliente é
-      // atendimento NOVO, não retomada — apaga o estado inteiro em vez de só destravar.
+      // atendimento NOVO, não retomada — apaga o estado em memória e marca a linha persistida
+      // como encerrada (046), pra abrir uma linha nova em vez de reaproveitar esta.
+      st.status = 'encerrado'
+      persistirEngajamento(jid).catch((err) => logger.warn({ jid, err: err.message }, 'Falha ao persistir encerramento do atendimento.'))
       conversas.delete(jid)
       logger.info({ jid }, '>>> Chamado fechado na plataforma — atendimento encerrado, próxima mensagem começa do zero.')
     } else if (status === 'returned_to_agent' && st.status !== 'qualificando') {
@@ -159,6 +211,7 @@ async function checarChamadosDevolvidos() {
       // Guarda `st.status !== 'qualificando'`: sem isso, reprocessaria a mesma mudança a
       // cada poll enquanto ninguém reassumir (o status no banco não muda sozinho).
       st.status = 'qualificando'
+      persistirEngajamento(jid).catch((err) => logger.warn({ jid, err: err.message }, 'Falha ao persistir retomada do atendimento.'))
       logger.info({ jid }, '>>> Chamado devolvido ao agente na plataforma — Manu volta a responder aqui.')
       // Achado real, 2026-09-12: mensagem chegando entre o clique do botão e este poll ficava
       // silenciada pra sempre, ninguém nunca respondia a ela — a pessoa via a Manu "voltar" só
@@ -176,6 +229,7 @@ async function checarChamadosDevolvidos() {
       // correção do dono: "a consultora deve ter a possibilidade de pegar o chamado de novo
       // quando quiser").
       st.status = 'escalado'
+      persistirEngajamento(jid).catch((err) => logger.warn({ jid, err: err.message }, 'Falha ao persistir retomada da consultora.'))
       logger.info({ jid, status }, '>>> Consultora retomou o chamado na plataforma — Manu volta a ficar em silêncio aqui.')
     }
   }
@@ -254,6 +308,7 @@ async function processarTurno(jid, texto, attachments) {
 
     if (escalou) {
       st.status = 'escalado'
+      if (escalou.nome) st.contactName = escalou.nome
       logger.info({ jid, escalou }, '>>> Escalada detectada — silêncio a partir de agora nesta conversa.')
       writeHandoff({
         trigger: escalou.trigger,
@@ -265,11 +320,18 @@ async function processarTurno(jid, texto, attachments) {
         if (r.ok) {
           st.handoffId = r.id // pro poll saber qual chamado observar (por id, não por jid — 045)
           logger.info({ jid, id: r.id }, '>>> Chamado gravado na fila real.')
+          // Persiste de novo agora que o handoffId existe (o persist logo abaixo já rodou sem
+          // ele, por causa da corrida entre este .then() assíncrono e o fim de processarTurno).
+          persistirEngajamento(jid).catch((err) => logger.warn({ jid, err: err.message }, 'Falha ao persistir vínculo com o chamado.'))
         } else {
           logger.error({ jid, erro: r.error }, '>>> NÃO gravou na fila real (resposta ao cliente já foi enviada).')
         }
       })
     }
+
+    // Persistência da memória (046) — depois de cada turno, não só na escalada. É o que
+    // sustenta "sobrevive a um restart sem perder a conversa em andamento".
+    persistirEngajamento(jid).catch((err) => logger.warn({ jid, err: err.message }, 'Falha ao persistir atendimento.'))
   } catch (err) {
     logger.error({ jid, err: err.message }, 'Falha ao pedir/enviar resposta — nada foi mandado.')
   }
@@ -297,6 +359,10 @@ let latestQR = null
 let connectionStatus = 'iniciando'
 
 async function start() {
+  // No-op depois da primeira vez (start() roda de novo em toda reconexão de socket, não só no
+  // boot do processo — ver a trava dentro da função).
+  await rehidratarEngajamentos()
+
   const { state: authState, saveCreds } = await useMultiFileAuthState(AUTH_DIR)
   const { version } = await fetchLatestBaileysVersion()
 
@@ -387,6 +453,7 @@ async function start() {
         if (st.sentByBridge.has(msg.key.id)) { st.sentByBridge.delete(msg.key.id); continue }
         if (st.status !== 'com_consultora') {
           st.status = 'com_consultora'
+          persistirEngajamento(jid).catch((err) => logger.warn({ jid, err: err.message }, 'Falha ao persistir consultora assumindo por outro aparelho.'))
           logger.info({ jid }, '>>> Consultora assumiu esta conversa (envio direto de outro aparelho) — Manu em silêncio aqui.')
         }
         continue
