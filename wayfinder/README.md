@@ -16,7 +16,7 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 
 | # | Ticket | Tipo |
 |---|---|---|
-| 046 | [Endurecer o runtime do agente — estado persistido, idempotência e deploy automático](tickets/046-endurecer-runtime-estado-idempotencia-deploy.md) | task · **in-progress** — item 1 (`engagements`) fechado por grilling e **codificado** (2026-09-14), falta só aplicar a migration/segredo em produção (ação humana, ver ticket); itens 2 (idempotência) e 3 (deploy automático) seguem sem tocar |
+| 046 | [Endurecer o runtime do agente — estado persistido, idempotência e deploy automático](tickets/046-endurecer-runtime-estado-idempotencia-deploy.md) | task · **in-progress** — item 1 (`engagements`) fechado por grilling, codificado **e aplicado em produção** (2026-09-14: migrations rodadas, segredo criado no Vault); falta só colar o segredo no Railway + redeploy + validar ao vivo (ação humana, ver ticket); itens 2 (idempotência) e 3 (deploy automático) seguem sem tocar |
 | 021 | [Instagram como porta de entrada para o WhatsApp](tickets/021-instagram-porta-de-entrada.md) | task |
 | 038 | [Estratégia de rollout do agente — piloto, horário, fallback, canal de erro](tickets/038-estrategia-de-rollout.md) | grilling · **in-progress** |
 | 039 | [Laço de contexto — o contexto do agente evoluindo com os atendimentos](tickets/039-laco-de-contexto-do-agente.md) | grilling · trazido da reconciliação do 014; não urgente, refinamento contínuo |
@@ -33,9 +33,11 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 > entregas do desenho original (estado de conversa em Supabase, idempotência, deploy via
 > GitHub) viraram o **046**. Ver `## Resolução` no ticket.
 >
-> **046 item 1 fechado por grilling e codificado** (2026-09-14): esquema de `engagements`
-> decidido (8 perguntas) e implementado (migrations + `engagement-writer.mjs` + `index.js`) —
-> falta só aplicar em produção (ação humana, ver seção "Pendente" do ticket). Itens 2/3 não
+> **046 item 1 fechado por grilling, codificado e aplicado em produção** (2026-09-14): esquema
+> de `engagements` decidido (8 perguntas), implementado (migrations + `engagement-writer.mjs`
+> + `index.js`) e **as duas migrations rodaram em produção** (SQL Editor, `db push` por CLI
+> seguiu bloqueado) + segredo criado no Supabase Vault. Falta só colar o segredo no Railway,
+> redeploy e validar ao vivo — ação humana, ver seção "Pendente" do ticket. Itens 2/3 não
 > tocados.
 >
 > **042 fechado** (2026-09-11, grilling): a **última névoa grande de arquitetura do mapa**
