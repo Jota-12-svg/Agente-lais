@@ -231,3 +231,15 @@ aberto um ticket `033-superficie-das-consultoras-para-o-agente` para essa superf
 convergiu com a decisão do dono do mesmo dia (a fila sai da planilha, vira plataforma sobre o
 Supabase) e foi **consolidado no 035**. Não reabre o
 [029](029-canal-de-notificacao-da-fila.md) — o canal de aviso é decidido dentro do 035.
+
+### Addendum 2026-09-14 — fonte e captura do `fora_de_escopo`
+
+A tabela "Fonte e captura, por sinal" deixava `fora_de_escopo` de fora — a taxonomia previa o
+valor, mas nunca atribuiu de onde ele viria. Fechado pelo grilling do
+[038](038-estrategia-de-rollout.md) (estratégia de rollout): **automático, pelo agente**, mesmo
+padrão de `escalado`/`esfriado`/`resolvido_sem_escalada`. Quando a resposta do contato no
+turno 1 deixa claro que não é cliente (número errado, mensagem pessoal de/para consultora,
+fornecedor), a Manu reconhece o sinal e se auto-classifica `fora_de_escopo` na hora, em vez de
+deixar o atendimento esfriar por 3 dias sem necessidade. Implementação (instrução no
+`system-prompt.md` + gravação do estado) segue detalhada no 038, condicionada ao esquema de
+`engagements` do [046](046-endurecer-runtime-estado-idempotencia-deploy.md).

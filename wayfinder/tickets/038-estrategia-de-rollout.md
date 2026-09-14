@@ -218,6 +218,52 @@ fase 2, que está **fora de escopo** deste mapa (volta como mapa novo).
 3. **Gatilho da checagem de manutenção do manual** → a **checagem obrigatória de 4 semanas**
    no fim do piloto.
 
+### Addendum 2026-09-14 — reconhecer quando o contato não é cliente
+
+Grilling à parte (2 rodadas, 5 perguntas), disparado por uma dúvida do dono: como a Manu
+reconhece que quem mandou mensagem no número compartilhado da loja **não é cliente** —
+contato pessoal de consultora, fornecedor, número errado. É distinto de "cliente novo vs.
+cliente que já compra ali", que é o addendum de 2026-09-01 do
+[010](010-o-que-e-um-lead-qualificado.md); aqui a pergunta é se a pessoa é cliente **de
+algum jeito**.
+
+**Fato de negócio, sem registro em lugar nenhum do mapa até agora:** o WhatsApp Business é o
+**único** número que as consultoras usam — não há separação entre pessoal e comercial — e
+mensagem que não é de cliente acontece **com regularidade**, não é caso raro.
+
+**Decisão:**
+
+- **Sem filtro técnico na entrada.** Bloquear por JID (allowlist/blocklist) fica descartado:
+  o erro mais caro, por decisão explícita do dono, é a Manu deixar de engajar um cliente
+  real — um filtro que erra pro lado de calar alguém arrisca exatamente isso. A Manu segue
+  respondendo a qualquer 1:1 por padrão. (Grupo e `@newsletter` já são ignorados por padrão
+  desde o commit `1473d0f` — isso não muda, nunca foi o gap.)
+- **Resolve no nível conversacional, não técnico.** A abertura do turno 1 já decidida no
+  [010](010-o-que-e-um-lead-qualificado.md) — perguntar explicitamente "é para a sua casa, ou
+  você é arquiteto(a)/designer montando um projeto?" — já funciona como filtro de baixo
+  atrito: um não-cliente descarta isso numa linha. **A abertura não muda** — reabrir tom sem
+  motivo novo foi descartado.
+- **A Manu se auto-classifica `fora_de_escopo` na hora**, quando a resposta deixa claro que
+  não é cliente, fechando o atendimento ali em vez de deixar esfriar por 3 dias poluindo o
+  sinal de aprendizado do [013](013-sinal-de-sucesso-do-aprendizado.md). Isso preenche uma
+  lacuna que o próprio 013 já deixava aberta (addendum espelhado lá): a tabela "Fonte e
+  captura" listava `fora_de_escopo` na taxonomia mas nunca atribuiu fonte/captura a ele —
+  vira automático, pelo agente, mesmo padrão de `escalado`/`esfriado`/`resolvido_sem_escalada`.
+
+**Checado antes de decidir (não é suposição):** o `system-prompt.md` do runtime hoje **não
+tem nenhuma instrução** sobre isso — nenhum dos 6 gatilhos de escalada (`qualified`,
+`architect`, `purchase_intent`, `human_requested`, `irritation`, `price_negotiation`) cobre
+"não é cliente"; é gap real, não sobreposição com algo já implementado.
+
+**O que falta pra virar comportamento real** (na lista de pendências abaixo): instrução nova
+no `system-prompt.md` + um jeito de gravar `fora_de_escopo` quando a Manu decidir isso
+sozinha — esbarra no mesmo bloqueio do
+[046](046-endurecer-runtime-estado-idempotencia-deploy.md): o runtime não persiste estado de
+atendimento no Supabase ainda (esquema de `engagements` segue como névoa no mapa). Até o 046
+resolver isso, a auto-classificação fica **decidida mas não implementável de fato**; o que dá
+pra construir antes disso é só a instrução de "recuar/parar de qualificar" no prompt, sem a
+gravação formal do estado.
+
 ### Pendências para fechar o 038
 
 O grilling decidiu a forma. O ticket fecha quando estas pontas — que dependem de trabalho
@@ -234,6 +280,10 @@ ainda inexistente — estiverem amarradas:
   item 3 (027) segue aberto no gate.
 - **Ajuste na seção do freio de mão do [033](033-manual-do-agente-para-as-consultoras.md)/[034](034-redigir-o-manual-do-agente.md)**
   — o veículo do aviso é plataforma + e-mail/SMS, não "o grupo". Aplicar na redação do 034.
+- **Instrução de "não é cliente" no `system-prompt.md`** (addendum 2026-09-14) — recuar/parar
+  de qualificar quando a resposta do turno 1 deixar claro que não é cliente; a
+  auto-classificação `fora_de_escopo` de verdade espera o esquema de `engagements` do
+  [046](046-endurecer-runtime-estado-idempotencia-deploy.md).
 
 Quando fechar: escrever a `## Resolução`, `status: closed`, tirar "estratégia de rollout" do
 bloqueio em prosa do 034, adicionar linha em `Decisions so far` no mapa, formalizar os
