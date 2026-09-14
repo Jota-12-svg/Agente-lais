@@ -255,14 +255,14 @@ tem nenhuma instrução** sobre isso — nenhum dos 6 gatilhos de escalada (`qua
 `architect`, `purchase_intent`, `human_requested`, `irritation`, `price_negotiation`) cobre
 "não é cliente"; é gap real, não sobreposição com algo já implementado.
 
-**O que falta pra virar comportamento real** (na lista de pendências abaixo): instrução nova
-no `system-prompt.md` + um jeito de gravar `fora_de_escopo` quando a Manu decidir isso
-sozinha — esbarra no mesmo bloqueio do
-[046](046-endurecer-runtime-estado-idempotencia-deploy.md): o runtime não persiste estado de
-atendimento no Supabase ainda (esquema de `engagements` segue como névoa no mapa). Até o 046
-resolver isso, a auto-classificação fica **decidida mas não implementável de fato**; o que dá
-pra construir antes disso é só a instrução de "recuar/parar de qualificar" no prompt, sem a
-gravação formal do estado.
+**O que falta pra virar comportamento real:** instrução nova no `system-prompt.md` +
+um jeito de gravar `fora_de_escopo` quando a Manu decidir isso sozinha. A segunda parte
+esbarra no mesmo bloqueio do [046](046-endurecer-runtime-estado-idempotencia-deploy.md): o
+runtime não persiste estado de atendimento no Supabase ainda (esquema de `engagements` segue
+como névoa no mapa) — a auto-classificação formal fica **decidida mas não implementável de
+fato** até o 046 resolver isso. A primeira parte **não esbarra em nada** — é só prompt — e foi
+**implementada em 2026-09-14** (ver pendência abaixo): a Manu recua/para de qualificar quando
+reconhece o sinal, sem gravar estado nenhum ainda.
 
 ### Pendências para fechar o 038
 
@@ -280,10 +280,13 @@ ainda inexistente — estiverem amarradas:
   item 3 (027) segue aberto no gate.
 - **Ajuste na seção do freio de mão do [033](033-manual-do-agente-para-as-consultoras.md)/[034](034-redigir-o-manual-do-agente.md)**
   — o veículo do aviso é plataforma + e-mail/SMS, não "o grupo". Aplicar na redação do 034.
-- **Instrução de "não é cliente" no `system-prompt.md`** (addendum 2026-09-14) — recuar/parar
-  de qualificar quando a resposta do turno 1 deixar claro que não é cliente; a
-  auto-classificação `fora_de_escopo` de verdade espera o esquema de `engagements` do
-  [046](046-endurecer-runtime-estado-idempotencia-deploy.md).
+- ~~**Instrução de "não é cliente" no `system-prompt.md`**~~ — **implementada em
+  2026-09-14**: seção nova "Quando não é cliente" em `agente-runtime/system-prompt.md`
+  (espelhada em `prototipo-tom-014/system-prompt.md`), instruindo a Manu a recuar/parar de
+  qualificar quando a resposta do turno 1 deixar claro que não é cliente, sem usar
+  `[[ESCALAR]]`. **Ainda falta**: a auto-classificação `fora_de_escopo` de verdade (gravar o
+  estado, não só recuar na conversa) — isso segue esperando o esquema de `engagements` do
+  [046](046-endurecer-runtime-estado-idempotencia-deploy.md). Não testado ao vivo ainda.
 
 Quando fechar: escrever a `## Resolução`, `status: closed`, tirar "estratégia de rollout" do
 bloqueio em prosa do 034, adicionar linha em `Decisions so far` no mapa, formalizar os
