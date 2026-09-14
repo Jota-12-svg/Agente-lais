@@ -7,15 +7,23 @@
 // O QUE FALTA para ser a versão do 044 (registrado, não escondido):
 //   - Auth do Baileys em disco (useMultiFileAuthState), não Supabase — todo redeploy sem
 //     volume persistente pede o QR de novo. Precisa de um Volume montado em /data no Railway.
-//   - Sem idempotência na escalada (mensagem de gatilho reprocessada pode escalar 2x).
 //   - Sem SMS/Telegram no watchdog — só o /health, pra quem configurar depois.
-//   - Deploy manual via `railway up`, não push-to-deploy via GitHub.
-//   (as três últimas seguem escopo do ticket 046 — itens 2 e 3, o item 1 já fechou abaixo)
+//   (item do ticket 038, não do 046 — watchdog SMS/Telegram nunca foi escopo deste ticket)
 //
 // O QUE JÁ TEM, ligado de verdade:
-//   - Estado de conversa persistido no Supabase (tabela `engagements`, ticket 046, item 1,
+//   - Estado de conversa persistido no Supabase (tabela `engagements`, ticket 046 item 1,
 //     2026-09-14): um restart não perde mais conversa em andamento — reidrata no boot
 //     (rehidratarEngajamentos) e persiste depois de cada turno (persistirEngajamento).
+//   - Idempotência na escalada (046 item 2, 2026-09-14): duas chamadas concorrentes de
+//     processarTurno pro mesmo jid não geram dois chamados na fila — ver comentário em
+//     processarTurno. Defesa em profundidade no banco (constraint por `engagement_id`) fica
+//     de fora de propósito: `handoffs_insert` nunca populou esse campo (achado no caminho,
+//     confirmado vazio em produção) e mexer nessa função é arriscado (já vazou segredo 2x
+//     via `pg_get_functiondef` — duas rotações de emergência registradas no histórico).
+//   - Deploy automático via GitHub (046 item 3, 2026-09-14): serviço `agente-runtime` do
+//     Railway conectado ao repo, branch `main`, raiz `/agente-runtime`. Configurado, ainda
+//     não validado de ponta a ponta nesta sessão — `main` estava parado há semanas, sem o
+//     código deste arquivo; PR trazendo `main` em dia é o que falta pra confirmar.
 //   - Freio de mão global (036): assina `agent_settings` via Supabase Realtime — se
 //     `agent_enabled = false`, o runtime não responde ninguém, em nenhuma conversa.
 //   - Silêncio por conversa (009/012): se uma mensagem chegar de outro dispositivo seu
@@ -306,7 +314,16 @@ async function processarTurno(jid, texto, attachments) {
     if (enviado?.key?.id) st.sentByBridge.add(enviado.key.id)
     logger.info({ jid, resposta: respostaLimpa }, 'Manu respondeu.')
 
-    if (escalou) {
+    // Idempotência (046 item 2): entre o `await askManu` acima e aqui não há mais nenhum
+    // `await` até `st.status = 'escalado'` — então esta checagem-e-escrita é atômica no
+    // event loop single-thread do Node. Sem ela, duas chamadas concorrentes de
+    // processarTurno pro mesmo jid (ex.: cliente manda duas mensagens em rajada, cada uma
+    // vira seu próprio `messages.upsert`, e a segunda começa a rodar enquanto a primeira
+    // ainda está esperando o Gemini) veriam `st.status === 'qualificando'` as duas, e as
+    // duas escalariam — dois chamados duplicados na fila pro mesmo atendimento. Com a
+    // checagem aqui, quem chega primeiro nesta linha "vence"; a segunda, ao chegar depois,
+    // já vê `st.status === 'escalado'` e pula o bloco inteiro.
+    if (escalou && st.status !== 'escalado') {
       st.status = 'escalado'
       if (escalou.nome) st.contactName = escalou.nome
       logger.info({ jid, escalou }, '>>> Escalada detectada — silêncio a partir de agora nesta conversa.')
@@ -327,6 +344,10 @@ async function processarTurno(jid, texto, attachments) {
           logger.error({ jid, erro: r.error }, '>>> NÃO gravou na fila real (resposta ao cliente já foi enviada).')
         }
       })
+    } else if (escalou) {
+      // A resposta deste turno também escalou, mas outra chamada concorrente pro mesmo jid
+      // já tinha feito isso primeiro (ver comentário acima) — não escreve de novo na fila.
+      logger.warn({ jid }, '>>> Escalada duplicada evitada (idempotência 046) — já estava escalado.')
     }
 
     // Persistência da memória (046) — depois de cada turno, não só na escalada. É o que
