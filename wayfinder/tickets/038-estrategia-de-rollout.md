@@ -405,3 +405,19 @@ histórico na plataforma já funciona sem depender de e-mail.
 - [036](036-freio-de-mao-global.md) e [037](037-construir-plataforma-consultoras-v1.md)
   ganharam nota registrando o incremento do canal de aviso de erro.
 - Linha nova em `Decisions so far` do `map.md`.
+
+## Addendum 2026-09-14 (2) — agente liberado com o gate ainda incompleto
+
+O dono pediu explicitamente para abrir o agente a todos os números. Confirmado antes de agir
+que o número conectado ao runtime já era o **real da loja** (verificado via `railway logs` —
+mensagens `fromMe: true` com `pushName: "Lais Aliski Casa"`; os handovers de 09-12 diziam que
+era o número pessoal do dono, mas isso ficou desatualizado por uma reconexão física nunca
+registrada em git). `ALLOWED_JID` removido do serviço `agente-runtime` em produção e redeploy
+forçado; log de boot confirmou `>>> Runtime conectado — Manu responde clientes reais a partir
+de agora.`
+
+**Isso aconteceu com o gate de entrada listado acima ainda incompleto**: item 8 (extração
+estruturada da qualificação) e item 9 (Parte A do manual entregue + demo ao vivo) seguem sem
+cumprir, e o [036](036-freio-de-mao-global.md) só está parcialmente comprovado. Fui alertado
+sobre os três pontos antes de agir; o dono decidiu prosseguir mesmo assim. Não reabro este
+ticket (já fechado por completo antes) — o registro fica aqui e em `036` e no `map.md`.

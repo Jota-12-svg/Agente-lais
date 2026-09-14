@@ -2,8 +2,8 @@
 id: "034"
 title: Redigir o manual do agente para as consultoras
 labels: [wayfinder:task]
-status: open
-assignee:
+status: in-progress
+assignee: Claude
 blocked-by: ["036"]
 ---
 
@@ -16,6 +16,22 @@ blocked-by: ["036"]
 > como névoa do mapa, não como ticket, quando este foi aberto).
 > **038 fechou em 2026-09-14** — sai do bloqueio em prosa. Só falta o **036** (freio de mão
 > global) agora.
+> **Redação iniciada em 2026-09-14 por decisão do dono**, antes do fechamento formal do 036.
+> `blocked-by` continua listando 036 porque a barra formal do ticket ("resolvido quando existir
+> um jeito **comprovado**") ainda não foi cumprida — falta só o teste com mensagem real de
+> WhatsApp chegando enquanto `agent_enabled = false` (ver `## Progresso 2026-09-14` no 036).
+> A feature em si já existe e funciona (testada ao vivo via update direto no banco), o que
+> justifica escrever a seção do freio de mão com conteúdo real, não hipotético. **034 não fecha
+> antes do 036 fechar** — a redação avança, mas a "Resolução" deste ticket só entra quando o
+> 036 também estiver `closed`.
+> **Dono dispensou prints reais e revisão prévia (2026-09-14)** — addendum no 033. O texto de
+> Parte A + Parte B está **escrito e considerado pronto de conteúdo**; a ilustração de tom usa
+> falas literais do `agente-runtime/system-prompt.md` entre aspas, em vez de print de tela. Só
+> falta o 036 fechar e a publicação como Google Doc (ver "Resolvido quando", atualizado).
+> **Texto passado pelo `/humanizer` e rodapé "dono · revisar quando" removido (2026-09-14)** —
+> segundo addendum no 033. Exportado também como `manual/manual-do-agente.pdf` (o meio de
+> entrega decidido continua sendo Google Doc, ver decisão 6 do 033; o PDF é adicional, não
+> substitui).
 
 ## Question
 
@@ -32,8 +48,10 @@ começar, é um addendum no 033, não uma escolha nova aqui.
   dia" (data no cabeçalho, muda com o rollout).
 - **Meio:** fonte markdown no repositório → entregue como **Google Doc**. Parte A em 1–2
   páginas, Parte B em ~1 página + prints.
-- **Tom:** concreto, segunda pessoa, zero jargão, curto, com prints reais do agente (do
-  014). Descreve o agente, não redesenha o trabalho de quem lê.
+- **Tom:** concreto, segunda pessoa, zero jargão, curto. Ilustrado com falas literais do
+  agente (do `system-prompt.md` em produção, entre aspas) — não print de tela, dispensado
+  pelo dono em 2026-09-14 (addendum no 033). Descreve o agente, não redesenha o trabalho de
+  quem lê.
 - **Estrutura:** ver item 7 da resolução do 033 (as duas partes, seção a seção).
 - **O que se pede às consultoras:** quatro pedidos (assumir da fila; marcar desfecho +
   veredito; avisar erro; responder pelo WhatsApp de sempre) + a seção do **freio de mão**.
@@ -43,17 +61,13 @@ começar, é um addendum no 033, não uma escolha nova aqui.
 
 ### Por que está bloqueado
 
-- **[011](011-o-que-o-agente-pode-dizer-sobre-produto.md)** — o manual mostra à consultora,
-  como promessa da loja, o que o agente pode e não pode afirmar sobre produto e
-  disponibilidade. Sem o 011 fechado, essa parte seria invenção.
-- **[014](014-como-o-agente-soa.md)** — a Parte A ilustra como o agente soa com **prints de
-  conversa real**, não texto inventado. Precisa do protótipo de tom pronto.
-- **[036](036-freio-de-mao-global.md)** — a Parte B descreve o freio de mão (kill switch)
-  como feature que a consultora aciona. A feature precisa existir e ter um controle
-  acionável por quem não abre terminal.
-- **[037](037-construir-plataforma-consultoras-v1.md)** — a Parte B ensina a operar a
-  plataforma das consultoras (assumir, fechar, marcar veredito) e é ilustrada com prints
-  dela. O manual não descreve uma interface que ainda não existe e pode mudar no build.
+- **[036](036-freio-de-mao-global.md)** — único bloqueio restante. A Parte B descreve o freio
+  de mão (kill switch) como feature que a consultora aciona; a feature já existe e funciona,
+  falta só a prova formal do próprio ticket (mensagem real de WhatsApp com o freio desligado).
+
+(011, 014 e 037 fecharam em 2026-09-11 e saíram do bloqueio; 038 fechou em 2026-09-14; o
+requisito de print real de 014 foi dispensado pelo dono em 2026-09-14 — ver addendum no 033 —
+então deixou de depender do 014 para a ilustração de tom.)
 
 ### Entradas úteis, não bloqueantes
 
@@ -68,5 +82,8 @@ começar, é um addendum no 033, não uma escolha nova aqui.
 - Respostas das consultoras no [020](020-perguntas-para-as-consultoras.md) — como elas
   atendem, o vocabulário delas.
 
-**Resolvido quando** o manual (Parte A + Parte B) estiver escrito em markdown no
-repositório, revisado pelo dono, publicado como Google Doc, e o link registrado aqui.
+**Resolvido quando** o manual (Parte A + Parte B) — **já escrito** em markdown no repositório
+(`manual/manual-do-agente.md`) — estiver publicado como Google Doc, com o link registrado
+aqui, **e** o [036](036-freio-de-mao-global.md) estiver `closed`. Revisão prévia do dono não é
+mais critério (dispensada em 2026-09-14, ver addendum no 033); a autorização para escrever
+sem prints/revisão, dada nesta mesma data, já cumpre esse papel.

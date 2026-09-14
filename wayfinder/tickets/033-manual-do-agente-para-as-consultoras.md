@@ -236,3 +236,28 @@ como bloqueio em prosa (não há ticket de rollout — é névoa do mapa). Racio
 
 (O ticket 013, que o enunciado original listava como bloqueio, saiu: fechou em 2026-09-02 e
 já define que marcar desfecho + veredito é responsabilidade da consultora.)
+
+### Addendum 2026-09-14 — dono dispensa prints reais e revisão prévia
+
+Pedido do dono, ao autorizar o início da redação (034) antes do 036 fechar: **não precisa de
+print real de conversa nem de revisão do dono antes de considerar o texto pronto.** Ajusta a
+decisão 5 (tom) e a decisão 9 (manutenção) acima:
+
+- **Ilustração do tom (decisão 5):** em vez de print de conversa do 014, o manual cita **falas
+  literais do `agente-runtime/system-prompt.md`** (produção) entre aspas — texto real que o
+  Manu usa, não inventado, só sem captura de tela. Print de verdade pode entrar depois, se um
+  dia fizer sentido trocar; não é mais critério de "pronto".
+- **Revisão antes de publicar (decisão 9, "resolvido quando" do 034):** a autorização do dono
+  nesta conversa **é** a revisão — não há uma passada formal separada depois de escrito. O
+  dono segue sendo quem mantém o manual (revisão em mudança de fase, mudança na Parte B,
+  checagem do fim do piloto), isso não muda.
+- **O que isso não dispensa:** o [036](036-freio-de-mao-global.md) fechar antes do 034 fechar
+  — o dono não comentou sobre isso, é bloqueio técnico separado, não de conteúdo do manual.
+
+### Addendum 2026-09-14 (2) — remove o rodapé "dono · revisar quando"
+
+Pedido do dono: tirar o rodapé do documento. Ajusta a decisão 9 acima, que previa "O rodapé
+do documento carrega 'dono · revisar quando'". O texto do manual (`manual/manual-do-agente.md`)
+não carrega mais essa linha. O restante da decisão 9 (dono do manual = João Victor; gatilhos
+de revisão: mudança de fase, mudança na Parte B, checagem do fim do piloto) continua valendo
+como norma do projeto — só deixou de estar impresso no próprio documento entregue.

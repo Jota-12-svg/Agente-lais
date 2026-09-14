@@ -28,6 +28,14 @@
 //     `agent_enabled = false`, o runtime não responde ninguém, em nenhuma conversa.
 //   - Silêncio por conversa (009/012): se uma mensagem chegar de outro dispositivo seu
 //     (fromMe, não eco da própria Manu), aquela conversa entra em silêncio.
+//   - Handoff sobrevive a reconexão (047, 2026-09-14): achado real em produção — se a
+//     consultora escreve enquanto o processo não está conectado, o `fromMe` acima chegava
+//     tarde demais (ou nunca), porque o filtro de "mensagem velha" (15s, pensado pra não
+//     re-responder cliente) descartava a mensagem replay-de-offline do Baileys antes da
+//     checagem de `fromMe`. Corrigido tratando `fromMe` antes desse filtro, com janela própria
+//     de 3 dias (mesma de 012/013). Desambiguação (mensagem antiga é da própria Manu, ou de
+//     uma consultora) via tabela nova `agent_sent_messages` (`agent-sent-messages-writer.mjs`),
+//     necessária porque `sentByBridge` (memória) não sobrevive a um restart.
 //   - Escalada grava na fila real (031) com o telefone de verdade do cliente.
 //   - Áudio de entrada (nota de voz do cliente): baixa via Baileys e manda como `inlineData`
 //     pro Gemini, mesmo padrão validado no 018 — achado e corrigido em 2026-09-12, ver 044.
@@ -47,6 +55,7 @@ import { createClient } from '@supabase/supabase-js'
 import { default as makeWASocket, useMultiFileAuthState, fetchLatestBaileysVersion, DisconnectReason, downloadMediaMessage } from '@whiskeysockets/baileys'
 import { writeHandoff, handoffWriterDisponivel, telefoneDoJid, fetchHandoffStatuses } from './handoff-writer.mjs'
 import { upsertEngagement, listOpenEngagements } from './engagement-writer.mjs'
+import { recordSentMessage, filterKnownSent } from './agent-sent-messages-writer.mjs'
 
 // Achado real, 2026-09-12: contato @lid (endereçamento indireto do WhatsApp, não expõe o
 // número) fazia a plataforma mostrar "LID:..." em vez de telefone de verdade — a consultora
@@ -178,6 +187,27 @@ async function rehidratarEngajamentos() {
   }
   logger.info({ total: engagements.length }, '>>> Atendimentos abertos reidratados do Supabase — restart não perdeu conversa em andamento.')
 }
+
+// ---- Handoff sobrevive a reconexão (047, 2026-09-14) ----
+// Mesma janela de "contato perdido" já fixada em 012/013 — reaproveitada aqui, não é um
+// número novo. Mensagem `fromMe` mais velha que isso não tem mais uso: se ninguém mais
+// escreveu por 3 dias, o atendimento já é tratado como esfriado/novo em outros lugares do
+// sistema, não faz sentido reabrir handoff mais velho que isso.
+//
+// Tentativa descartada, registrada pra quem mexer aqui de novo não repetir: a primeira versão
+// deste fix escutava `messaging-history.set` (evento de histórico completo que o Baileys
+// reenvia numa reconexão). Não funciona nesta configuração — esse evento só é processado se
+// `shouldSyncHistoryMessage` mandar (`Socket/index.js` do Baileys), que por padrão só retorna
+// `true` quando `syncFullHistory: true` está setado, e não está (de propósito: baixar histórico
+// completo de conversa pra decidir isso seria um escopo de dado bem maior que o necessário,
+// questão de LGPD que o mapa nem chegou a decidir). Testado ao vivo (log real): o evento nunca
+// disparou. O caminho de verdade é mais simples e já existe: mensagem enviada enquanto o
+// aparelho estava offline chega pelo `messages.upsert` normal de qualquer forma (Baileys marca
+// `offline: true` no node e entrega via `type: 'append'`, ver `Socket/messages-recv.js`) — só
+// que o filtro de "mensagem velha, não é evento de agora" (15s, linha abaixo) descarta ela antes
+// de chegar na checagem de `fromMe`. A correção real é no handler de `messages.upsert`: `fromMe`
+// é tratado ANTES desse filtro, com esta janela de 3 dias em vez de 15s.
+const JANELA_HANDOFF_MS = 3 * 24 * 60 * 60 * 1000
 
 // ---- Reagir a mudanças de handoffs feitas pela plataforma (045/012, 2026-09-12) ----
 // Construído direto em cima do runtime provisório, por decisão do dono na sessão — o 045
@@ -311,7 +341,13 @@ async function processarTurno(jid, texto, attachments) {
     st.history.push({ role: 'agent', text: bruto })
 
     const enviado = await sock.sendMessage(jid, { text: respostaLimpa })
-    if (enviado?.key?.id) st.sentByBridge.add(enviado.key.id)
+    if (enviado?.key?.id) {
+      st.sentByBridge.add(enviado.key.id)
+      // 047: sobrevive ao restart, diferente de sentByBridge (só memória) — é o que deixa o
+      // handler de `fromMe` em `messages.upsert` saber que uma mensagem antiga é da própria
+      // Manu, não de uma consultora, mesmo depois de o processo cair e subir de novo.
+      recordSentMessage(enviado.key.id, jid).catch((err) => logger.warn({ jid, err: err.message }, 'Falha ao registrar mensagem enviada (047).'))
+    }
     logger.info({ jid, resposta: respostaLimpa }, 'Manu respondeu.')
 
     // Idempotência (046 item 2): entre o `await askManu` acima e aqui não há mais nenhum
@@ -464,21 +500,37 @@ async function start() {
         continue
       }
 
-      // Histórico recente reenviado ao reconectar (item 3 do 027) não é evento de agora.
-      const idadeMs = Date.now() - Number(msg.messageTimestamp) * 1000
-      if (!Number.isFinite(idadeMs) || idadeMs > 15000) continue
-
       const st = estadoDe(jid)
 
+      // Silêncio por conversa (009/012), endurecido pelo 047: `fromMe` é tratado ANTES do
+      // filtro de "mensagem velha" abaixo, com janela própria de 3 dias em vez de 15s — é
+      // exatamente essa diferença que resolve o achado real de 2026-09-14 (consultora escreve
+      // com o processo fora do ar, mensagem chega via replay de offline do Baileys quando
+      // reconecta, `messageTimestamp` já tem minutos/horas — o filtro de 15s descartava ela
+      // antes de chegar aqui, e o handoff se perdia pra sempre).
       if (msg.key.fromMe) {
+        if (!msg.key.id) continue
         if (st.sentByBridge.has(msg.key.id)) { st.sentByBridge.delete(msg.key.id); continue }
-        if (st.status !== 'com_consultora') {
+        const idadeFromMeMs = Date.now() - Number(msg.messageTimestamp) * 1000
+        if (Number.isFinite(idadeFromMeMs) && idadeFromMeMs > JANELA_HANDOFF_MS) continue // 047: mais velha que a janela de 012/013, sem uso
+        // 047: `sentByBridge` acima é só memória desta sessão — não sobrevive a um restart.
+        // `agent_sent_messages` sobrevive, é o que permite reconhecer mensagem antiga da
+        // própria Manu (enviada antes de o processo cair) sem confundir com uma consultora.
+        const { ok, known, error } = await filterKnownSent([msg.key.id])
+        if (!ok) { logger.warn({ jid, error }, '>>> 047: falha ao consultar mensagens conhecidas — tratando como handoff por segurança.') }
+        if (ok && known.has(msg.key.id)) continue // é a própria Manu, mensagem antiga sua
+        if (st.status !== 'com_consultora' && st.status !== 'escalado') {
           st.status = 'com_consultora'
           persistirEngajamento(jid).catch((err) => logger.warn({ jid, err: err.message }, 'Falha ao persistir consultora assumindo por outro aparelho.'))
-          logger.info({ jid }, '>>> Consultora assumiu esta conversa (envio direto de outro aparelho) — Manu em silêncio aqui.')
+          logger.info({ jid }, '>>> Consultora assumiu esta conversa (envio direto de outro aparelho, possivelmente recuperado de reconexão — 047) — Manu em silêncio aqui.')
         }
         continue
       }
+
+      // Histórico recente reenviado ao reconectar (item 3 do 027) não é evento de agora — só
+      // pra mensagem de CLIENTE (não re-responder o que já foi respondido antes de cair).
+      const idadeMs = Date.now() - Number(msg.messageTimestamp) * 1000
+      if (!Number.isFinite(idadeMs) || idadeMs > 15000) continue
 
       const texto = msg.message?.conversation || msg.message?.extendedTextMessage?.text
       const audioMsg = msg.message?.audioMessage

@@ -4,8 +4,15 @@ title: Implementar a escrita do chamado do agente na fila (INSERT no Supabase)
 labels: [wayfinder:task]
 status: open
 assignee: claude-sonnet-5
-blocked-by: ["046"]
+blocked-by: []
 ---
+
+> **046 fechou em 2026-09-14** — sai do `blocked-by`. A idempotência que faltava (item 2)
+> está implementada e validada (guarda em memória contra escalada duplicada). O critério
+> "Resolvido quando" deste ticket está tecnicamente cumprido (escreve linha real, telefone
+> real, sem duplicar). **Segue `open` só pelo item solto**: `chatModify({markRead: false},
+> jid)` (035 §5) continua sem implementar em `agente-runtime/index.js` — não tocado nesta
+> sessão, não fazia parte do escopo do 046.
 
 > **Mecanismo de autenticação decidido e testado ao vivo em 2026-09-11** (grilling + deploy
 > real, sessão de reconciliação do 037) — ver "Decisão do mecanismo" abaixo. O ticket **segue

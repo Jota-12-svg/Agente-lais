@@ -393,6 +393,45 @@ prototipagem, `/prototype`. Em tickets de research, `/research` como subagente.
   Achado no fechamento: o rótulo de prioridade que o 037 exigia (erro de preço/disponibilidade
   é mais urgente) tinha ficado de fora da implementação original — corrigido antes de fechar.
   Desbloqueia o [034](tickets/034-redigir-o-manual-do-agente.md) (só falta o 036 agora).
+- [Endurecer o runtime do agente — estado, idempotência e deploy automático](tickets/046-endurecer-runtime-estado-idempotencia-deploy.md)
+  — **fechado em 2026-09-14**, os três itens completos e validados ao vivo. **Estado**:
+  esquema `engagements` no Supabase (histórico em JSONB, uma linha por atendimento com índice
+  único parcial, segredo no Vault em vez de hardcoded) — restart não perde mais conversa em
+  andamento. **Idempotência**: guarda em memória (`st.status !== 'escalado'`) evita duas
+  escaladas concorrentes duplicarem o chamado na fila; reforço no banco descartado — achado
+  que `handoffs.engagement_id` nunca foi populado pelo `handoffs_insert`, e mexer nessa função
+  (não versionada, já vazou segredo 2x) fica fora de escopo. **Deploy automático**: serviço
+  `agente-runtime` do Railway ligado ao GitHub (branch `main`, raiz `/agente-runtime`) — achado
+  no caminho que **`main` nunca tinha recebido PR** desde a fase de pesquisa do projeto (todo
+  o trabalho real vivia só em `wayfinder/atendimento-hoje`); corrigido com o dono, PR #1
+  (aberto desde 2026-08-10) squash-mergeado trazendo `main` em dia.
+- **Agente liberado para clientes reais** — 2026-09-14, decisão explícita do dono. Removida
+  a variável `ALLOWED_JID` do serviço `agente-runtime` em produção (Railway) e forçado um
+  redeploy; log de boot confirmou `>>> Runtime conectado — Manu responde clientes reais a
+  partir de agora.` e `/health` respondeu `{"status":"conectado","agentEnabled":true}`.
+  Verificado antes de mexer, via `railway logs`, que o número já conectado era o **da loja**
+  (não o pessoal do dono, como os handovers de 09-12 registravam — reconexão física, fora de
+  qualquer sessão, nunca chegou a ser documentada em git). Feito com **dois itens do gate de
+  entrada do [038](tickets/038-estrategia-de-rollout.md) ainda abertos** (item 8, extração
+  estruturada da qualificação; item 9, Parte A do manual entregue + demo ao vivo) e o
+  [036](tickets/036-freio-de-mao-global.md) só parcialmente comprovado (falta o teste com
+  mensagem real) — decisão consciente do dono, registrada aqui e nos tickets 036/038, não
+  decisão tomada por conta própria.
+- **Handoff não sobrevive a reconexão do runtime — achado real em produção e corrigido**
+  ([047](tickets/047-handoff-sobrevive-reconexao.md), 2026-09-14). A detecção de que uma
+  consultora já assumiu uma conversa (009/012) só existia como efeito colateral de observar
+  `fromMe` **enquanto o processo estava conectado**; se ela escreveu com o runtime fora do ar
+  (ou durante uma das reconexões frequentes do Baileys), o sinal se perdia pra sempre e a
+  Manu recomeçava a qualificação do zero em cima de uma conversa já humana — foi o que
+  aconteceu com um cliente real hoje, confirmado linha a linha nos logs do Railway. Correção:
+  toda (re)conexão agora escuta o histórico reenviado pelo WhatsApp (`messaging-history.set`)
+  e recupera qualquer `fromMe` humano dentro da janela de 3 dias já fixada em 012/013,
+  inclusive sobrepondo um atendimento `encerrado`; desambiguação (mensagem antiga é da própria
+  Manu, ou de uma consultora) via tabela nova `agent_sent_messages`, **já aplicada em
+  produção** (migration rodada via SQL Editor, segredo validado de propósito com `ERROR
+  28000: forbidden`). Rede de segurança imediata no `system-prompt.md` enquanto isso não é
+  validado ao vivo. **Pendente**: só o teste real de reconexão — ver ticket, ainda
+  `in-progress`.
 
 ## Not yet specified
 
@@ -404,15 +443,13 @@ Névoa em escopo, ainda sem nitidez para virar ticket:
   qualificação, o `advisor_verdict` da consultora é o sinal de maior peso, e desfecho de
   negócio negativo é neutro. Falta a forma do mecanismo — depende de ver conversas reais e
   de a superfície do 035 existir para o `advisor_verdict` acumular.
-- **Modelo de dados no Supabase.** Esquema de clientes, conversas, produtos e aprendizado. O
-  ticket 010 já fixou os campos que a qualificação extrai e que o Supabase é a memória interna
-  do agente (todo atendimento, inclusive os perdidos); o ticket **035 fixou a tabela
-  `handoffs`** (a fila de chamados escalados que as consultoras enxergam — distinta da memória
-  do agente, ligada a ela por `engagement_id`). Falta o esquema da memória (`engagements`),
-  como o catálogo é representado, e a relação entre os dois. **Vira parte do escopo do
-  [046](tickets/046-endurecer-runtime-estado-idempotencia-deploy.md)** (2026-09-14): o runtime
-  hoje guarda a conversa em memória, não sobrevive a restart — persistir isso exige fechar
-  este esquema primeiro.
+- **Modelo de dados no Supabase — parcialmente resolvido.** O esquema da memória do agente
+  (`engagements`) fechou no [046](tickets/046-endurecer-runtime-estado-idempotencia-deploy.md)
+  (item 1, 2026-09-14) — ver `Decisions so far`. Falta ainda: como o catálogo de produtos é
+  representado (fase 2, sem material à vista desde que o 032 fechou sem buscar planilhas
+  reais); qualificação estruturada (nome/orçamento/prazo como campos, não só texto livre no
+  histórico JSONB) segue como pendência aberta, item 8 do gate de entrada do
+  [038](tickets/038-estrategia-de-rollout.md).
 - **Fluxo do arquiteto.** O agente recebe uma planilha com dezenas de itens — o que ele faz
   com ela é um segundo fluxo inteiro, não uma variação do primeiro. Na fase 1 ele escala
   imediato, sem coleta (010); o ticket [032](tickets/032-catalogo-do-maino-e-planilha-de-arquiteto.md)
@@ -431,13 +468,6 @@ Névoa em escopo, ainda sem nitidez para virar ticket:
   construído** em 2026-09-12 — [045](tickets/045-devolver-chamado-ao-agente.md), não é a
   mesma névoa, mas morava na mesma superfície. Reenquadrou 029/030/031.
 - **LGPD.** Consentimento, retenção e o que pode ser guardado de conversa de cliente.
-- **Estratégia de rollout.** Piloto com uma consultora, horário limitado, fallback quando
-  o agente falha. Bloqueia a redação do manual das consultoras
-  ([034](tickets/034-redigir-o-manual-do-agente.md)): define o canal de aviso de erro, o
-  momento de entrega de cada parte e o piloto que dispara a checagem de manutenção.
-  **Virou o ticket [038](tickets/038-estrategia-de-rollout.md)** (grilling, aberto
-  2026-09-10; forma decidida, ticket segue aberto por pendências de runtime/037) — quando
-  fechar, some desta lista.
 - **Migração da planilha compartilhada.** Se os clientes saem da planilha para o Supabase,
   ou se os dois coexistem.
 
