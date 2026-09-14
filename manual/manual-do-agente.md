@@ -146,8 +146,3 @@ depois de checar o que houve; não é algo que você carrega sozinha.
 Depois de assumir, continue respondendo pelo mesmo WhatsApp Business de sempre; não passe o
 cliente pra um app à parte. O Manu só enxerga o que acontece ali, e um caminho diferente o
 deixa cego para aquele atendimento.
-
----
-
-**Dono do manual:** João Victor · revisar quando mudar de fase, mudar algo na Parte B, ou na
-checagem obrigatória do fim do piloto (4 semanas após o arranque).

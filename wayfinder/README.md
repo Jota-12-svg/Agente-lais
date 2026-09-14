@@ -203,7 +203,7 @@ Tracker local em markdown (nenhum tracker de issues foi configurado neste reposi
 | # | Ticket | Tipo | Espera |
 |---|---|---|---|
 | 019 | [De quais dispositivos a consultora pode responder sem cegar o agente](tickets/019-companion-windows-ponto-cego.md) | task | **em pausa** — premissa (Coexistence) não é mais o caminho; ver 016 |
-| 034 | [Redigir o manual do agente para as consultoras](tickets/034-redigir-o-manual-do-agente.md) | task | **texto pronto** em `manual/manual-do-agente.md` (Parte A + B) — dono dispensou prints reais e revisão prévia 2026-09-14 (addendum no 033), ilustração de tom usa falas literais do `system-prompt.md`; falta só o **036** fechar (feature já funciona, só falta o teste ao vivo) e publicar como Google Doc |
+| 034 | [Redigir o manual do agente para as consultoras](tickets/034-redigir-o-manual-do-agente.md) | task | **texto pronto** em `manual/manual-do-agente.md` (Parte A + B), passado pelo `/humanizer`, sem o rodapé "dono · revisar quando" (dispensado pelo dono, addendum no 033) — também exportado como `manual/manual-do-agente.pdf`; falta só o **036** fechar (feature já funciona, só falta o teste ao vivo) e publicar como Google Doc (meio decidido no 033, o PDF é adicional) |
 | 036 | [Freio de mão global — desligamento de emergência do agente](tickets/036-freio-de-mao-global.md) | task | mecanismo, esquema, UI **e o runtime assinando a flag** já testados de ponta a ponta ao vivo (036/046 hoje) — falta só o teste com **mensagem real de WhatsApp** chegando enquanto o freio está desligado, não dá pra simular |
 
 ## Fechados

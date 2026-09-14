@@ -253,3 +253,11 @@ decisão 5 (tom) e a decisão 9 (manutenção) acima:
   checagem do fim do piloto), isso não muda.
 - **O que isso não dispensa:** o [036](036-freio-de-mao-global.md) fechar antes do 034 fechar
   — o dono não comentou sobre isso, é bloqueio técnico separado, não de conteúdo do manual.
+
+### Addendum 2026-09-14 (2) — remove o rodapé "dono · revisar quando"
+
+Pedido do dono: tirar o rodapé do documento. Ajusta a decisão 9 acima, que previa "O rodapé
+do documento carrega 'dono · revisar quando'". O texto do manual (`manual/manual-do-agente.md`)
+não carrega mais essa linha. O restante da decisão 9 (dono do manual = João Victor; gatilhos
+de revisão: mudança de fase, mudança na Parte B, checagem do fim do piloto) continua valendo
+como norma do projeto — só deixou de estar impresso no próprio documento entregue.

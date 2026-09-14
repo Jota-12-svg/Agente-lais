@@ -28,6 +28,10 @@ blocked-by: ["036"]
 > Parte A + Parte B está **escrito e considerado pronto de conteúdo**; a ilustração de tom usa
 > falas literais do `agente-runtime/system-prompt.md` entre aspas, em vez de print de tela. Só
 > falta o 036 fechar e a publicação como Google Doc (ver "Resolvido quando", atualizado).
+> **Texto passado pelo `/humanizer` e rodapé "dono · revisar quando" removido (2026-09-14)** —
+> segundo addendum no 033. Exportado também como `manual/manual-do-agente.pdf` (o meio de
+> entrega decidido continua sendo Google Doc, ver decisão 6 do 033; o PDF é adicional, não
+> substitui).
 
 ## Question
 
