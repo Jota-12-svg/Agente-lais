@@ -49,3 +49,10 @@ export function clock(iso) {
     minute: '2-digit',
   }).replace(':', 'h');
 }
+
+// "14/09 14h03" — usado no histórico de problemas reportados, onde a data importa (não só a
+// hora, ao contrário do resto da tela que só mostra "há X min" de atendimento do dia).
+export function dateTime(iso) {
+  const d = new Date(iso).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+  return `${d} ${clock(iso)}`;
+}

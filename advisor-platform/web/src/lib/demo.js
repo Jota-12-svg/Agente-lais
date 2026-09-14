@@ -10,6 +10,9 @@ const NAMES = {
   'lais@demo.local': 'Laís (dona)',
 };
 
+// A consultora demo também é admin, pra demonstrar a tela de histórico (ticket 038 addendum).
+const ADMIN_EMAILS = new Set([DEMO_EMAIL]);
+
 const ago = (min) => new Date(Date.now() - min * 60000).toISOString();
 
 let handoffs = [
@@ -61,6 +64,14 @@ let agentSettings = [
   { id: 1, agent_enabled: true, toggled_by: null, toggled_at: null },
 ];
 
+// "Reportar problema" (ticket 038 addendum 2026-09-14) — histórico visível só pro admin.
+let problemReports = [
+  {
+    id: 'pr1', created_at: ago(37), reported_by: 'pamella@demo.local',
+    contact_reference: 'Rafael Siqueira', description: 'O agente disse que a mesa de 8 lugares estava disponível — a gente não afirma isso.',
+  },
+];
+
 let realtimeListeners = [];
 const fireRealtime = () => realtimeListeners.forEach((fn) => fn({}));
 const ok = (data) => Promise.resolve({ data, error: null });
@@ -93,11 +104,20 @@ class Query {
     };
   }
 
+  insert(row) {
+    if (this.table === 'problem_reports') {
+      problemReports = [{ id: `pr${problemReports.length + 1}`, created_at: new Date().toISOString(), ...row }, ...problemReports];
+      fireRealtime();
+    }
+    return ok(null);
+  }
+
   _rows() {
     let rows;
     if (this.table === 'handoffs') rows = handoffs.map(clone);
     else if (this.table === 'agent_settings') rows = agentSettings.map(clone);
-    else rows = Object.entries(NAMES).map(([email, name]) => ({ email, name }));
+    else if (this.table === 'problem_reports') rows = problemReports.map(clone);
+    else rows = Object.entries(NAMES).map(([email, name]) => ({ email, name, is_admin: ADMIN_EMAILS.has(email) }));
     rows = rows.filter((r) => this._filters.every((f) => f(r)));
     if (this._order) {
       const { col, asc } = this._order;

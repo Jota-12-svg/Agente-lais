@@ -136,15 +136,15 @@ fieldset legend { font-weight: 600; margin-bottom: 8px; padding: 0; }
   margin-bottom: 8px;
 }
 .opt input { width: 22px; height: 22px; accent-color: var(--accent); }
-textarea {
+textarea, input[type="text"] {
   font: inherit;
   width: 100%;
-  min-height: 76px;
   padding: 12px;
   border: 1px solid var(--line);
   border-radius: 10px;
-  resize: vertical;
 }
+textarea { min-height: 76px; resize: vertical; }
+input[type="text"] { min-height: var(--tap); }
 
 .err {
   background: #fdecea;

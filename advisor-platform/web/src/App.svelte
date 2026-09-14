@@ -9,6 +9,7 @@
   let phase = $state('loading');
   let email = $state('');
   let advisorName = $state('');
+  let isAdmin = $state(false); // ticket 038 addendum 2026-09-14 — histórico de problemas, só pro admin
 
   async function checkAccess(session) {
     if (!session?.user?.email) {
@@ -19,7 +20,7 @@
     phase = 'checking-access';
     const { data, error } = await supabase
       .from('advisor_allowlist')
-      .select('name')
+      .select('name, is_admin')
       .eq('email', email.toLowerCase())
       .maybeSingle();
 
@@ -30,6 +31,7 @@
     }
     if (data) {
       advisorName = data.name;
+      isAdmin = !!data.is_admin;
       phase = 'allowed';
     } else {
       phase = 'denied';
@@ -62,5 +64,5 @@
 {:else if phase === 'denied'}
   <NoAccess {email} onSignOut={signOut} />
 {:else}
-  <Queue {advisorName} {email} onSignOut={signOut} />
+  <Queue {advisorName} {email} {isAdmin} onSignOut={signOut} />
 {/if}

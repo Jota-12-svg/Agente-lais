@@ -3,8 +3,10 @@
   import { supabase } from './supabase.js';
   import HandoffCard from './HandoffCard.svelte';
   import KillSwitch from './KillSwitch.svelte';
+  import ReportProblem from './ReportProblem.svelte';
+  import ProblemHistory from './ProblemHistory.svelte';
 
-  let { advisorName, email, onSignOut } = $props();
+  let { advisorName, email, isAdmin = false, onSignOut } = $props();
 
   let handoffs = $state([]);
   let names = $state({}); // email -> nome, para "FULANA pegou"
@@ -70,6 +72,9 @@
 </div>
 
 <KillSwitch {email} {names} />
+
+<ReportProblem {email} />
+{#if isAdmin}<ProblemHistory {names} />{/if}
 
 {#if error}<div class="err">{error}</div>{/if}
 

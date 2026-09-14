@@ -3,9 +3,9 @@
   // Ticket 036. Lê/grava a linha única de `agent_settings` (id=1) via Supabase, com
   // Realtime pra refletir na hora se outra pessoa (ou outra aba) mudar o estado.
   //
-  // O que isto NÃO faz ainda: parar o agente de responder de verdade — isso é o
-  // runtime (ticket 044) assinando a mesma tabela, que ainda não existe. Esta tela já
-  // grava o estado real no banco; falta o consumidor do outro lado.
+  // O runtime (ticket 044) assina esta mesma tabela via Realtime e obedece a flag de
+  // verdade (agente-runtime/index.js) — confirmado ao vivo em produção (046, 2026-09-14):
+  // toggle daqui propaga pro processo do runtime em segundos.
 
   import { onMount } from 'svelte';
   import { supabase } from './supabase.js';

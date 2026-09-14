@@ -123,20 +123,26 @@ Checklist — o 038 fixa a lista, **não** agenda data. Nenhum cliente real fala
 antes de:
 
 1. **[037](037-construir-plataforma-consultoras-v1.md)** no ar, com Supabase real — a
-   consultora vê / assume / fecha chamado.
+   consultora vê / assume / fecha chamado. ✅ (2026-09-11)
 2. **[036](036-freio-de-mao-global.md)** no ar e **testado** — a consultora consegue parar o
-   agente de fato.
+   agente de fato. **Parcial** (2026-09-14): banco → Realtime → runtime validado ao vivo em
+   produção nos dois sentidos; falta só o teste com mensagem real chegando (não dá pra simular
+   sem WhatsApp de verdade) — ver `## Progresso` no próprio 036.
 3. **[027](027-testar-self-hosted-no-numero-atual.md)** validado — a conexão self-hosted no
-   número de produção não bana.
+   número de produção não bana. ✅ (2026-09-11/12 — **esta lista estava desatualizada**: o
+   027 fechou há dias, só não tinha sido corrigido aqui.)
 4. **[011](011-o-que-o-agente-pode-dizer-sobre-produto.md)** fechado (2026-09-11) — o agente
    sabe o que pode e não pode afirmar sobre produto/disponibilidade. ✅
-5. **[014](014-como-o-agente-soa.md)** pronto — tom validado, prints existem.
+5. **[014](014-como-o-agente-soa.md)** pronto — tom validado, prints existem. ✅
 6. **[031](031-implementar-escrita-do-chamado-na-fila.md)** feito — o agente grava o chamado
-   no Supabase.
+   no Supabase. ✅ (testado ao vivo, funciona; segue aberto só pela idempotência do 046 item 2,
+   que não bloqueia este gate)
 7. Runtime hospedado num lugar estável — **stack decidida no [042](042-stack-e-hospedagem-do-runtime.md)**
-   (Railway); falta construir/implantar de fato.
+   (Railway); falta construir/implantar de fato. ✅ (044 fechado 2026-09-14, no ar em produção)
 8. Lógica de qualificação de fato construída (o [010](010-o-que-e-um-lead-qualificado.md)
-   decidiu os campos; a extração ainda não existe).
+   decidiu os campos; a extração ainda não existe). **Ainda em aberto** — `engagements` (046
+   item 1, 2026-09-14) persiste a conversa, mas não extrai campos estruturados (nome/orçamento/
+   prazo como colunas separadas); isso segue sem existir.
 9. **Parte A do manual entregue + demonstração ao vivo** feita com as três consultoras + a
    dona, na semana anterior ao arranque.
 
@@ -264,29 +270,93 @@ fato** até o 046 resolver isso. A primeira parte **não esbarra em nada** — �
 **implementada em 2026-09-14** (ver pendência abaixo): a Manu recua/para de qualificar quando
 reconhece o sinal, sem gravar estado nenhum ainda.
 
+### Addendum 2026-09-14 — canal de aviso: e-mail + tela admin, sem SMS
+
+Grilling à parte (3 perguntas), pra fechar a pendência "reportar problema + rota de SMS" que
+ficava esperando o 037 ser reaberto. Fatos levantados antes de perguntar: não existe decisão
+de provedor de SMS em lugar nenhum do projeto (o SMS do watchdog é resolvido *dentro* da
+ferramenta de uptime monitoring — 042 — não é integração própria); o 037 derrubou o e-mail do
+mecanismo de aviso das **consultoras** (elas não checam e-mail), mas aqui quem seria avisado é
+o **admin** (dono do projeto), pergunta diferente; não existia, em lugar nenhum do código,
+distinção entre "consultora com acesso" e "admin" na allow-list.
+
+**Decisão:**
+
+- **E-mail, sem SMS.** O admin confirmou que checa e-mail com regularidade — reaproveita o
+  código já escrito (nunca implantado) do `notify-handoff` (035/037), sem decisão de
+  fornecedor novo. SMS descartado: o próprio 038 original já enquadrava erro isolado como "não
+  urgente" (ver `### Fallback` acima), e não há necessidade comprovada que justifique escolher
+  um fornecedor sem uso real ainda.
+- **Mesmo canal cobre os dois eventos** (reportar problema + freio de mão acionado) — como o
+  038 original já previa.
+- **Pedido novo do dono, além do e-mail:** uma **tela na própria plataforma, visível só pro
+  admin**, com o **histórico completo** de problemas reportados — não só notificação pontual.
+  Isso muda o desenho: `advisor_allowlist` ganha uma coluna `is_admin` (não existia distinção
+  nenhuma até aqui — todo mundo na allow-list era só "consultora com acesso").
+
+**Implementado** (advisor-platform):
+- Migration `20260914130000_problem_reports.sql` — coluna `is_admin` em `advisor_allowlist`,
+  função `is_admin()`, tabela `problem_reports` (RLS: qualquer consultora insere, só admin
+  lê), Realtime.
+- `ReportProblem.svelte` (formulário, qualquer consultora) e `ProblemHistory.svelte`
+  (histórico, só quando `isAdmin`) — encaixados em `Queue.svelte`, ao lado do `KillSwitch`.
+  `App.svelte` busca `is_admin` junto do `name` no login e propaga a prop.
+  `demo.js` estendido (mock de `problem_reports` + `insert()`, que não existia na classe
+  `Query`). Build (`npm run build`) e lógica do mock testados, sem erro.
+- `advisor-platform/supabase/functions/notify-admin/` — Edge Function nova (não
+  `notify-handoff` reaproveitada: destinatário e gatilho são diferentes), mesmo padrão nunca
+  implantado do 037. Cobre `problem_reports` INSERT e `agent_settings` UPDATE (freio de mão).
+
+**Bloqueado antes de aplicar em produção**: a migration foi recusada pelo classificador de
+permissão do harness (**"Protected-Scope IaC Apply"**) — provavelmente por alterar tabela
+existente + criar conceito de privilégio, mais sensível que as migrations do 046 (só criação)
+aplicadas mais cedo no mesmo dia. Não contornado de propósito. Ver "Pendente" abaixo.
+
+**Fica de fora, de propósito:** a `notify-admin` **não foi implantada de verdade** (deploy da
+function + Database Webhooks + segredos + conta Resend) — mesmo estado em que a `notify-handoff`
+já estava desde o 037, por decisão explícita de escopo naquele ticket ("e-mail caiu do escopo
+do v1"). A tela de histórico já funciona sem depender disso; o e-mail é ganho de latência, não
+o único jeito de ver o que foi reportado. Criar conta em serviço externo (Resend) não é algo
+que o agente faz sozinho de qualquer forma.
+
+### Pendente — precisa de ação humana
+
+Dois bloqueios, mesmo padrão do 046 hoje mais cedo — a migration precisa ser aplicada por
+fora do harness:
+
+1. **Aplicar a migration `20260914130000_problem_reports.sql`** — SQL Editor do painel
+   Supabase (`supabase db push` também deve funcionar, já que não é o bloqueio de worktree
+   desta vez, é o classificador de permissão — tentar de um ambiente sem essa restrição, ou
+   autorizar explicitamente).
+2. **Deploy do `advisor-platform/web`** no Railway (`railway up`, serviço
+   `plataforma-consultoras`) — depois do passo 1, senão a tela nova quebra (tabela/coluna
+   não existem ainda).
+3. **Opcional, pode esperar**: criar conta Resend, `supabase functions deploy notify-admin`,
+   configurar os dois Database Webhooks — ver `advisor-platform/supabase/functions/notify-admin/README.md`
+   pro passo a passo completo. Não bloqueia o fechamento do 038 (mesmo precedente do 037).
+
 ### Pendências para fechar o 038
 
-O grilling decidiu a forma. O ticket fecha quando estas pontas — que dependem de trabalho
-ainda inexistente — estiverem amarradas:
+O grilling decidiu a forma. O ticket fecha quando estas pontas estiverem amarradas:
 
 - ~~**Watchdog + canal de push (SMS/Telegram) para o dono**~~ — **resolvido pelo
   [042](042-stack-e-hospedagem-do-runtime.md)** (2026-09-11): uptime monitoring externo
   (UptimeRobot/Better Stack) batendo num `/health` do runtime, com alerta SMS/Telegram
   configurado direto na ferramenta — não o healthcheck nativo do Railway, que só atua no
   momento do deploy.
-- **Incremento "reportar problema" + rota de SMS no [037](037-construir-plataforma-consultoras-v1.md)**
-  — vira requisito formal do build quando o 037 for puxado; hoje o 037 espera o runtime.
-- **Confirmação do gate** — os itens **4 (011) e 5 (014) já fecharam** (2026-09-11); só o
-  item 3 (027) segue aberto no gate.
-- **Ajuste na seção do freio de mão do [033](033-manual-do-agente-para-as-consultoras.md)/[034](034-redigir-o-manual-do-agente.md)**
-  — o veículo do aviso é plataforma + e-mail/SMS, não "o grupo". Aplicar na redação do 034.
-- ~~**Instrução de "não é cliente" no `system-prompt.md`**~~ — **implementada em
-  2026-09-14**: seção nova "Quando não é cliente" em `agente-runtime/system-prompt.md`
-  (espelhada em `prototipo-tom-014/system-prompt.md`), instruindo a Manu a recuar/parar de
-  qualificar quando a resposta do turno 1 deixar claro que não é cliente, sem usar
-  `[[ESCALAR]]`. **Ainda falta**: a auto-classificação `fora_de_escopo` de verdade (gravar o
-  estado, não só recuar na conversa) — isso segue esperando o esquema de `engagements` do
-  [046](046-endurecer-runtime-estado-idempotencia-deploy.md). Não testado ao vivo ainda.
+- ~~**Incremento "reportar problema" + rota de SMS no 037**~~ — **decidido e codificado em
+  2026-09-14** (ver addendum acima); falta só aplicar a migration + deploy (ação humana).
+- ~~**Confirmação do gate**~~ — **fechado em 2026-09-14**: todos os 8 itens checados contra o
+  estado real (ver `### Gate de entrada` acima); só o item 2 (036) segue parcial, sem bloquear
+  o fechamento deste ticket (036 é ticket próprio, com seu próprio critério de fechamento).
+- ~~**Ajuste na seção do freio de mão do 033**~~ — **corrigido em 2026-09-14**, direto no
+  033 (não esperou o 034 ser escrito) — ver addendum no próprio 033.
+- ~~**Instrução de "não é cliente" no `system-prompt.md`**~~ — **implementada e deployada em
+  2026-09-14**: seção "Quando não é cliente" em `agente-runtime/system-prompt.md`. A
+  auto-classificação `fora_de_escopo` de verdade (gravar estado) segue como pendência **do
+  046**, não deste ticket — `engagements` já existe (046 item 1, 2026-09-14), falta só ligar.
+
+**Só falta a ação humana do item 1/2 de "Pendente" acima para o 038 poder fechar de fato.**
 
 Quando fechar: escrever a `## Resolução`, `status: closed`, tirar "estratégia de rollout" do
 bloqueio em prosa do 034, adicionar linha em `Decisions so far` no mapa, formalizar os

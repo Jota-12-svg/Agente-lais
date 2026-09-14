@@ -156,13 +156,20 @@ usarem:
   [036](036-freio-de-mao-global.md) / runtime.
 - **Quando usar**: o agente inventou preço, afirmou que tem um produto, está alucinando.
   **Não** é para "esse cliente eu quero pegar" — para isso é só **assumir** o chamado.
-- **O que acontece**: o agente para de responder todo mundo; um aviso vai para a dona / o
-  grupo; alguém do lado do projeto religa depois de checar.
+- **O que acontece**: o agente para de responder todo mundo; um aviso vai para a **plataforma
+  das consultoras + e-mail para o admin**; alguém do lado do projeto religa depois de checar.
 - **Depois de acionar**: avisar o dono pelo canal de erro. Não é decisão que a consultora
   carrega sozinha.
 
 Isso **fecha a pergunta "quem aciona" do 036** para o lado de incluir as consultoras
 (decisão do dono, 2026-09-02) — o 036 ganha nota nesse sentido.
+
+**Correção 2026-09-14** (grilling do 038, addendum): o texto original desta seção dizia "um
+aviso vai para a dona / o grupo" — **errado**, um grupo de WhatsApp foi cogitado e rejeitado
+(decisão do dono, 038) em favor da plataforma. O veículo real é a **plataforma das
+consultoras** (tela "reportar problema" + histórico, visível só pro admin) **mais e-mail**
+(função `notify-admin`, mesmo padrão nunca implantado da `notify-handoff` do 035/037). Quando
+a Parte B do manual (034) for redigida, usar esta versão corrigida, não a original acima.
 
 **5. Tom do manual.** Concreto e com exemplo, segunda pessoa ("quando um cliente te
 chama…"), zero jargão de software, curto. Ilustrado com **prints de conversa real do

@@ -96,3 +96,24 @@ com quem tem acesso documentado e o caminho de religar claro.
   efetivamente parar de responder quando `agent_enabled = false` — sem isso, a UI prova que o
   estado é gravado e propagado, mas não prova que o agente se cala. "Resolvido quando" deste
   ticket continua de pé até esse teste real existir.
+
+## Progresso (2026-09-14) — metade validada ao vivo, ainda não fecha
+
+O 044 fechou (runtime provisório em produção) e o código **já assina** `agent_settings` via
+Realtime e **já obedece** a flag (`agente-runtime/index.js` — `if (!agentEnabled) { ...
+continue }`). Testado ao vivo, em produção, no meio do trabalho do 038:
+
+- `update agent_settings set agent_enabled = false ...` direto no banco → log do runtime em
+  produção, em segundos: `>>> FREIO DE MÃO: estado mudou via Realtime. agentEnabled: false`.
+- Religado (`agent_enabled = true`) → mesmo log, `agentEnabled: true`, confirmado também via
+  `/health`.
+
+**O que isso prova:** o caminho banco → Realtime → processo do runtime funciona de ponta a
+ponta em produção — não é só a UI gravando e mais nada do outro lado, como o "Progresso
+2026-09-11" registrava.
+
+**O que ainda não prova:** que uma **mensagem real chegando** enquanto `agent_enabled = false`
+é de fato ignorada — não dá pra simular isso sem mandar mensagem de verdade no WhatsApp (o
+dono não pôde nesta sessão). "Resolvido quando" deste ticket **continua de pé** até esse teste
+específico acontecer — próxima vez que alguém mandar mensagem no grupo de teste com o freio
+de mão desligado (de propósito ou não), confirma e fecha.
