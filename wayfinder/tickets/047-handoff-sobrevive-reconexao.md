@@ -145,3 +145,61 @@ id) rodada antes do redeploy — todos os casos bateram o esperado.
 
 **Validação ao vivo do item 4 (pendência): em andamento**, mesma sessão — aguardando o
 resultado do teste real na conversa de teste depois deste redeploy corrigido.
+
+---
+
+## Addendum — 2026-09-14/15, madrugada (tentativas de validação ao vivo — parcial, não conclusiva)
+
+Múltiplas tentativas de validação ao vivo no número **pessoal** do dono (celular próprio, não o
+Business da loja), com um contato de teste real ("Larissa"). Resultado misto — registrado
+completo, incluindo os enganos no caminho, porque a próxima sessão precisa saber o que já foi
+tentado e o que não prova nada:
+
+- **Achado de infraestrutura, resolvido no caminho**: os primeiros `railway up` falharam
+  (`Root directory "/agente-runtime" was not found`) por usar `--path-as-root` de dentro da
+  pasta `agente-runtime/`, conflitando com o `rootDirectory` que o 046 já tinha configurado no
+  serviço. Corrigido via PR (`main` estava 159 commits atrás de `wayfinder/atendimento-hoje` —
+  achado à parte, ver handover) — deploy via GitHub confirmado funcionando.
+- **Uma detecção ao vivo bem-sucedida, real**: `>>> Consultora assumiu esta conversa...
+  jid: "97624673771575@lid"`, às 23:47:54, com o código corrigido já em produção. Prova que a
+  lógica de desambiguação (`agent_sent_messages`) funciona de ponta a ponta. **Não prova**,
+  sozinha, a recuperação de mensagem perdida em reconexão (era uma mensagem chegando com o
+  processo já conectado, não uma mensagem "presa" de quando ele estava fora do ar).
+- **Dois enganos de diagnóstico feitos e corrigidos na hora, registrados para não se repetir**:
+  (1) um jid errado (`554191953551@s.whatsapp.net`) foi tratado como sendo da Larissa por
+  coincidência de horário no log — o dono confirmou depois que é o **próprio número dele**, e
+  as mensagens vistas ali eram ruído de auto-mensagem (ver research aberto sobre isso). (2) um
+  reset de estado feito direto no Supabase (`status = 'qualificando'`) não teve efeito porque
+  `rehidratarEngajamentos()` só roda uma vez por processo — um logout de WhatsApp sozinho não
+  reinicia o processo Node, só reconecta o socket; sem restart completo do container, a memória
+  do processo nunca recarrega o estado do banco.
+- **A tentativa final de teste limpo (reset + restart completo + logout + mensagem offline +
+  reconexão) não produziu evidência clara nem a favor nem contra**: a mensagem de teste enviada
+  à Larissa durante a janela offline não apareceu em log nenhum — nem processada, nem ignorada
+  por `ALLOWED_JID` — o que sugere falha de descriptografia (ver próximo item), não uma falha da
+  lógica do 047.
+- **Ruído recorrente identificado, em investigação separada**: toda reconexão no número pessoal
+  produziu uma rajada de eventos `fromMe: true` com `remoteJid` igual ao **próprio número da
+  conta conectada** (`pushName: null`), acompanhada de erros de sessão do protocolo Signal
+  (`PreKeyError`, `SessionError`, `MessageCounterError`). Não apareceu no incidente real desta
+  manhã (número Business, sem re-pareamentos repetidos). Hipótese de trabalho: corrupção de
+  sessão Signal por múltiplos logout/relogin em menos de uma hora no mesmo número. Pesquisa
+  disparada em `wayfinder/research/047-ruido-fromme-proprio-numero.md` para confirmar contra
+  fontes primárias (código do Baileys, issues da comunidade) antes de decidir se isso pede
+  alguma mudança defensiva no `index.js`.
+- **Decisão do dono: parar a validação ao vivo por esta noite.** A lógica está validada por
+  dois ângulos sólidos e independentes da instabilidade do WhatsApp pessoal (teste unitário
+  isolado, 6/6 casos; a detecção ao vivo real de 23:47:54). A prova específica de "mensagem
+  chegando via reconexão depois de ficar presa" segue **pendente**, agora bloqueada por
+  instabilidade de protocolo no ambiente de teste, não por dúvida sobre o código.
+
+**Efeito colateral operacional, registrar com destaque**: o número **Business da loja está
+desconectado** desde as 20h43 UTC de ontem — a madrugada inteira de testes usou o celular
+**pessoal** do dono como substituto. Nenhum cliente real está sendo atendido enquanto isso.
+Reconectar o número da loja (não o pessoal) continua sendo a prioridade #0 herdada do handover
+anterior — ver "Pendências" do handover de hoje.
+
+**Ticket segue `in-progress`.** Próximos passos, em ordem: (1) ler o research sobre o ruído de
+auto-mensagem quando terminar; (2) reconectar o número real da loja; (3) só então repetir a
+validação ao vivo do item 4, idealmente sem múltiplos logout/relogin em sequência rápida (o
+próprio padrão que corrompeu a sessão hoje).
