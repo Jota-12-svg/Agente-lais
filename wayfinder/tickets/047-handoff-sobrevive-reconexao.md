@@ -178,15 +178,19 @@ tentado e o que não prova nada:
   à Larissa durante a janela offline não apareceu em log nenhum — nem processada, nem ignorada
   por `ALLOWED_JID` — o que sugere falha de descriptografia (ver próximo item), não uma falha da
   lógica do 047.
-- **Ruído recorrente identificado, em investigação separada**: toda reconexão no número pessoal
-  produziu uma rajada de eventos `fromMe: true` com `remoteJid` igual ao **próprio número da
-  conta conectada** (`pushName: null`), acompanhada de erros de sessão do protocolo Signal
-  (`PreKeyError`, `SessionError`, `MessageCounterError`). Não apareceu no incidente real desta
-  manhã (número Business, sem re-pareamentos repetidos). Hipótese de trabalho: corrupção de
-  sessão Signal por múltiplos logout/relogin em menos de uma hora no mesmo número. Pesquisa
-  disparada em `wayfinder/research/047-ruido-fromme-proprio-numero.md` para confirmar contra
-  fontes primárias (código do Baileys, issues da comunidade) antes de decidir se isso pede
-  alguma mudança defensiva no `index.js`.
+- **Ruído recorrente identificado e explicado** — pesquisa concluída em
+  [`wayfinder/research/047-ruido-fromme-proprio-numero.md`](../research/047-ruido-fromme-proprio-numero.md).
+  Confirmado no código-fonte real do Baileys 6.7.24 (comentário do próprio mantenedor em
+  `decode-wa-message.js`): são "peer-routed self stanzas" — tráfego de sincronização entre os
+  aparelhos da mesma conta (histórico, app-state), roteado como mensagem endereçada ao próprio
+  jid e emitido via `messages.upsert` sem filtro. Os erros de sessão associados
+  (`PreKeyError`/`SessionError`/`MessageCounterError`) são um padrão **conhecido e sem correção**
+  nas issues do Baileys/Evolution API — não específico deste projeto. **Não contamina conversa
+  de cliente real** (jid distinto) e o `ALLOWED_JID` do teste absorveu o ruído incidentalmente.
+  **Recomendação da pesquisa: nenhuma mudança de código agora** — o gatilho (vários logout+QR
+  em menos de uma hora) não é o padrão de operação do número Business em produção; revisitar
+  quando o 044 resolver auth em disco (redeploy sem volume força QR novo a cada deploy, um
+  caminho realista pro mesmo ruído aparecer com menor frequência em produção real).
 - **Decisão do dono: parar a validação ao vivo por esta noite.** A lógica está validada por
   dois ângulos sólidos e independentes da instabilidade do WhatsApp pessoal (teste unitário
   isolado, 6/6 casos; a detecção ao vivo real de 23:47:54). A prova específica de "mensagem
